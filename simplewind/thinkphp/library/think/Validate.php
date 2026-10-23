@@ -936,6 +936,9 @@ class Validate
         } else {
             $param = null;
         }
+        // PHP 8.1+ no longer accepts null for filter_var()'s options argument.
+        // Older PHP versions treated it the same as the default value (0).
+        $param = null === $param ? 0 : $param;
         return false !== filter_var($value, is_int($rule) ? $rule : filter_id($rule), $param);
     }
 
