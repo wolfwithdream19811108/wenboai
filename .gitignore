@@ -9,6 +9,7 @@
 /node_modules
 /simplewind/vendor/
 /simplewind/新建文件夹/
+/config/queue.php
 Vagrantfile
 .vagrant
 
