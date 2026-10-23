@@ -9,8 +9,10 @@
 
 // [ 入口文件 ]
 
-// 调试模式开关
-define("APP_DEBUG", true);
+// 调试模式开关：生产环境默认关闭，本地开发可通过 APP_DEBUG=true 开启。
+$appDebug = getenv('APP_DEBUG');
+define('APP_DEBUG', $appDebug !== false && filter_var($appDebug, FILTER_VALIDATE_BOOLEAN));
+unset($appDebug);
 
 // 定义CMF根目录,可更改此目录
 define('CMF_ROOT', __DIR__ . '/../');

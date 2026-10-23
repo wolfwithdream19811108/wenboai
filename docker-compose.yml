@@ -17,6 +17,7 @@ services:
       dockerfile: docker/php/Dockerfile
     environment:
       CMF_ENV: local
+      APP_DEBUG: ${APP_DEBUG:-true}
       CMF_DATABASE_MODE: ${DB_MODE:-local}
       CMF_AUTHCODE: local-auth-code
       DB_HOST: db
