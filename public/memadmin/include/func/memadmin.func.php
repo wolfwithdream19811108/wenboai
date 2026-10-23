@@ -32,7 +32,7 @@ function getSessionMonitor() {
  * array to utf8 & urlencode
  *
  */
-function arrayRecursive(&$array, $function, $apply_to_keys_also = false, $cs)
+function arrayRecursive(&$array, $function, $apply_to_keys_also = false, $cs = 'UTF-8')
 {
     foreach ($array as $key => $value) {
         if (is_array($value)) {
