@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建艺-建筑艺术美学大模型</title>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/jquery-2.0.0.min.js"></script>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/layer-v3.1.1/layer/layer.js"></script>    
+
+    <script src="__STATIC__/js/frontend.js"></script>
+     
+    <script src="__TMPL__/public/assets/js/marked.min.js" defer></script>
+    <script src="__TMPL__/public/assets/js/suggestwork/suggestwork.js" defer></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/suggestwork/suggestwork.css" type="text/css" media="screen" />    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+    .row-container {
+        position: relative;
+        width: 100%;  /* 使用百分比宽度，确保它在不同的屏幕上自适应 */
+        max-width: 800px;  /* 最大宽度设置为800px，确保大屏时不会过于宽 */
+        height: 100vh;  /* 使用视口高度（vh）来设置高度，相对于可视窗口 */
+        margin: 0 auto;  /* 自动水平居中 */
+        box-sizing: border-box; /* 包括内边距和边框的宽度计算在内 */
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 1024px) {
+
+    }
+    
+    @media (max-width: 600px) {
+
+    }
+
+  
+        
+   
+   
+   
+        
+    </style>
+
+</head>
+<body>
+    <div class="row-container" id="ai-chat-container"></div>
+    
+
+    <script>
+        var GV = {
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "static/js/"
+        };        
+
+    
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取预设问题
+            const questions = [<foreach name="questions" item="question">'{$question}',</foreach>];
+            
+            // 实例化聊天组件
+            new AIChatComponent(
+                document.getElementById('ai-chat-container'), 
+                { questions: questions }
+            );
+        });
+    </script>
+    <script src="https://static.hongmengyishu.com/public/static/js/wind.js"></script> 
+</body>
+</html>

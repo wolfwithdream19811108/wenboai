@@ -1,0 +1,85 @@
+<div class="side">
+	<ul>
+		<notempty name="hi_sidebar_qq">
+			<li id="qqonline">
+				<a target="_blank" href="http://wpa.qq.com/msgrd?v=3&uin={$hi_sidebar_qq}&site=qq&menu=yes">
+					<div><i class="bgs1"></i>QQ咨询</div>
+				</a>
+			</li>
+		</notempty>
+		<notempty name="hi_sidebar_online">
+			<li class="shangqiao">
+				<a href="{$hi_sidebar_online}" rel="nofollow">
+					<div>
+						<i class="bgs2"></i>在线咨询
+					</div>
+				</a>
+			</li>
+		</notempty>
+		<notempty name="hi_sidebar_wechat_on">
+			<notempty name="hi_sidebar_wechat">
+				<li class="sideewm"><i class="bgs3"></i>官方微信
+					<div class="ewBox son">
+						<img src="{:cmf_get_image_url($hi_sidebar_wechat)}"style="max-width: 100%;"/>
+					</div>
+				</li>
+			</notempty>
+		</notempty>
+		<if condition="!empty($hi_sidebar_phone) OR !empty($hi_sidebar_mobile) ">
+			<li class="sideetel"><i class="bgs4"></i>联系电话
+				<div class="telBox son">
+					<notempty name="hi_sidebar_phone">
+						<dd class="bgs1"><span>座机</span>{$hi_sidebar_phone}</dd>
+					</notempty>
+					<notempty name="hi_sidebar_mobile">
+						<dd class="bgs2"><span>手机</span>{$hi_sidebar_mobile}</dd>
+					</notempty>
+				</div>
+			</li>
+		</if>
+		<notempty name="hi_sidebar_url">
+			<li id="yuyueshow">
+				<a href="{$hi_sidebar_url}">
+					<div><i class="bgs5"></i>预约上门</div>
+				</a>
+			</li>
+		</notempty>
+		<if condition="$hi_sidebar_totop">
+			<li class="sidetop" id="hi_backtotop"><i class="bgs6"></i>返回顶部</li>
+		</if>
+	</ul>
+</div>
+<if condition="$hi_sidebar_totop">
+	<script>
+		(function($) {
+			$.fn.hi_totop = function(opt) {
+				var scrolling = false;
+				return this.each(function() {
+					var $this = $(this);
+					$(window).scroll(function() {
+						if(!scrolling) {
+							var sd = $(window).scrollTop();
+							if(sd > 100) {
+								$this.fadeIn();
+							} else {
+								$this.fadeOut();
+							}
+						}
+					});
+
+					$this.click(function() {
+						scrolling = true;
+						$('html, body').animate({
+							scrollTop: 0
+						}, 500, function() {
+							scrolling = false;
+							$this.fadeOut();
+						});
+					});
+				});
+			};
+		})(jQuery);
+
+		$("#hi_backtotop").hi_totop();
+	</script>
+</if>

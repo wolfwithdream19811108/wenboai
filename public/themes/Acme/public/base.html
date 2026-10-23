@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+
+    <link rel="shortcut icon" href="__TMPL__/public/assets/img/favicon.png">
+
+    <include file="public@head"/>
+
+    <block name="head">
+        <title>{$site_info.site_name|default=''}</title>
+    </block>
+
+    <hook name="before_head_end"/>
+</head>
+<body>
+<include file="public@header"/>
+
+<block name="body"></block>
+
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<block name="scripts">
+    <script>
+        wow = new WOW(
+            {
+                boxClass: 'wow',      // default
+                animateClass: 'animated', // default
+                offset: 0          // default
+            }
+        )
+        wow.init();
+    </script>
+</block>
+<hook name="before_body_end"/>
+</body>
+</html>

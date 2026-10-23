@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+<body>
+<include file="public@header"/>
+<div class="section section-top-bg jarallax" data-jarallax='{"speed": 0.8}'
+     style="background-image: url('{:cmf_get_image_url($category.more.thumbnail)}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{$category.name}</h1>
+                <p>{$category.description}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-breadcrumb no-mar no-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-inline breadcrumb">
+                    <li class="breadcrumb-item"><a href="__ROOT__/"><i class="fa fa-home"></i>首页</a></li>
+                    <portal:breadcrumb cid="$category['id']" self="true">
+                        <li class="breadcrumb-item"><a
+                                href="{:url('portal/list/index',['id'=>$vo['id']])}">{$vo.name}</a></li>
+                    </portal:breadcrumb>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-list-thumb-v2">
+    <div class="container">
+        <div class="row">
+            <php>
+                //判断是否有子栏目，有子栏目则将子栏目获取；若无则展现同级别栏目列表
+                $sCats = ApiService::subCategories($category['id']);
+                $cSub= count($sCats);
+                if($cSub == 0){
+                $pid=ApiService::category($category['id']);
+                $sCats = ApiService::subCategories($pid['parent_id']);
+                }
+                //返回当前栏目及其一级子栏目所有内容
+                $allsubCats = ApiService::allsubCategories($category['id']);
+                $ids = "";
+                foreach ($allsubCats as $t) {
+                $ids = $ids . "," . $t['id'];
+                }
+                $cids = $category['id'] . $ids;
+            </php>
+            <div class="col-12 col-md-9 mb-30">
+                <div class="thumb-list-wrap">
+                    <php>
+                        $where=[
+                        'post.create_time'=>['egt',0]
+                        ];
+                    </php>
+                    <div class="row thumb-list-v1">
+                        <portal:articles item="vo" where="$where" order="post.create_time DESC" page="9"
+                                         relation="categories"
+                                         categoryIds="$cids"
+                                         returnVarName="articles_data">
+                            <div class="col-12 col-sm-6 col-md-4 thumb-list-item">
+                                <div class="image-box text-center">
+                                    <div class="overlay-container">
+                                        <img src="{:cmf_get_image_url($vo['more']['thumbnail'])}"
+                                             alt="" class="img-fluid">
+                                        <div class="overlay-top">
+                                            <div class="text">
+                                                <h3>
+                                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}">{$vo.post_title}</a>
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <div class="overlay-bottom">
+                                            <div class="links">
+                                                <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"
+                                                   class="btn btn-outline-white btn-sm btn-animated">详细介绍 <i
+                                                        class="pl-10 fa fa-angle-double-right"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </portal:articles>
+                    </div>
+                </div>
+                <ul class="pagination">
+                    <page/>
+                </ul>
+            </div>
+            <div class="col-12 col-md-3">
+                <div class="right-nav-v2 mb-30">
+                    <div class="head">
+                        <h3>
+                            <span>{$category.name}</span>
+                        </h3>
+                        <div class="separator-2"></div>
+                    </div>
+                    <div class="body">
+                        <ul class="list-unstyled flex-column">
+                            <!--将对应分类名称展现在标签中-->
+                            <foreach name="sCats" item="vo">
+                                <if condition="$vo['id'] eq $category['id']">
+                                    <li class="active slow">
+                                        <a href="{:cmf_url('portal/List/index',array('id'=>$vo['id']))}">
+                                            {$vo.name}
+                                        </a>
+                                    </li>
+                                    <else/>
+                                    <li class="slow">
+                                        <a href="{:cmf_url('portal/List/index',array('id'=>$vo['id']))}">
+                                           {$vo.name}
+                                        </a>
+                                    </li>
+                                </if>
+                            </foreach>
+                        </ul>
+                    </div>
+                </div>
+                <include file="public@right_search"/>
+            </div>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<hook name="before_body_end"/>
+</body>
+</html>

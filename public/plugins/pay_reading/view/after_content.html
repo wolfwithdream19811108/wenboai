@@ -1,0 +1,41 @@
+<if condition="$_show">
+    <div>
+        <if condition="$_is_pay_reading">
+            <div class="sigma-content">
+                <div class="sigma-middle-line">
+                    <span class="sigma-line-text">以下是隐藏内容</span>
+                </div>
+            </div>
+        </if>
+        {$_info.__pay_content}
+    </div>
+    <else />
+    <div class="row text-center" style="width:100%;height:100px;border:dashed 1px #ddd;display: table;">
+        <div style="display:table-cell;vertical-align:middle;">
+            <p>以下内容已隐藏，如需继续阅读，请购买</p>
+            <button class="btn btn-primary" onclick="buy({$_info.postid})">购买 ￥{$_info.__pay_money}</button>
+        </div>
+    </div>
+    <script>
+        function buy(postid) {
+            swal({
+                title: "确定购买吗？",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#2780E3",
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                closeOnConfirm: false
+            }, function () {
+                $.post("{:cmf_url('/plugin/pay_reading/index/buy')}", { postid, postid }, function (res) {
+                    res = typeof res == 'string' ? JSON.parse(res) : res
+                    console.log(res)
+                    if (res.code == 0) window.location.reload()
+                    else swal('ERROR', res.data, 'error');
+                })
+            });
+
+        }
+    </script>
+    <script src="https://umeng123.com/static/admin/js/sweetalert/dist/sweetalert.min.js"></script>
+</if>

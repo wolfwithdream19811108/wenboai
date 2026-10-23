@@ -1,0 +1,24 @@
+<h3>通讯录设置</h3>
+<hr>
+<table>
+<foreach name="datalist" item="vo" key="k">
+<notempty name="$vo.name">
+<tbody style="border-top: 15px solid white;">
+    <tr>
+        <td colspan="2" style="color: #2780e3;">{$vo.company}</td>
+    </tr>
+    <tr>
+        <td colspan="2">地址：{$vo.address}</td>
+    </tr>
+    <tr>
+        <td width="50%">姓名：{$vo.name}</td>
+        <td width="50%">邮箱：{$vo.email}</td>
+    </tr>
+    <tr>
+        <td width="50%">电话：{$vo.mobile}</td>
+        <notempty name="$vo.tel"><td width="50%">固话：{$vo.tel}</td></notempty>
+    </tr>
+</tbody>
+</notempty>
+</foreach>
+</table>

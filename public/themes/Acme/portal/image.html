@@ -1,0 +1,237 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+<meta charset="UTF-8"> 
+<script src="__TMPL__/public/assets/js/jquery-2.0.0.min.js"></script>
+<script src="__TMPL__/public/assets/js/bootstrap.js"></script>
+<script src="__TMPL__/public/assets/js/md5.js"></script>
+<script src="__TMPL__/public/assets/js/common-scripts.js"></script>
+<script src="__TMPL__/public/assets/js/jquerylightslider/js/jquery.lightSlider.js"></script> 
+<script src="__TMPL__/public/assets/js/lightgallery/js/lightgallery.js"></script>
+<!--<script src="__TMPL__/public/assets/js/lightgallery/js/lg-zoom.js"></script>-->
+<!--<script src="__TMPL__/public/assets/js/lightgallery/js/lg-thumbnail.js"></script>-->
+<script src="__STATIC__/js/frontend.js"></script>
+<script type="text/javascript" src="__TMPL__/public/assets/js/current.js"></script>
+
+<script src="__TMPL__/public/assets/js/openseadragon-bin-2.4.0/openseadragon.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
+<link rel="stylesheet" href="__TMPL__/public/assets/js/lightgallery/css/lightgallery.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/base.css" type="text/css" media="screen" />
+
+
+
+
+<block name="head">
+	<meta charset="'UTF-8'">
+	<title>艺术云库高清大图</title>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+	<meta name="description" content="{$site_info.site_seo_description|default=''}">
+	<meta name="author" content="Crazy">
+	<link rel="shortcut icon" href="__TMPL__/public/assets/images/favicon.png">
+	   
+	<include file="public@scripts"/>
+	 
+	<style>
+		.galleryfooter{
+			width: 100%;
+			background-color: #414040;
+			position: fixed;
+			bottom: 0;
+		}
+		#openseadragon {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+		  }
+	</style>
+</block>
+
+<body bgcolor="black">
+<div id="openseadragon" style="background-color:black;"/></div>
+    <div class="galleryfooter">
+		<ul id="imageGallery" >
+			<foreach name="$photos" item="vo">
+				<li data-thumb="<?php echo cmf_get_image_url_with_token($vo['url'],'!w300'); ?>" data-src="" class="lslide active">
+				</li>
+			</foreach>
+
+		</ul>
+    </div>
+
+
+
+<script>
+$.ajax({
+		url: '<?php echo $xml_url; ?>',
+        dataType: 'xml',
+        type: 'GET',
+        timeout: 5000,
+        error: function(xml)
+        {
+            alert("slow network please try again later!");
+        },
+        success: function(xml)
+        {
+			var infos=$(xml).find("Size");
+           // alert(infos.length);//长度
+			var picWidth=infos.eq(0).attr("Width");
+			var picHeight=infos.eq(0).attr("Height");
+
+			/*
+			(function(win){
+				var viewer = OpenSeadragon({
+					// debugMode: true,
+					id: "dyx",  //容器id
+					prefixUrl: "./images/", //openseadragon插件资源路径
+					tileSources: path,  //openseadragon 图片资源xml
+					showNavigator:true  //是否显示控制按钮
+				});
+				console.log(viewer);
+			})(window);
+
+			 */
+			 /*
+			 OpenSeadragon({
+				 id:  "dyx",
+				 constrainDuringPan:false,
+				 visibilityRatio:0.9,
+				 showFullPageControl:false,
+				 prefixUrl: "./images/",
+				 tileSources: {
+					 Image: {
+						 xmlns:  "http://schemas.microsoft.com/deepzoom/2009",
+						 Url: '<?php echo $files_url; ?>',
+						 TileSize: "256",
+						 Format : "jpg",
+						 Size:{
+							 Height: picHeight,
+							 Width:  picWidth
+						 }
+					 }
+				 }
+			 });
+
+			*/
+			OpenSeadragon({
+              id:              "openseadragon",
+              prefixUrl:       "__TMPL__/public/assets/js/openseadragon-bin-2.4.0/images/",
+              
+    		visibilityRatio: 1,
+    	//	minZoomLevel: 0.5,
+    	//	maxZoomLevel: 8,
+    	//	minScrollDeltaTime:50,
+    	//	pixelsPerWheelLine:40,
+    		immediateRender:true,////初始化渲染，是否自动选择最佳分辨率图片显示，移动端最好开启  
+    		iOSDevice:true,
+    	//	springStiffness:4,
+    	//	animationTime:5,
+    		useCanvas:false, //这个参数一定要false，否则移动端会很卡
+    		minPixelRatio:1,
+    /*		zoomInButton: "zoom-in", //放大
+    		zoomOutButton: "zoom-out", //缩小
+    		homeButton: "home", //恢复默认
+    		fullPageButton: "full-page", //全屏
+    		nextButton: "next", //下一张图片
+    		previousButton: "previous", //前一张图片*/
+                 
+            // panHorizontal:true,  //是否允许水平移动
+            //   panVertical:true,  //是否允许垂直移动              
+                  
+            // navigatorId:   //导航所在容器ID  如果指定则会忽略导航上所有的属性  使用自定义的css
+            navigatorPosition:'TOP_RIGHT',//'TOP_LEFT'，'TOP_RIGHT'，'BOTTOM_LEFT'，'BOTTOM_RIGHT'或'ABSOLUTE'   ///导航所在位置 若为ABSOLUTE，可根据需求指定位置navigatorTop，navigatorLeft，  且会忽略下边两个属性若为其他，则会根据下边的属性或者导航的宽高确定导航的大小
+            navigatorSizeRatio:0.2,   //导航的大小与整体视图的比例 ，  如果设置了导航的宽高  则忽略此属性
+            navigatorMaintainSizeRatio:true, //当容器大小改变时，是否自动缩放导航图的大小，此属性依赖上一属性
+            // navigatorHeight:   //指定后将会忽略上边两个属性
+            // navigatorWidth:  同上
+            navigatorAutoResize:true, // 根据视图自动调整导航大小  若已确定导航大小，请设置为false避免每次窗口缩放的查询 可提高性能
+            navigatorAutoFade:true,  // 如果用户停止与视口交互，则淡化导航器迷你地图。设置为false将使导航器小地图始终可见。
+            navigatorRotate:true,   //图像旋转时   导航地图同时旋转
+            navigatorBackground:'#000000',  //导航背景色
+            navigatorOpacity:1,   //导航背景透明度
+            navigatorBorderColor:'#000000',  // 导航边框颜色
+            // navigatorDisplayRegionColor: ''   //导航中，当前查看区域的边框颜色              
+            controlsFadeDelay:2000,   //停止交互多少秒后，隐藏导航栏
+            controlsFadeLength:1500,   //导航窗口淡化动画时间   
+            showReferenceStrip:false,   //显示图像缩略图滚动条
+                  
+            // 展示导航图
+            showNavigator: true,
+            maxZoomLevel: 12,
+            // 控制器展示
+            showHomeControl: true,
+            tileSources:     {
+              "Image": {
+                  "xmlns":    "http://schemas.microsoft.com/deepzoom/2008",
+                  "Url": "<?php echo $files_url; ?>",
+                  "Format":   "jpg", 
+                  "Overlap":  "1", 
+                  "TileSize": "254",
+                  "Size": {
+                      "Width":  picWidth,
+                      "Height": picHeight
+                  }
+              }
+            }
+          });
+        }
+    });
+
+
+ $(document).ready(function() {
+     
+  var counter = 0;
+    if (window.history && window.history.pushState) {
+      $(window).on('popstate', function () {
+         //微信小程序里直接跳转到最开始页面
+          wx.miniProgram.navigateBack({delta: 1}) 
+      });
+    }
+  window.history.pushState('forward', null, '#'); //在IE中必须得有这两行
+  window.history.forward(1);
+     
+     
+    $('#imageGallery').lightSlider({
+        gallery:true,
+        item:1,
+        thumbItem:20,
+		galleryCenter:true,
+		mode: "fade",
+		currentPagerPosition: 'middle',
+		hiddenSlider:true,
+        enableDrag: false,
+		onThumbClick: function(el,scene) {
+         
+			imgurls = '<?php echo $img_urls; ?>'
+			articleId = '<?php echo $articleId; ?>'
+			imgurls = JSON.parse(imgurls)
+			imgurl = imgurls[scene]
+			url = "https://www.hongmengyishu.com/portal/image/index?image="+imgurl["url"]
+			url = url + "&"+"articleId="+articleId
+            if (url.indexOf("故宫博物院M")==-1)
+  			{
+    			url =url.replace("压缩图","高清") 
+  			}
+			window.open(url,"_self")
+        },
+        onSliderLoad:function(){
+          //由于大图加载完成以后无需观看图片，而是通过OpenSeadragon加载，所以删除幻灯片节点
+          $("#imageGallery").remove();
+        },
+        onPageCreated:function(page){
+          var thumbIndex = '<?php echo $thumbIndex; ?>'
+          page.removeClass('active');
+          page.eq(thumbIndex).addClass('active');
+        }
+    });  
+    
+    
+  });
+ </script>
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<extend name="public@base"/>
+
+<block name="head">
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鉴渊-文博工艺美术大模型</title>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/jquery-2.0.0.min.js"></script>
+    <script src="__STATIC__/js/frontend.js"></script>
+    <script src="__TMPL__/public/assets/js/marked.min.js" defer></script>
+    <script src="__TMPL__/public/assets/js/aichat/jianyuan.js" defer></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/aichat/aichat.css" type="text/css" media="screen" />
+
+  
+    <style>
+    .row-container {
+        position: relative;
+        width: 100%;  /* 使用百分比宽度，确保它在不同的屏幕上自适应 */
+        max-width: 800px;  /* 最大宽度设置为800px，确保大屏时不会过于宽 */
+        height: 85vh;  /* 使用视口高度（vh）来设置高度，相对于可视窗口 */
+        margin: 0 auto;  /* 自动水平居中 */
+        box-sizing: border-box; /* 包括内边距和边框的宽度计算在内 */
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 1024px) {
+        .row-container {
+            height: 75vh;  /* 在较小的屏幕上稍微减少高度 */
+            width: 90%;  /* 宽度略微缩小，确保适应中等屏幕 */
+        }
+    }
+    
+    @media (max-width: 600px) {
+        .row-container {
+            height: 70vh;  /* 在手机屏幕上进一步减少高度 */
+            width: 100%;  /* 在手机设备上使用100%宽度 */
+        }
+    }
+
+  
+        
+    </style>
+
+
+</block>
+
+<block name="body">
+
+    <div class="row-container" id="ai-chat-container"></div>
+
+</block>
+
+
+<block name="scripts">
+    
+
+    
+
+
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取预设问题
+            const questions = [<foreach name="questions" item="question">'{$question}',</foreach>];
+            
+            // 实例化聊天组件
+            new AIChatComponent(
+                document.getElementById('ai-chat-container'), 
+                { questions: questions }
+            );
+        });
+    </script>
+
+   
+        
+        
+</script>        
+        
+        
+        
+</block>

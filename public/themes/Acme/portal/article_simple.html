@@ -1,0 +1,34 @@
+<extend name="public@base"/>
+<block name="body">
+    <include file="public@breadcrumb"/>
+    <div class="container">
+        <div class="row mar-b-30">
+            <div class="col-md-12 text-center">
+                <h1 class="wow flipInX animated">{$article.post_title}</h1>
+                <div class="wow fadeIn">
+                    <span>{:date('Y-m-d H:i',$article.published_time)} | 来源：{$article.post_source|default='本站'}</span> |
+                    <span>
+		    			<a href="javascript:;"><i class="fa fa-eye"></i> <span>{$article.post_hits} 查看</span></a> |
+						<a href="{:url('portal/Article/doLike',array('id'=>$article['id']))}" class="js-count-btn">
+                            <i class="fa fa-thumbs-up"></i> <span class="count">{$article.post_like} 赞</span> |
+                        </a>
+						<a href="{:url('user/favorite/add')}" class="js-favorite-btn" data-title="{:base64_encode($article.post_title)}"
+                           data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}" data-table="portal_post" data-id="{$article['id']}">
+							<i class="fa fa-star-o"></i> 收藏
+						</a>
+					</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mar-b-50">
+                {$article.post_content}
+            </div>
+                <notempty name="$article.page">
+                    <ul class="pagination">
+                        {$article.page}
+                    </ul>
+                </notempty>
+        </div>
+    </div>
+</block>

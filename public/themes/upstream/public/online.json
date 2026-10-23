@@ -1,0 +1,67 @@
+{
+  "name": "在线客服配置模板",
+  "action": "public/Online",
+  "description": "在线客服配置文件",
+  "is_public": "1",
+  "order": 0.1,
+  "more": {
+    "vars": {
+      "online_bg": {
+        "title": "鼠标经过样式颜色",
+        "name": "style",
+        "value": "#dddddd",
+        "type": "text",
+        "tip": "填写默认显示颜色格式为“#dddddd”",
+        "rule": []
+      },
+      "online_bg_hover": {
+        "title": "鼠标经过样式颜色",
+        "name": "style_hover",
+        "value": "#2aa4a5",
+        "type": "text",
+        "tip": "填写鼠标经过显示颜色格式为“#dddddd”",
+        "rule": []
+      }
+    },
+    "widgets": {
+      "online_service": {
+        "title": "在线客服设置",
+        "display": "1",
+        "vars": {
+          "online_qq": {
+            "title": "在线QQ客服",
+            "name": "QQ",
+            "value": "",
+            "type": "text",
+            "tip": "输入客服QQ号",
+            "rule": []
+          },
+          "online_tel": {
+            "title": "客服热线",
+            "name": "tel",
+            "value": "",
+            "type": "text",
+            "tip": "输入客服电话",
+            "rule": []
+          },
+          "online_email": {
+            "title": "客服邮箱",
+            "name": "email",
+            "value": "",
+            "type": "text",
+            "tip": "输入客服邮箱",
+            "rule": []
+          },
+          "online_wechat": {
+            "title": "微信二维码",
+            "name": "wechat",
+            "value": "",
+            "type": "image",
+            "tip": "上传微信二维码",
+            "rule": []
+          }
+        }
+      }
+    }
+  }
+}

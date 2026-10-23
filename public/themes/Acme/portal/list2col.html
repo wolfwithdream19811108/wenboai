@@ -1,0 +1,50 @@
+<extend name="public@base"/>
+<block name="body">
+    <include file="public@breadcrumb"/>
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <portal:articles order="post.create_time DESC" page="theme_vars.page_count" relation="categories" categoryIds="$category.id">
+                <div class="col-md-6">
+                    <php>$fade_class = $i%2==0 ? 'fadeInRight' : 'fadeInLeft';</php>
+                    <div class="blog-left wow {$fade_class}">
+                        <div class="blog-img">
+                            <img src="{$vo.more.thumbnail|default='__TMPL__/public/assets/img/php.jpg'|cmf_get_image_url}" alt="{$vo.post_title}" class="img-responsive"/>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="blog-two-info">
+                                    <p>
+                                        <i class="fa fa-user"></i> 来源：{$vo.post_source|default='本站'} |
+                                        <i class="fa fa-calendar"></i> {$vo.published_time|cmf_get_date='Y-m-d H:i'} |
+                                        <i class="fa fa-comment"></i> <a href="#">{$vo.comment_count} 回复</a> |
+                                        <i class="fa fa-heart"></i> <a href="#">{$vo.post_like} 收藏</a> |
+                                        <i class="fa fa-eye"></i> {$vo.post_hits} 查阅
+
+                                        <php>$keywords = explode(',',$vo['post_keywords']);</php>
+                                        <notempty name="keywords">
+                                            <br>
+                                            <i class="fa fa-tags"></i> 标签：
+                                            <foreach name="keywords" item="v">
+                                                <span class="label label-info">{$v}</span>
+                                            </foreach>
+                                        </notempty>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="blog-content">
+                            <h3>{$vo.post_title}</h3>
+                            <p>{$vo.post_excerpt}</p>
+                        </div>
+                        <a href="{:cmf_url('portal/Article/index',['id'=>$vo['id'],'cid'=>$category['id']])}" class="btn btn-primary">
+                            查看详情
+                        </a>
+                    </div>
+                </div>
+            </portal:articles>
+            <!--blog end-->
+        </div>
+    </div>
+    <!--container end-->
+</block>

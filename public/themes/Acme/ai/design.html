@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+   
+    
+
+    
+</head>
+
+<style>
+canvas {
+    /* border: 1px solid #ccc; */
+}
+
+body {
+    background-color: rgb(246, 247, 250);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.canvas-wrapper {
+    position: relative;
+    width: fit-content;
+    background-color: rgba(0, 30, 89, 0.04);
+
+    position: relative;
+    box-shadow: 0 .68702px 2.06107px 0 rgba(0, 0, 0, .08)
+}
+
+#productActionBar,
+#elementActionBar {
+    display: none;
+    position: absolute;
+    z-index: 1;
+}
+
+#layer-panel {
+    width: 200px;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+}
+
+#layer-list {
+    list-style: none;
+    padding: 0;
+}
+
+.layer-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 6px;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    background-color: #fff;
+    cursor: grab;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.layer-item .pic {
+    width: 40px;
+    height: 40px;
+}
+
+.layer-options {
+    display: none;
+    position: absolute;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    z-index: 10;
+    bottom: -70px;
+    right: 0;
+    align-items: center;
+    cursor: pointer;
+}
+
+.lo-item {
+    min-width: 180px;
+    padding: 5px 16px;
+}
+
+.layer-options .li-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 6px;
+}
+
+.layer-options.show {
+    display: block;
+}
+
+.layer-menu {
+    display: block;
+    padding: 0 10px;
+    transform: rotate(90deg)
+}
+
+.layer-item.active {
+    border-color: #38f;
+    border-width: 2px;
+
+}
+
+.layer-item button {
+    margin: 0 2px;
+    cursor: pointer;
+}
+
+.action-box {
+    display: flex;
+}
+
+.layersize-radio-popup {
+    position: absolute;
+    width: 160px;
+    padding: 8px 0;
+    border-radius: 8px;
+    background: #fff;
+    bottom: -248px;
+    display: none;
+}
+
+.layersize-radio {
+    padding: 2px 10px;
+    margin-bottom: 10px;
+}
+
+.layersize-radio.active {
+    color: #38f;
+    background: #e5f2ff;
+}
+
+
+
+#productListPopUp {
+    display: none;
+}
+
+#elementListPopUp {
+    display: none;
+
+}
+
+.list-popUp {
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 10px 40px 0 rgba(0, 0, 0, .1), 0 0 2px 0 rgba(0, 0, 0, .08);
+    padding: 16px;
+    width: 600px;
+    height: 500px;
+    z-index: 3;
+
+}
+
+.list-popUp .pl-wrap {
+    height: 460px;
+    overflow: auto;
+}
+.el-typelist{
+    display: flex;
+    align-items: baseline;
+}
+.el-typelist .label{
+    margin-right: 20px;
+}
+#elTypes{
+    display: flex;
+}
+.elt-item{
+    cursor: pointer;
+    padding: 0 6px;
+    font-size: 14px;
+    color: #616366;
+}
+ .elt-item:hover, .elt-item.active{
+    color:#38f;
+ }
+.elt-item:not(:last-child){
+    border-right: 1px solid #e0e0e0;
+   
+}
+.image-list {
+    display: grid;
+    column-gap: 5px;
+    justify-items: center;
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    min-height: 200px;
+
+}
+#pmore,#emore{
+    text-align: center;
+}
+
+
+.pli-wrap {
+    break-inside: avoid;
+    margin: 5px 5px;
+    grid-row-start: auto;
+    grid-row-end: span 100;
+    /* width: 100px; */
+    box-sizing: border-box;
+    height: fit-content;
+}
+
+.pli-img {
+    width: 100%;
+    cursor: pointer;
+}
+
+.list-popUp .close {
+    background-color: rgba(0, 0, 0, 0.04);
+    width: max-content;
+    padding: 9px;
+    border-radius: 8px;
+}
+
+.action-bar {
+    display: none;
+    padding: 2px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, .05), 0 0 1px 0 rgba(0, 0, 0, .1)
+}
+
+.bar-box {
+    display: flex;
+    align-items: center;
+}
+
+.action-bar .bar-item {
+    padding: 7px;
+    cursor: pointer;
+    border-radius: 8px;
+    position: relative;
+}
+
+.action-bar .bar-item:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
+.ab-icon {
+    width: 16px;
+    height: 16px;
+
+}
+
+.tooltip {
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px;
+    width: max-content;
+    position: absolute;
+    z-index: 1;
+    top: calc(-100% - 10px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px 5px 0;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+}
+
+.action-bar .bar-item:hover .tooltip {
+    visibility: visible;
+}
+
+.resizeinput-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 52px;
+    height: 26px;
+    margin-left: 4px;
+    font-size: 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: #fff;
+}
+
+#customSize {
+    touch-action: manipulation;
+
+    /* flex: 1 1; */
+    height: 16px;
+    border: none;
+    color: var(--content-input);
+    outline: none;
+    width: 30px !important;
+    user-select: unset;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+}
+
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+.customSizeP .b {
+    flex: 0 0 12px;
+    width: 12px;
+    height: 16px;
+    margin-left: 4px;
+    color: #abadb2;
+}
+
+.s-btn-g {
+    position: absolute;
+    right: 40px;
+    bottom: 10px;
+    display: flex;
+
+}
+
+.s-btn {
+    padding: 0 9px;
+    height: 28px;
+    margin: 0 0 0 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    color: #616366;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.s-btn:hover {
+    color: #38f;
+}
+ </style>
+<body>
+
+    <!-- <button onclick="addImage()">添加图片</button> -->
+    <!-- <button onclick="cloneSelected()">复制选中对象</button> -->
+    <!-- <button onclick="bringForward()">向上一层</button> -->
+    <!-- <button onclick="sendBackward()">向下一层</button> -->
+    <!-- <button onclick="bringToFront()">置于顶层</button> -->
+    <!-- <button onclick="sendToBack()">置于底层</button> -->
+    <!-- <button onclick="deleteSelected()">删除选中对象</button> -->
+
+    <!-- <button onclick="togglePopup()">改变图层大小</button> -->
+
+
+
+
+    <div class="action-box">
+
+        <div class="canvas-wrapper">
+
+            <!-- 图层上方操作栏 -->
+            <div id="productActionBar" class="action-bar">
+                <div class="bar-box">
+                    <div onclick="replaceProduct()" id="" class="bar-item">
+
+                        <div class="tooltip">作品选择</div>
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/replace_icon.png" alt="">
+                    </div>
+
+                    <div onclick="togglePopup(true)" id="" class="bar-item">
+                        <div class="tooltip">选择大小比例</div>
+
+
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/resize_icon.png" alt="">
+
+                    </div>
+
+
+                    <div onclick="bringForward()" class="bar-item">
+                        <div class="tooltip">图层前移</div>
+
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/pre_icon.png" alt="">
+
+                    </div>
+
+                    <div onclick="sendBackward()" class="bar-item">
+                        <div class="tooltip">图层后移</div>
+
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/next_icon.png" alt="">
+
+                    </div>
+
+                    <div onclick="deleteSelected()" class="bar-item">
+                        <div class="tooltip">删除</div>
+
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/delete_icon.png" alt="">
+
+
+                    </div>
+                </div>
+                <div class="layersize-radio-popup" id="sizePopup">
+
+                    <div class="layersize-radio" data-sizeid="0" data-size="default"
+                        onclick="resizeLayer('default',this)">默认</div>
+                    <div class="layersize-radio" data-sizeid="1" data-size="0.6" onclick="resizeLayer(0.6,this)">60%
+                    </div>
+                    <div class="layersize-radio" data-sizeid="2" data-size="0.7" onclick="resizeLayer(0.7,this)">70%
+                    </div>
+                    <div class="layersize-radio" data-sizeid="3" data-size="0.8" onclick="resizeLayer(0.8,this)">80%
+                    </div>
+                    <div class="layersize-radio" data-sizeid="4" data-size="0.85" onclick="resizeLayer(0.85,this)">85%
+                    </div>
+                    <div class="layersize-radio" data-sizeid="5" data-size="0.66" style="display: flex;"
+                        id="customSizeP" onclick="resizeLayer(getCustomSize(),this)">
+                        <label>自定义：</label>
+                        <div class="resizeinput-box"><input class="size-input"
+                                @change="resizeLayer(getCustomSize(),this)" type="number" id="customSize" value="66"
+                                style="width: 100px;">
+                            <span class="b">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="elementActionBar" class="action-bar">
+                <div class="bar-box">
+
+                    <div onclick="cloneSelected()" class="bar-item">
+                        <div class="tooltip">创建副本</div>
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/copy_icon.png" alt="">
+                    </div>
+                    <div onclick="bringForward()" class="bar-item">
+                        <div class="tooltip">图层前移</div>
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/pre_icon.png" alt="">
+                    </div>
+
+                    <div onclick="sendBackward()" class="bar-item">
+                        <div class="tooltip">图层后移</div>
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/next_icon.png" alt="">
+                    </div>
+
+                    <div onclick="deleteSelected()" class="bar-item">
+                        <div class="tooltip">删除</div>
+                        <img class="ab-icon" src="__TMPL__/public/assets/img/delete_icon.png" alt="">
+                    </div>
+                </div>
+            </div>
+            <canvas id="canvas" width="800" height="800"></canvas>
+            <div class="s-btn-g">
+                <div onclick="toggleProductList(true,'add')" class="s-btn">选择商品图</div>
+                <div onclick="toggleElementList(true)" class="s-btn">选择元素图</div>
+                <div onclick="exportAsImagetoServer()" class="s-btn">导出为图片</div>
+
+            </div>
+
+            <div id="productListPopUp" data-type="add" class="list-popUp">
+                <div style="text-align: center;">选择作品</div>
+                <div class="pl-wrap">
+                    <div id="productList" class="image-list"></div>
+                    <div id="pmore">加载中...</div>
+                </div>
+                <div onclick="toggleProductList(false)" class="s-btn ">
+                    <span class="close">关闭</span>
+                </div>
+            </div>
+
+            <div id="elementListPopUp" class="list-popUp">
+                <div style="text-align: center;">选择元素</div>
+
+                <div class="pl-wrap">
+                    <div class="el-typelist">
+                        <div class="label">分类</div>
+                        <div id="elTypes"></div>
+                    </div>
+                    <div id="elementList" class="image-list"></div>
+                    <div id="emore">加载中...</div>
+                </div>
+
+                <div onclick="toggleElementList(false)" class="s-btn ">
+
+                    <span class="close">关闭</span>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div id="layer-panel">
+            <h4>图层排序</h4>
+            <ul id="layer-list">
+            </ul>
+        </div>
+
+    </div>
+
+
+
+
+<script >
+    
+//计算等比例缩放的图片尺寸
+
+
+
+function calculateScaleFactor(canvasWidth, canvasHeight, imageWidth, imageHeight, occupyRatio) {
+    // 确定图片和画布的最长边
+    const imageLongestSide = Math.max(imageWidth, imageHeight);
+    const canvasLongestSide = Math.max(canvasWidth, canvasHeight);
+
+    // 根据指定比例计算图片最长边在画布上应占据的长度
+    const targetLength = canvasLongestSide * occupyRatio;
+
+    // 计算缩放因子，使图片最长边等于目标长度
+    const scaleFactor = targetLength / imageLongestSide;
+
+    // 返回缩放因子
+    return scaleFactor;
+}
+
+
+
+
+//生成唯一值
+function generateUniqueId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2, 9) + '';
+}
+
+let addToCanvasOffset = 0; // 放置图片到画布上的偏移量初始化为 0
+let activeElementImageType = "宝相花"//元素图片弹窗内选择的类型
+const iw = 100 //元素图片宽度
+const ih = 100//元素图片高度
+const r_iconOffsetY = 24//旋转图标y偏移
+const r_iconSize = 30//旋转图标大小
+const canvasWidth = 800;//canvas像素宽
+const canvasHeight = 800;//canvas像素高
+let ppage = 1;  // 作品初始页码
+const ppageSize = 20;  // 每页加载的数量
+const uid = 7;  // 用户 ID
+let ploading = false; // 防止重复加载
+let epage = 1;  // 作品初始页码
+const epageSize = 20;  // 每页加载的数量
+let eloading = false; // 防止重复加载
+const productActionBar = document.getElementById('productActionBar') //商品操作栏组件
+const elementActionBar = document.getElementById('elementActionBar')//元素操作栏组件
+const layerList = document.getElementById('layer-list');//图层组件
+let selectedImage = null //当前选中的图层
+const sizePopup = document.getElementById('sizePopup') //大小设置组件
+const productListPopUp = document.getElementById('productListPopUp') //商品图片弹窗组件
+const elementListPopUp = document.getElementById('elementListPopUp') //元素图片弹窗组件
+const pmore = document.getElementById('pmore')//商品加载更多组件
+const emore = document.getElementById('emore')//元素加载更多组件
+
+fabric.Object.prototype.originX = fabric.Object.prototype.originY = 'center';//设置为中心
+
+// 用于获取对象的绝对坐标
+fabric.Canvas.prototype.getObjectComputedValue = function (object) {
+    return {
+        abLeft: object.left + this._offset.left,
+        abTop: object.top + this._offset.top,
+        scaledHeight: object.height * object.scaleY,
+        scaledWidth: object.width * object.scaleX
+    };
+};
+//自定义旋转图标
+
+function createRotateIcon() {
+
+
+    fabric.Object.prototype.controls.mtr.visible = false; // 隐藏默认的旋转控件
+    const r_icon = '__TMPL__/public/assets/img/r_icon.png'
+    var img = document.createElement('img');
+    img.src = r_icon;
+    fabric.Object.prototype.controls.customRotateControl = new fabric.Control({
+        // x: 0,               // Center horizontally
+        // y: 0,             // Position at the bottom
+        // offsetY: ih / 2 + r_iconOffsetY,
+        cursorStyle: 'pointer',
+        actionHandler: fabric.controlsUtils.rotationWithSnapping,
+        render: renderIcon,
+        cornerSize: r_iconSize
+    });
+    function renderIcon(ctx, left, top, styleOverride, fabricObject) {
+
+
+
+        var size = this.cornerSize;
+        ctx.save();
+        // ctx.translate(left, fabricObject.top + fabricObject.height * fabricObject.scaleY / 2 + r_iconOffsetY);
+        // 计算新的旋转图标元素（旋转控制点的覆盖物）位置
+        ctx.translate(left,top);
+
+
+
+        // ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle));
+        ctx.drawImage(img, -size / 2, -size / 2, size, size);
+        ctx.restore();
+
+
+
+    }
+}
+createRotateIcon()
+// 初始化 Fabric.js 画布并启用对象堆叠顺序
+const canvas = new fabric.Canvas('canvas', {
+    preserveObjectStacking: true  // 保留对象堆叠顺序
+});
+canvas.on('selection:cleared', function (event) {
+    // 取消选中的对象的回调逻辑
+    elementActionBar.style.display = 'none'; // 隐藏 elementActionBar
+    productActionBar.style.display = 'none';  // 隐藏 productActionBar
+
+    document.querySelectorAll('.layer-item').forEach(option => {
+
+        option.classList.remove('active');
+    });
+
+    document.querySelectorAll('.layer-options').forEach(option => {
+
+        option.classList.remove('show');
+    });
+    selectedImage = null
+});
+
+
+// 显示或隐藏大小调整弹出框
+function togglePopup(show) {
+
+    sizePopup.style.display = show ? 'block' : 'none';
+    //回显上次选中的值
+    if (show) {
+        document.querySelectorAll('.layersize-radio').forEach(option => {
+            if (selectedImage.sizeId === option.dataset.sizeid) {
+                option.classList.add('active');
+            }
+        });
+    }
+
+}
+//层级组件
+// 将新图层项添加到面板的函数
+function addLayerToPanel(object) {
+    const li = document.createElement('li');
+    li.classList.add('layer-item');
+    li.draggable = true;
+    li.dataset.id = object.id;
+    li.addEventListener('click', function (e) {
+
+        document.querySelectorAll('.layer-item').forEach(option => {
+
+            option.classList.remove('active');
+        });
+
+        if (object !== selectedImage) {
+            //如果点击的对象没有变化则不删除show
+            document.querySelectorAll('.layer-options').forEach(option => {
+
+                option.classList.remove('show');
+            });
+            togglePopup(false)
+
+        }
+
+        li.classList.add('active');
+
+        canvas.setActiveObject(object)
+        canvas.renderAll()
+    }, true)
+    // 创建图层预览和选项菜单
+    li.innerHTML = `
+   <img class='pic' data-id="${object.id}" src="${object.toDataURL()}" alt="图层预览" />
+
+<div class="layer-options" data-id="${object.id}">
+    <div data-id="${object.id}" onclick="duplicateLayer('${object.id}')" class='lo-item'><img class="li-icon" src="__TMPL__/public/assets/img/copy_icon.png" alt="">创建副本</div>
+    <div data-id="${object.id}" onclick="deleteLayer('${object.id}')" class='lo-item'><img class="li-icon" src="__TMPL__/public/assets/img/delete_icon.png" alt="">删除</div>
+</div>
+<span data-id="${object.id}" class="layer-menu" onclick="showLayerOptions(event,this)">⋮</span>
+`;
+
+    layerList.insertBefore(li, layerList.firstChild);
+
+    // 添加用于重新排序的拖动事件
+    li.addEventListener('dragstart', dragStart);
+    li.addEventListener('dragover', dragOver);
+    li.addEventListener('drop', drop);
+}
+//点击三个点
+function showLayerOptions(event, menuButton) {
+
+    document.querySelectorAll('.layer-options').forEach(option => {
+
+        option.classList.remove('show');
+    });
+
+    const options = menuButton.previousElementSibling;
+    if (options && options.classList.contains('layer-options')) {
+        options.classList.add('show');
+    }
+
+}
+// 添加拖动事件
+function dragStart(e) {
+    e.dataTransfer.setData('text/plain', e.target.dataset.id);
+}
+
+function dragOver(e) {
+    e.preventDefault(); // 允许放置
+}
+
+function drop(e) {
+    e.preventDefault();
+    const draggedId = e.dataTransfer.getData('text/plain');
+    const targetId = e.target.closest('.layer-item').dataset.id;
+
+    console.log(targetId, 'targetId', draggedId)
+    // 通过 ID 在 Fabric 画布中查找对象
+    const draggedObject = canvas.getObjects().find(obj => obj.id === draggedId);
+    const targetObject = canvas.getObjects().find(obj => obj.id === targetId);
+
+    // 在画布中重新排序对象
+    const draggedIndex = canvas.getObjects().indexOf(draggedObject);
+    const targetIndex = canvas.getObjects().indexOf(targetObject);
+    /* 堆叠顺序调整 */
+    canvas.moveTo(draggedObject, targetIndex);
+    canvas.moveTo(targetObject, draggedIndex);
+    canvas.setActiveObject(draggedObject)
+    // 更新面板以反映新的顺序
+    updateLayerPanel();
+    canvas.renderAll()
+
+}
+
+// 更新图层面板的函数（清空并重新添加所有图层）
+function updateLayerPanel() {
+    layerList.innerHTML = '';
+    canvas.getObjects().forEach(addLayerToPanel);
+    document.querySelectorAll('.layer-item').forEach(option => {
+        if (selectedImage && option.getAttribute('data-id') === selectedImage.id) {
+            option.classList.add('active');
+
+        } else {
+            option.classList.remove('active');
+        }
+    });
+
+}
+
+// 复制图层的函数
+function duplicateLayer(id) {
+    cloneSelected()
+
+    updateLayerPanel();
+}
+
+// 删除图层的函数
+function deleteLayer(id) {
+
+    const object = canvas.getObjects().find(obj => obj.id === id);
+
+    deleteSelected()
+
+}
+//层级组件
+// 获取自定义大小输入的值
+function getCustomSize() {
+    const customSizeInput = document.getElementById('customSize');
+    return parseFloat(customSizeInput.value) / 100; // 转换为百分比
+}
+// 调整选中图层的大小
+function resizeLayer(size, self) {
+    //更新自定义输入框父元素的data属性
+    let dataSet = self.dataset
+    let currentTarget= self
+    if (self.id === 'customSize') {
+        currentTarget= document.getElementById( 'customSizeP')
+        currentTarget.dataset.size = size
+        dataSet = currentTarget.dataset
+    } else if (self.id === 'customSizeP') {
+        self.dataset.size = size
+
+    }
+    document.querySelectorAll('.layersize-radio').forEach(option => {
+            option.classList.remove('active');
+    });
+    currentTarget.classList.add('active');
+    const activeObject = canvas.getActiveObject();
+    if (activeObject && size) {
+        if (size === 'default') {
+            // 恢复为初始宽高
+            const { initialWidth, initialHeight } = activeObject.data;
+
+            activeObject.scaleToWidth(initialWidth);
+
+            // activeObject.scaleToHeight(initialHeight);
+        } else {
+
+            const { height, width } = activeObject;
+            // 按比例调整宽高
+            const scaledDimensions = calculateScaleFactor(canvasWidth, canvasHeight, width, height, size);
+
+            // const containerWidth = canvas.width;
+            // const containerHeight = canvas.height;
+            // const newWidth = containerWidth * size;
+            // const newHeight = containerHeight * size;
+            const newWidth = scaledDimensions * activeObject.width;
+            activeObject.scaleToWidth(newWidth);
+            // activeObject.scaleToHeight(newHeight);
+        }
+        activeObject.setCoords(); // 更新对象坐标
+        positionBtn(activeObject);
+        activeObject.controls.customRotateControl.offsetY = canvas.getObjectComputedValue(activeObject).scaledHeight / 2 + r_iconOffsetY
+
+        canvas.renderAll(); // 渲染画布
+
+    }
+    activeObject.set({
+        size,
+        sizeId: dataSet.sizeid
+    })
+}
+
+//作品和元素图片加载逻辑
+// 获取作品列表的函数
+
+const observerP = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            loadWorks();
+
+        }
+    });
+});
+const observerE = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            loadEles(activeElementImageType)
+
+        }
+    });
+});
+observerP.observe(pmore);
+observerE.observe(emore);
+function loadWorks() {
+    if (ploading) return;  // 如果正在加载，则不重复请求
+    pmore.innerText = '加载中...';
+
+    ploading = true;  // 设置为加载中
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', `https://www.hongmengyishu.com/api/ai/aiimage/getMyWorks?uid=${uid}&page=${ppage}&pagesize=${ppageSize}`, true);
+
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            var data = JSON.parse(xhr.responseText);
+            console.log(data);
+            if (data && data.worksItems && data.worksItems.length > 0) {
+
+                renderImageList(data.worksItems, 'product', 'productList');
+
+                ppage++; // 下一页
+                ploading = false; // 允许下次加载
+            } else {
+                pmore.innerText = '没有更多内容了';
+                observerP.unobserve(pmore); // 停止监听
+            }
+        } else {
+            console.error('加载失败:', xhr.statusText);
+            ploading = false; // 允许重试
+            pmore.innerText = '加载失败';
+
+        }
+    };
+
+    xhr.onerror = function () {
+        console.error('加载失败:', '网络错误');
+        pmore.innerText = '加载失败';
+
+        ploading = false; // 允许重试
+    };
+
+    xhr.send();
+}
+function loadEles(category) {
+    if (eloading) return;  // 如果正在加载，则不重复请求
+    eloading = true;  // 设置为加载中
+    emore.innerText = '加载中...';
+
+    var xhr = new XMLHttpRequest();
+    //xhr.open('GET', `https://www.hongmengyishu.com/api/portal/lists/getPostLists?category_id=${category_id}&page=${epage}&pagesize=${epageSize}`, true);
+    xhr.open('GET', `https://www.hongmengyishu.com/api/ai/aiimage/getDesignElements?category=${category}&page=${epage}&pagesize=${epageSize}`, true);
+
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 300) {
+            var data = JSON.parse(xhr.responseText);
+            console.log(data);
+            if (data && data.list && data.list.length > 0) {
+
+                renderElementImageList(data.list, 'element', 'elementList');
+
+
+                epage++; // 下一页
+                eloading = false; // 允许下次加载
+            } else {
+                emore.innerText = '没有更多内容了';
+                observerE.unobserve(emore); // 停止监听
+            }
+        } else {
+            console.error('加载失败:', xhr.statusText);
+            emore.innerText = '加载失败';
+
+
+            eloading = false; // 允许重试
+        }
+    };
+
+    xhr.onerror = function () {
+        console.error('加载失败:', '网络错误');
+        emore.innerText = '加载失败';
+        const mockData = [{
+            more: {
+                thumbnail: './images/00.jpg',
+            },
+            post_title: '本地元素'
+
+        }]
+        renderImageList(mockData, 'element', 'elementList');
+
+        eloading = false; // 允许重试
+
+    };
+
+    xhr.send();
+}
+loadELTypes()
+//加载分类选项
+function loadELTypes() {
+    const typesContainer = document.getElementById('elTypes')
+    const res = [{ text: '宝相花', id: 111 }, { text: '缠枝纹', id: 112 }, { text: '敦煌藻井', id: 113 }]
+
+    res.forEach(item => {
+        var typeItem = document.createElement('div');
+        typeItem.innerText = item.text
+        typeItem.classList.add('elt-item')
+        if (activeElementImageType === item.text) {
+            typeItem.classList.add('active')
+        }
+        typeItem.onclick = () => {
+            epage = 1
+            activeElementImageType = item.text
+            document.querySelectorAll('.elt-item').forEach(option => {
+                option.classList.remove('active');
+            });
+            typeItem.classList.add('active')
+            loadEles(item.text)
+        }
+        typesContainer.appendChild(typeItem)
+    })
+}
+//转换src为本地资源
+function loadImageAsBase64(url, callback) {
+    return fetch(url)
+        .then(response => response.blob()) // 将响应转换为 Blob
+        .then(blob => {
+            const reader = new FileReader();
+            reader.onloadend = function () {
+                callback(reader.result); // 返回Base64字符串
+            };
+            reader.readAsDataURL(blob); // 将 Blob 读取为 Data URL (Base64)
+        })
+        .catch(error => console.error('Error fetching image:', error));
+}
+// 渲染图片列表函数
+function renderImageList(images, type, containerId) {
+    const container = document.getElementById(containerId);
+    if (type == 'element' && epage === 1 || type == 'product' && ppage === 1) {
+        container.innerHTML = ''; // 清空之前的内容
+
+    }
+
+    images.forEach((item) => {
+        const src = item.picture_url || item.more.thumbnail;
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('pli-wrap')
+        const imgElement = document.createElement('img');
+        imgElement.src = src;
+        imgElement.alt = type === 'product' ? '商品图' : '元素图';
+        imgElement.classList.add('pli-img')
+
+
+
+
+        itemElement.appendChild(imgElement);
+        if (type === 'element') {
+            const titleElement = document.createElement('div');
+            titleElement.innerText = item.post_title
+            itemElement.appendChild(titleElement);
+        }
+        // 点击图片添加到画布
+        imgElement.onclick = () => {
+            const eoa = productListPopUp.dataset.type
+            loadImageAsBase64(src, function (base64Url) {
+                if (type === 'product' && eoa === 'edit') {
+                    //替换作品图,保留堆叠层级
+                    runReplaceProduct(base64Url)
+
+                } else {
+
+                    addImageToCanvas(base64Url, type);
+                }
+                toggleProductList(false);
+                toggleElementList(false)
+            })
+
+
+        }
+
+        container.appendChild(itemElement);
+    });
+}
+
+// 渲染元素图片列表函数
+function renderElementImageList(lists, type, containerId) {
+    const container = document.getElementById(containerId);
+    if (epage === 1 ) {
+        container.innerHTML = ''; // 清空之前的内容
+
+    }
+
+    lists.forEach((item) => {
+        const src = item.image
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('pli-wrap')
+        const imgElement = document.createElement('img');
+        imgElement.src = src;
+        imgElement.classList.add('pli-img')
+
+
+
+
+        itemElement.appendChild(imgElement);
+        const titleElement = document.createElement('div');
+        /*titleElement.innerText = item.name;*/
+        itemElement.appendChild(titleElement);
+
+        // 点击图片添加到画布
+        imgElement.onclick = () => {
+            const eoa = productListPopUp.dataset.type
+            loadImageAsBase64(src, function (base64Url) {
+                addImageToCanvas(base64Url, type);
+                toggleProductList(false);
+                toggleElementList(false)
+            })
+
+
+        }
+
+        container.appendChild(itemElement);
+    });
+}
+
+//作品和元素图片加载逻辑
+
+
+//图片绑定事件
+function bindEvents(object) {
+    // 为图片对象添加事件监听器，当对象移动时调用 `positionBtn` 函数
+    object.on('moving', function () {
+        elementActionBar.style.display = 'none'; // 隐藏 elementActionBar
+        productActionBar.style.display = 'none';  // 隐藏 productActionBar
+        object.controls.customRotateControl.visible = false;//隐藏旋转按钮
+        togglePopup(false)
+
+    });
+    // 监听变化之后事件
+
+    object.on('modified', function () {
+        console.log(11)
+        //更新旋转图标位置
+        if (object.controls.customRotateControl) {
+            object.controls.customRotateControl.offsetY = canvas.getObjectComputedValue(object).scaledHeight / 2 + r_iconOffsetY
+        }
+
+        positionBtn(object);
+        object.controls.customRotateControl.visible = true;
+    });
+    // 监听旋转事件
+    object.on('rotating', function () {
+
+        elementActionBar.style.display = 'none'; // 隐藏 elementActionBar
+        productActionBar.style.display = 'none';  // 隐藏 productActionBar
+
+    });
+    // 当对象缩放时调用 `positionBtn` 函数
+    object.on('scaling', function () {
+        object.controls.customRotateControl.visible = false;
+
+        elementActionBar.style.display = 'none'; // 隐藏 elementActionBar
+        productActionBar.style.display = 'none';  // 隐藏 productActionBar
+
+    });
+    object.on('selected', function () {
+        togglePopup(false)
+
+        selectedImage = object
+        document.querySelectorAll('.layer-options').forEach(option => {
+            option.classList.remove('show');
+        });
+        document.querySelectorAll('.layer-item').forEach(option => {
+            if (option.getAttribute('data-id') === object.id) {
+                option.classList.add('active');
+
+            } else {
+
+                option.classList.remove('active');
+            }
+        });
+        object.controls.customRotateControl.offsetY = canvas.getObjectComputedValue(object).scaledHeight / 2 + r_iconOffsetY
+        positionBtn(object);
+    })
+}
+
+
+
+// 添加图片到画布的函数
+function addImageToCanvas(src, type) {
+    fabric.Image.fromURL(src, (img) => {
+
+        const center = canvas.getCenter();
+
+        const scaleRatio = type === 'product' ? 0.7 : 0.2;
+        const scaledDimensions = calculateScaleFactor(canvasWidth, canvasHeight, img.width, img.height, scaleRatio);
+
+
+        img.set({
+            angle: 0,
+
+            scaleX: scaledDimensions, //iw / img.width,
+            scaleY: scaledDimensions,//ih / img.height,
+            data: {
+                initialWidth: img.width * scaledDimensions, //iw,
+                initialHeight: img.height * scaledDimensions//ih 
+            },
+            type: type,
+            left: center.left + addToCanvasOffset,
+            top: center.top + addToCanvasOffset,
+            id: generateUniqueId(),
+            size: 'default',
+            sizeId: '0'
+        });
+        img.setControlsVisibility({
+            mt: false, // 上边
+            mb: false, // 下边
+            ml: false, // 左边
+            mr: false, // 右边
+            tl: true,  // 左上角
+            tr: true,  // 右上角
+            bl: true,  // 左下角
+            br: true   // 右下角
+        });
+
+        canvas.add(img);
+        canvas.setActiveObject(img);
+
+        bindEvents(img)
+        // 初次设置按钮的位置
+        positionBtn(img);
+        addToCanvasOffset += 10;
+    });
+}
+
+// 用于定位按钮到对象的上方
+function positionBtn(obj) {
+    // obj.left.top是图形圆心所在的位置
+    // 获取对象的绝对坐标
+    var objCValue = canvas.getObjectComputedValue(obj);
+    const btnMargin = 10
+    // 设置按钮的左边和顶部位置，使其在对象正上方偏移10像素
+    if (obj.type === "product") {
+        productActionBar.style.display = 'block'; // 显示 productActionBar
+        elementActionBar.style.display = 'none';  // 隐藏 elementActionBar
+
+        const btnWidth = productActionBar.getBoundingClientRect().width;
+        const btnHeight = productActionBar.getBoundingClientRect().height;
+
+        productActionBar.style.left = (obj.left - btnWidth / 2) + 'px';
+        productActionBar.style.top = (obj.top - objCValue.scaledHeight / 2 - btnHeight - btnMargin) + 'px';
+    } else if (obj.type === "element") {
+        elementActionBar.style.display = 'block'; // 显示 elementActionBar
+        productActionBar.style.display = 'none';  // 隐藏 productActionBar
+        const btnWidth = elementActionBar.getBoundingClientRect().width;
+        const btnHeight = elementActionBar.getBoundingClientRect().height;
+        elementActionBar.style.left = (obj.left - btnWidth / 2) + 'px';
+        elementActionBar.style.top = (obj.top - objCValue.scaledHeight / 2 - btnHeight - btnMargin) + 'px';
+
+    }
+}
+
+//重新选择作品
+function replaceProduct() {
+    toggleProductList(true, 'edit')
+}
+//替换作品
+function runReplaceProduct(src) {
+
+    const center = canvas.getCenter();
+
+    selectedImage.setSrc(src, function (img) {
+        const scaledDimensions = calculateScaleFactor(canvasWidth, canvasHeight, img.width, img.height, 0.7);
+        //更新属性
+        const upProperty = {
+            scaleX: scaledDimensions,
+            scaleY: scaledDimensions,
+            data: {
+                initialWidth: img.width * scaledDimensions, //iw,
+                initialHeight: img.height * scaledDimensions//ih 
+            },
+            left: center.left + addToCanvasOffset,
+            top: center.top + addToCanvasOffset,
+            size: 'default',
+            sizeId: '0'
+        }
+        img.set({
+            ...upProperty
+        })
+        //替换图层组件的图片
+        var imgElement = document.querySelector(`img[data-id="${img.id}"]`);
+
+        if (imgElement) {
+            imgElement.src = src; // 替换为新的图片URL
+        } else {
+        }
+        positionBtn(img);
+
+        canvas.renderAll(); // 替换完成后刷新画布
+    });
+
+}
+//显示或隐藏商品图片列表弹窗
+function toggleProductList(show, type) {
+
+    productListPopUp.dataset.type = type
+
+    productListPopUp.style.display = show ? 'block' : 'none'
+    if (show) {
+        toggleElementList(false)
+
+    }
+}
+//显示或隐藏元素图片列表弹窗
+function toggleElementList(show) {
+    elementListPopUp.style.display = show ? 'block' : 'none'
+    if (show) {
+        toggleProductList(false)
+
+
+    }
+
+}
+// 复制选中的对象
+function cloneSelected() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+
+        activeObject.clone((clonedObj) => {
+            clonedObj.set({
+                scaleX: activeObject.scaleX, //iw / img.width,
+                scaleY: activeObject.scaleY,//ih / img.height,
+                left: activeObject.left + addToCanvasOffset,  // 偏移一点位置
+                top: activeObject.top + addToCanvasOffset,
+                data: activeObject.data,
+                type: activeObject.type,
+                id: generateUniqueId(),
+                size: activeObject.size,
+                sizeId: activeObject.sizeId
+            });
+            clonedObj.setControlsVisibility({
+                mt: false, // 上边
+                mb: false, // 下边
+                ml: false, // 左边
+                mr: false, // 右边
+                tl: true,  // 左上角
+                tr: true,  // 右上角
+                bl: true,  // 左下角
+                br: true   // 右下角
+            });
+            canvas.add(clonedObj);
+            bindEvents(clonedObj)
+
+            canvas.setActiveObject(clonedObj);
+
+        });
+    }
+}
+
+// 向上一层
+function bringForward() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.bringForward(activeObject);
+        updateLayerPanel();
+
+        canvas.renderAll();
+    }
+}
+
+// 向下一层
+function sendBackward() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.sendBackwards(activeObject);
+        updateLayerPanel();
+
+        canvas.renderAll();
+    }
+}
+
+// 置于顶层
+function bringToFront() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.bringToFront(activeObject);
+        canvas.renderAll();
+    }
+}
+
+// 置于底层
+function sendToBack() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.sendToBack(activeObject);
+        canvas.renderAll();
+    }
+}
+
+// 删除选中的对象
+function deleteSelected() {
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+        canvas.remove(activeObject);
+        canvas.renderAll();
+        productActionBar.style.display = 'none'; // 隐藏 productActionBar
+        elementActionBar.style.display = 'none';  // 隐藏 elementActionBar
+        updateLayerPanel()
+
+    }
+}
+
+// 导出画布为图片
+function exportAsImage() {
+    const dataURL = canvas.toDataURL({
+        format: 'png',  // 图片格式可以是 'png' 或 'jpeg'
+        quality: 1.0,  // 图片质量（仅适用于 'jpeg' 格式）
+        multiplier: 5   // 增加分辨率倍数
+    });
+
+    // 创建一个下载链接
+    const link = document.createElement('a');
+    link.href = dataURL;
+    link.download = 'canvas_image.png';
+    link.click();
+}
+// 导出画布为图片
+function exportAsImagetoServer() {
+    const dataURL = canvas.toDataURL({
+        format: 'png',  // 图片格式可以是 'png' 或 'jpeg'
+        quality: 1.0,  // 图片质量（仅适用于 'jpeg' 格式）
+        multiplier: 5   // 增加分辨率倍数
+    });
+
+// 创建一个Blob对象，用于构建发送到服务器的数据
+    const blob = dataURItoBlob(dataURL);
+
+    // 创建一个FormData对象，用于构建发送到服务器的数据
+    const formData = new FormData();
+    formData.append('image', blob, 'canvas_image.png'); // 添加文件名
+
+    // 使用fetch发送POST请求到服务器
+    fetch('https://www.hongmengyishu.com/api/ai/aiimage/uploadimage', { // 服务器端点
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // 假设服务器返回JSON响应
+    .then(data => {
+        console.log('Image uploaded successfully', data);
+        // 处理服务器响应的数据
+    })
+    .catch((error) => {
+        console.error('Error uploading image:', error);
+    });
+}
+function dataURItoBlob(dataURI) {  
+        
+      // 获取Base64编码的数据
+        const byteString = atob(dataURI.split(',')[1]);
+        // 将Base64编码转换为8位无符号整数数组
+        const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+        const ab = new ArrayBuffer(byteString.length);
+        const ia = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        return new Blob([ab], {type: mimeString});       
+        
+    }  
+// 启用缩放、旋转和拖拽
+canvas.on('object:added', (e) => {
+    addLayerToPanel(e.target);//添加到图层组件
+
+    selectedImage = e.target
+    e.target.set({
+        cornerStyle: 'circle',
+        cornerSize: 10,
+        transparentCorners: false,
+    });
+    document.querySelectorAll('.layer-options').forEach(option => {
+        option.classList.remove('show');
+    });
+    document.querySelectorAll('.layer-item').forEach(option => {
+        if (option.getAttribute('data-id') === e.target.id) {
+            option.classList.add('active');
+
+        } else {
+            option.classList.remove('active');
+        }
+    });
+    //初始化设置旋转控制器位置
+    e.target.controls.customRotateControl.offsetY = canvas.getObjectComputedValue(e.target).scaledHeight / 2 + r_iconOffsetY
+
+});
+
+// 调整画布使所有对象可选、可拖拽
+canvas.set({
+    selection: true
+});
+
+    
+    
+    
+</script>
+</body>
+
+</html>

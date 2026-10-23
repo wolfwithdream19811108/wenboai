@@ -1,0 +1,147 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+<div class="container">
+
+	<!--<div class="col-lg-9">-->
+	<div class="col-lg-12">
+		<div class="row">
+			<div id="filter" class="cation-middle">
+			    
+				<dl class="cation-list">
+					<dt>拍卖公司</dt>
+					<dd>
+						<a href="" rel="" name="company" class="all on">全部</a>
+						<a href="" rel="保利" name="company" class="default">保利</a>
+						<a href="" rel="嘉德" name="company" class="default">嘉德</a>
+
+					</dd>
+				</dl>			    
+				<dl class="cation-list">
+				    
+					<dt>拍卖年份</dt>
+					<dd>
+						<a href="" rel="" name="year" class="all on">全部</a>
+						<foreach name="year" item="vo">
+						<portal:year order="ASC">
+						<a href="" rel="{$vo}" name="year" class="default">{$vo}</a>
+						</foreach>
+					</dd>
+				</dl>
+				<dl class="cation-list">
+				    
+					<dt>拍卖会</dt>
+					<dd>
+						<a href="" rel="" name="auction_meeting" class="all on">全部</a>
+						<foreach name="auction_meeting" item="vo">
+						<portal:auction_meeting order="ASC">
+						<a href="" rel="{$vo}" name="auction_meeting" class="default">{$vo}</a>
+						</foreach>
+					</dd>
+				</dl>
+
+			</div>
+		
+
+			<div class="" id="my-gallery-container">
+				<foreach name="articles" item="vo">
+					<div class="item">
+
+    						<notempty name="$vo.more.thumbnail">
+    							<div  align="left" class="blog-img img">
+    							    <figure class="effect-ruby">
+        								<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+                                        	<if condition="$vo['firstpic_width'] gt $vo['firstpic_height']*8 ">
+                                              <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!longimg'); ?>" />
+                                           <elseif condition="$vo['firstpic_height'] gt $vo['firstpic_width']*2" />
+                                              <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!shuimg'); ?>" />
+                                            <else />
+        									  <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!300X'); ?>" />
+                                            </if>
+        								</a>
+    								</figure>
+    							</div>
+    						</notempty>
+    							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+                                  {$vo.title}|{$vo.auction_year}| {$vo.author}
+    							</a>
+
+					</div>
+				</foreach>
+			</div>
+		</div>
+		<!--分页-->
+		<div class="text-center">
+			<ul class="pagination">{$page|default=''}</ul>
+		</div>
+	</div>
+
+</div>
+
+</block>
+
+<block name="scripts">
+<script type="text/javascript">
+
+$(document).ready(function() {
+    pageIsOver = '<?php echo $pageIsOver; ?>'
+    total_pages = '<?php echo $total_pages; ?>'
+	if (category == 0)
+	{
+		var filter=document.getElementById("filter");
+		filter.removeChild(child);
+	}
+  
+  	if(pageIsOver)
+	{
+		var curPath = window.document.location.href;
+        curPath = curPath+'&'
+		var regex = /page=(.+?)&/;
+		var pageNum = curPath.match(regex);
+		var jumpUrl = curPath.replace(regex,"page=1&").replace("&&","&");
+		window.location.href=jumpUrl;
+	}
+  
+    if(!idInMuseumList)
+    {
+		var curPath = window.document.location.href;
+        curPath = curPath+'&'
+      
+		var regex = /museum=(.+?)&/;
+		var pageNum = curPath.match(regex);
+		var jumpUrl = curPath.replace(regex,"");
+		window.location.href=jumpUrl;
+    }
+    if(total_pages==0)
+	{
+
+	    	layer.msg('无更多作品，请重新筛选作品', {
+            	  icon: 1,
+            	  time: 2000 //2秒关闭（如果不配置，默认是3秒）
+            	}, function(){
+                    var curPath = window.document.location.href;
+                    var jumpUrl = curPath.substr(0,curPath.indexOf("&")+1);
+                    window.location.href=jumpUrl;
+                });
+	}
+ 
+  });
+
+
+</script>
+
+</block>

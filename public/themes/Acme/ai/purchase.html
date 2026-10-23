@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #2b2b2b;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            display: flex; /* 将Grid布局改为Flex布局以方便居中 */
+        
+            flex-direction: column; /* 设置方向为列 */
+        
+            align-items: center; /* 水平居中 */
+        
+            justify-content: center; /* 垂直居中 */
+        
+            gap: 16px; /* 保留项目间的间距 */
+        
+            padding: 0 16px; /* 如果需要，可以添加左右内边距 */
+        }
+        .option-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 8px;
+            margin-bottom: 16px;
+        }
+        .option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 250px;
+            padding: 4px;
+            gap: 5px; /* 为子元素之间添加间距，可根据需要调整 */
+            height: 100px;
+            background: rgb(56, 56, 56);
+            cursor: pointer; /* 添加鼠标指针样式 */
+        }
+        /* 新增高亮样式 */
+        .option.active {
+            border: 2px solid rgba(0, 255, 236, 0.71);
+            padding: 2px; /* 调整内边距以适应边框 */
+        }
+        .price {
+            color: rgba(0, 255, 236, 0.71);
+        }
+        .button {
+            background-color: rgba(0, 255, 236, 0.71);
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .estimations{
+            font-size:12px;
+        }
+        .payment-method{
+           display: flex; /* 启用Flex布局 */
+        
+            align-items: center; /* 垂直居中对齐 */
+        
+            border: 1px solid #ccc; /* 灰色边框 */
+        
+            padding: 5px;
+        
+            justify-content: space-between; /* 在两端之间分配空间，将checkbox推到最右边 */          
+        }
+        .points {
+
+            position: relative;
+
+        }
+
+        .points input {
+
+          width: 50px;
+          text-align: left;
+          padding-right: 40px;
+          appearance: none;
+          -moz-appearance: textfield;
+          background: bottom;
+          color: white;
+          border-color: black;
+
+        }
+        .points-container {
+            display: flex; /* 使用Flexbox布局 */
+            justify-content: space-between; /* 两端对齐 */
+            align-items: center; /* 垂直居中 */
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .current-points {
+            display: flex;
+            align-items: center; /* 确保文本和输入框垂直居中 */
+        }
+
+    /*    .points::after {
+
+            content: "积分";
+
+
+            transform: translateY(-50%);
+
+            right: 8px; 
+
+            background-color: #383838;
+
+            color: #fff;
+
+            padding: 0 4px;
+
+            border-radius: 4px;
+
+        }*/
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            
+            
+            <div class="points-container">
+                <div class="points">
+                    充值积分：
+                    <input type="number" value="1000" min="1">
+                </div>
+                <div class="current-points">
+                    当前积分：<?=$currentPoints?>
+                </div>
+            </div>            
+            
+            <div class="option-group">
+                <div class="option active">
+                    <label>1000积分</label>
+                    <span class="price">￥10元</span>
+                    <span class="estimations">预计可生成20张创作</span>
+                </div>
+                <div class="option active">
+                    <label>2000积分</label>
+                    <span class="price">￥20元</span>
+                    <span class="estimations">预计可生成40张创作</span>
+                </div>
+                <!-- 其他选项同上结构，只需调整小时数和价格 -->
+            </div>
+            <div class="option-group">
+                <div class="option active">
+                    <label>5000积分</label>
+                    <span class="price">￥50元</span>
+                    <span class="estimations">预计可生成100张创作</span>
+                </div>
+                <div class="option active">
+                    <label>10000积分</label>
+                    <span class="price">￥100元</span>
+                    <span class="estimations">预计可生成200张创作</span>
+                </div>
+                <!-- 其他选项同上结构，只需调整小时数和价格 -->
+            </div>
+            <!-- 更多option-group同上 -->
+            <div class="payment-method">
+                <img width="24" style="margin-right: 8px; margin-top: -3px;" src="https://data.wujiebantu.com/wx.png" alt="">
+                <label for="wechat-payment">微信支付</label>
+                <!--<input type="checkbox" id="wechat-payment" name="payment" value="wechat" checked>-->
+                <label style="margin-right: 0px;" class=""><span class=""><input type="radio" checked="" class=""></span></label>
+            </div>
+            <button class="button" onclick="gotoPay()">立即支付</button>
+        </div>
+    </div>
+
+    <script>
+        const options = document.querySelectorAll('.option');
+        const payButton = document.querySelector('.button');
+        let selectedOption = options[0]; // 初始化第一个选项为选中状态
+        var pointsInput = document.querySelector('.points input'); // 新增：获取积分输入框
+        var paymentAmount = pointsInput.value;
+        var totalPrice = paymentAmount/100;
+        pointsInput.addEventListener('input', onPointsInputChange); // 新增：添加输入框变化事件监听器
+        pointsInput.addEventListener('focus', function() {
+            options.forEach(opt => opt.classList.remove('active'));
+            totalPrice = paymentAmount/100;
+            payButton.textContent = `立即支付￥${totalPrice.toFixed(2)}`;
+        });
+
+        function highlightOption(option) {
+            options.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+        }
+        
+
+
+        function updatePayAmount(option) {
+            highlightOption(option);
+            
+            payButton.textContent = `立即支付￥${option.querySelector('.price').textContent.replace('￥', '')}`;
+        }
+        function gotoPay(){
+         // 获取选中的支付选项金额
+            if(!isNumericString(pointsInput.value)){
+                alert("请输入大于0的正整数")
+            }else{
+                
+                const selectedOption = document.querySelector('.option.active');
+                if(selectedOption){
+                    //选择方框
+                    totalPrice = selectedOption.querySelector('.price').textContent.replace('￥', '').replace('元', '');
+                }else{
+                    //输入积分框
+                    totalPrice = pointsInput.value/100;
+                }
+                
+                const url = "/ai/purchase/wxPay?payAmount="+Number(totalPrice).toFixed(2);
+                window.location.href =url
+            }
+
+        
+        }    
+        function onPointsInputChange() {
+
+            // 当积分输入框值改变时，根据用户输入的积分计算价格并更新支付按钮
+            if (pointsInput.value > 0) { // 确保输入值为正数
+
+                totalPrice = pointsInput.value / 100;
+                options.forEach(opt => opt.classList.remove('active'));
+                payButton.textContent = `立即支付￥${totalPrice.toFixed(2)}`;
+
+
+            } else {
+
+            }
+
+        }
+        options.forEach(option => {
+            option.addEventListener('click', () => updatePayAmount(option));
+        });
+        
+        function isNumericString(str) {
+            return /^\d+$/.test(str);
+        }
+
+        // 初始化时更新支付按钮文字
+        updatePayAmount(selectedOption);
+    </script>
+</body>
+</html>
+

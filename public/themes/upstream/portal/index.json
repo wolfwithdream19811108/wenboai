@@ -1,0 +1,242 @@
+{
+  "name": "网站首页模板",
+  "action": "portal/Index/index",
+  "description": "网站首页模板编辑",
+  "order": 1.0,
+  "more": {
+    "vars": {
+      "top_slider": {
+        "title": "顶部幻灯片",
+        "value": "",
+        "type": "text",
+        "dataSource": {
+          "api": "admin/Slide/index",
+          "multi": false
+        },
+        "placeholder": "请选择顶部幻灯片",
+        "tip": "",
+        "rule": {
+          "require": true
+        }
+      }
+    },
+    "widgets": {
+      "service": {
+        "title": "服务板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "板块标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": ""
+          },
+          "sub_title": {
+            "title": "副标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入副标题",
+            "tip": ""
+          },
+          "serviceId": {
+            "title": "服务内容栏目ID",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/category/index",
+              "multi": false
+            },
+            "placeholder": "请选择分类",
+            "tip": "",
+            "rule": {
+              "require": true
+            }
+          }
+        }
+      },
+      "about": {
+        "title": "关于板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "板块标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": ""
+          },
+          "aboutId": {
+            "title": "关于我们单页ID",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/page/index",
+              "multi": false
+            },
+            "placeholder": "请选择分类",
+            "tip": "选择显示单页内容",
+            "rule": {
+              "require": true
+            }
+          },
+          "about_desc": {
+            "title": "关于我们描述",
+            "value": "",
+            "type": "textarea",
+            "placeholder": "输入关于我们信息",
+            "tip": "使用单页描述请留空"
+          },
+          "about_thumb": {
+            "title": "关于我们缩略图",
+            "value": "",
+            "type": "image",
+            "tip": "使用单页缩略图请留空"
+          }
+        }
+      },
+      "project": {
+        "title": "产品板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "板块标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": ""
+          },
+          "sub_title": {
+            "title": "副标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入副标题",
+            "tip": ""
+          },
+          "projectId": {
+            "title": "产品内容栏目ID",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/category/index",
+              "multi": false
+            },
+            "placeholder": "请选择根分类",
+            "tip": "",
+            "rule": {
+              "require": true
+            }
+          }
+        }
+      },
+      "news": {
+        "title": "新闻动态板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "板块标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": ""
+          },
+          "sub_title": {
+            "title": "副标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入副标题",
+            "tip": ""
+          },
+          "newsId": {
+            "title": "新闻栏目ID",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/category/index",
+              "multi": false
+            },
+            "placeholder": "请选择根分类",
+            "tip": "",
+            "rule": {
+              "require": true
+            }
+          }
+        }
+      },
+      "client": {
+        "title": "客户板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "板块标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": ""
+          },
+          "sub_title": {
+            "title": "副标题",
+            "value": "",
+            "type": "text",
+            "placeholder": "请输入副标题",
+            "tip": ""
+          },
+          "client_bg": {
+            "title": "客户板块背景图",
+            "value": "",
+            "type": "image",
+            "tip": "客户板块视觉差背景图"
+          },
+          "clientId": {
+            "title": "客户栏目ID",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/category/index",
+              "multi": false
+            },
+            "placeholder": "请选择根分类",
+            "tip": "",
+            "rule": {
+              "require": true
+            }
+          }
+        }
+      },
+      "feedback": {
+        "title": "反馈留言板块",
+        "display": "1",
+        "vars": {
+          "title": {
+            "title": "提示文字一",
+            "value": "不要错过我们的创意和报价",
+            "type": "text",
+            "placeholder": "请输入标题",
+            "tip": "默认显示的文字"
+          },
+          "sub_title": {
+            "title": "提示文字二",
+            "value": "留下信息，我们将给你完整的解决方案",
+            "type": "text",
+            "placeholder": "请输入副标题",
+            "tip": "鼠标经过显示的文字"
+          },
+          "feedbackId": {
+            "title": "按钮单页链接选择",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/page/index",
+              "multi": false
+            },
+            "placeholder": "请选择链接地址",
+            "tip": "",
+            "rule": {
+              "require": true
+            }
+          }
+        }
+      }
+    }
+  }
+}

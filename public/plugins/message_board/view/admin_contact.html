@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+	<head>
+		<include file="public/head" />
+		<title>留言板后台管理</title>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+	</head>
+	<body>
+		<div class="wrap js-check-wrap">
+			<ul class="nav nav-tabs">
+				<li><a href="{:cmf_plugin_url('MessageBoard://AdminIndex/index')}">全部留言</a></li>
+				<li><a href="{:cmf_plugin_url('MessageBoard://AdminIndex/othermsg')}">售后反馈</a></li>
+				<li class="active"><a>通讯录设置</a></li>
+			</ul>
+			<div class="common-form">
+				<div class="table_list">
+					<div class="table2excel" data-tableName="Test Table 1">
+						<table width="100%" class="table table-hover">
+							<thead>
+								<tr>
+									<th width="60">序号</th>
+									<th width="120">职务</th>
+									<th width="80">姓名</th>
+									<th width="100">手机号</th>
+									<th width="100">电话</th>
+									<th width="100">邮箱</th>
+									<th>地址</th>
+									<th width="120">更新时间</th>
+									<th width="130">操作</th>
+								</tr>
+							</thead>
+							<tbody>
+
+								<foreach name="datalist" item="vo" key="k">
+									<tr>
+										<td>{$k+1}</td>
+										<td>{$vo.company}</td>
+										<td>{$vo.name}</td>
+										<td>{$vo.mobile}</td>
+										<td>{$vo.tel}</td>
+										<td>{$vo.email}</td>
+										<td>{$vo.address}</td>
+										<td>{:date('Y-m-d H:i',$vo['update_time'])}</td>
+										<td>
+											<a href="{:cmf_plugin_url('MessageBoard://AdminIndex/msg',['id'=>$vo['id']])}" class="btn btn-primary btn-sm">编辑</a>
+
+											<a href="{:cmf_plugin_url('MessageBoard://AdminIndex/delete',['id'=>$vo['id']])};" class="js-ajax-delete btn btn-danger btn-sm">删除</a>
+										</td>
+									</tr>
+								</foreach>
+							</tbody>
+						</table>
+						<div class="pagination">{$page}</div>
+						<form action="{:cmf_plugin_url('MessageBoard://AdminIndex/updown')}" method="post" class="form form-horizontal"
+						 enctype="multipart/form-data">
+							<div style="float: left;"><input type="file" name="namefile" accept=".csv" /></div>
+							<div style="float: left;"><input class="btn btn-primary btn-sm" type="submit" value="导入联系人" /> </div>&nbsp;<a href="{:cmf_plugin_url('MessageBoard://AdminIndex/msg')}" class="btn btn-primary btn-sm">添加联系人</a>&nbsp;<a
+							 id="btn" class="btn btn-info btn-sm">导出到excel</a>&nbsp;<a href="{:cmf_plugin_url('MessageBoard://AdminIndex/deleteAllData')};"
+							 class="js-ajax-delete btn btn-danger btn-sm">删除所有联系人</a>&nbsp;<a href="__PLUGIN_TMPL__/assets/通讯录模板.csv"
+							 download="通讯录模板.csv">下载模板</a>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<include file="public/scripts" />
+
+		<!-- excel 导出 -->
+		<script src="__PLUGIN_TMPL__/assets/js/jquery.table2excel.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				$("#btn").click(function() {
+					$(".table2excel").table2excel({
+						exclude: ".noExl",
+						name: "Excel Document Name",
+						filename: "联系人",
+						exclude_img: true,
+						exclude_links: true,
+						exclude_inputs: true
+					});
+				});
+
+			});
+		</script>
+	</body>
+</html>

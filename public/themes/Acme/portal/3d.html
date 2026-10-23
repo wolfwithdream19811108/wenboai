@@ -1,0 +1,84 @@
+<extend name="public@base" />
+
+<block name="head">
+  {__block__}
+  <style>
+iframe {
+display: block; /* iframes are inline by default */
+background: #000;
+border: none; /* Reset default border */
+height: 600px; /* Viewport-relative units */
+width: 100%;
+}
+.think_page_trace_open {
+
+	height: 30px;
+	float: right;
+	text-align: right;
+	overflow: hidden;
+	position: fixed;
+	bottom: 53px;
+	right: 160px;
+	color: #000;
+	line-height: 30px;
+	cursor: pointer;
+	/* width: 184px; */
+
+}
+
+
+    @media only screen and (max-width: 990px) {
+      .box {
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</block>
+<block name="body">
+
+     <iframe id="myIframe" src="https://obs.3dyunzhan.com/sceneFront/index.html?G_TEMP_ID=a68ff5f2b324430597e898c12f564180"></iframe>
+<!--     <iframe src="https://obs.3dyunzhan.com/showcase/showcase.html?play=1&edit=0&placeholder=0&qs=1&title=-1&tempid=a68ff5f2b324430597e898c12f564180&sceneId=941fc5f815d2dbf0274bad4e9cfa1909&tilesid=a68ff5f2b324430597e898c12f564180&locky=&lockYAngle=&nozoom="></iframe>-->
+
+
+
+</block>
+
+<block name="scripts">
+  <script type="text/javascript">
+   
+ function adjustIframeHeight() {
+  var screenHeight = window.innerHeight;
+  
+  
+var element = document.getElementsByClassName("head-section"); // 替换为你要获取高度的元素的ID
+var headHeight = element[0].offsetHeight;
+console.log("head元素的高度：" + headHeight);
+
+var element = document.getElementsByClassName("footer-small"); // 替换为你要获取高度的元素的ID
+var footHeight = element[0].offsetHeight;
+console.log("foot元素的高度：" + footHeight);
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  var iframe = document.getElementById("myIframe"); // 替换为你的iframe元素的ID
+  if (iframe) {
+    iframe.style.height = screenHeight-headHeight-footHeight + "px";
+    console.log(screenHeight)
+  }
+}
+
+window.onload = adjustIframeHeight;
+  
+   
+   
+   
+  </script>
+</block>
+</extend>

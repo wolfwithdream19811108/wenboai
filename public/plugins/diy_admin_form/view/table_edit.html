@@ -1,0 +1,185 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title></title>
+    <style>
+        .form-required{
+            color: #ff2222;
+        }
+
+    </style>
+</head>
+<body>
+<ul class="nav nav-tabs">
+    <li class="active"><a title="{$row.id}" href="javascript:;">表:&nbsp;
+        <span class="text-primary">{$row.table_name}</span>
+        </a></li>
+</ul>
+<form action="" method="post" class="well form-inline js-ajax-form"
+      style="padding-bottom: 0;margin-top: 5px">
+    <input type="hidden" id="id" name="id" value="{$row.id}">
+    <div class="row">
+        <div class="col-md-6 col-xs-12">
+            <table class="table table-bordered">
+                <tr>
+                    <th width="150">数据表标识:</th>
+                    <td width="200">
+                        <input type="text" class="form-control" id="table_tag" style="width: 100%"
+                               value="{$row.table_tag}" placeholder="标识文字,必须填写!">
+                    </td>
+                    <td class="text-muted">
+                        用简短的汉字标识,必填!
+                    </td>
+                </tr>
+                <tr>
+                    <th>菜单名称:</th>
+                    <td>
+                        <input type="text" class="form-control" id="menu_name"
+                               value="{$row.menu_name}" style="width: 100%">
+                    </td>
+                    <td class="text-muted">
+                        菜单项名称,字数不能太多,建议4-6个汉字
+                    </td>
+                </tr>
+                <tr>
+                    <th>菜单序号:</th>
+                    <td>
+                        <input type="text" class="form-control" id="menu_order"
+                               value="{$row.menu_order}" style="width: 100%">
+                    </td>
+                    <td class="text-muted">
+                        菜单顺序号,输入大于0的整数!
+                    </td>
+                </tr>
+                <tr>
+                    <th>选择主键:</th>
+                    <td>
+                        <select class="form-control" id="key_field" style="width: 100%">
+                            {$key_field_tree|default=''}
+                        </select>
+                    </td>
+                    <td class="text-danger">
+                        选择一个能用于唯一确定数据行的关键字段
+                    </td>
+                </tr>
+                <tr>
+                    <th>选择应用:</th>
+                    <td>
+                        <select class="form-control" id="app_id" style="width: 100%">
+                            {$app_id_tree|default=''}
+                        </select>
+                    </td>
+                    <td class="text-muted">
+                        如果没有应用列表,请先点"配置应用"进行添加应用.
+                    </td>
+                </tr>
+                <tr>
+                    <th>数据导出<br>自定义分页:</th>
+                    <td>
+                        <php>
+                            $chk_exp = $row['export_flag'] == 1 ? 'checked' : '';
+                        </php>
+                        <label class="checkbox-inline">
+                            <input class="js-check" type="checkbox" id="export_flag"
+                                   name="export_flag" value="1" {$chk_exp}>数据导出
+                        </label>
+                        <php>
+                            $chk_page = $row['page_flag'] == 1 ? 'checked' : '';
+                        </php>
+                        <label class="checkbox-inline">
+                            <input class="js-check" type="checkbox" id="page_flag"
+                                   name="page_flag" value="1" {$chk_page}>定义分页
+                        </label>
+                    </td>
+                    <td class="text-muted">
+                        确定在列表页里,是否有数据导出和自定义显示行数的功能.<br>
+                        如果选中"数据导出",请引入phpOffice,参考:https://www.thinkcmf.com/topic/9771.html.
+                    </td>
+                </tr>
+                <tr>
+                    <th>批量删除:</th>
+                    <td>
+                        <php>
+                            $chk_delete = $row['batch_delete'] == 1 ? 'checked' : '';
+                        </php>
+                        <label class="checkbox-inline">
+                            <input class="js-check" type="checkbox" id="batch_delete"
+                                   name="batch_delete" value="1" {$chk_delete}>允许批量删除
+                        </label>
+                    </td>
+                    <td class="text-muted">
+                        是否在列表页加入批量删除数据行按钮
+                    </td>
+                </tr>
+                <tr>
+                    <th>批量置0(或1)的字段:</th>
+                    <td>
+                        <select class="form-control" id="batch_field" style="width: 100%">
+                            {$batch_field_tree|default=''}
+                        </select>
+                    </td>
+                    <td class="text-muted">
+                        选中字段后,可列表页加入启用和禁用按钮.
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="text-danger">
+
+    </div>
+</form>
+<include file="public/scripts"/>
+<script>
+    function confirm() {
+        var exp = 0;var page = 0;bt_del = 0;
+        var export_flag = $('#export_flag');
+        var page_flag   = $('#page_flag');
+        var batch_delete= $('#batch_delete');
+
+        if(export_flag.is(":checked")){
+            exp = 1;
+        }
+        if(page_flag.is(":checked")){
+            page = 1;
+        }
+        if(batch_delete.is(":checked")){
+            bt_del = 1;
+        }
+
+        var table_tag   = $('#table_tag');
+        //var app_name    = $('#app_name');
+        var app_id      = $('#app_id');
+        var key_field   = $('#key_field');
+        var myid        = $('#id');
+        var batch_field = $('#batch_field');
+        var menu_parent = $('#menu_parent');
+        var menu_name   = $('#menu_name');
+        var menu_order  = $('#menu_order');
+        var menu_icon   = $('#menu_icon');
+        var menu_parent_url   = $('#menu_parent_url');
+
+
+
+        return {
+            id:myid.val(),
+            export: exp,
+            page: page,
+            tag: table_tag.val(),
+            //app:app_name.val(),
+            appid:app_id.val(),
+            key:key_field.val(),
+            btdel:bt_del,
+            btfield:batch_field.val(),
+            menu_parent:menu_parent.val(),
+            menu_name:menu_name.val(),
+            menu_order:menu_order.val(),
+            menu_icon:menu_icon.val(),
+            menu_parent_url:menu_parent_url.val()
+
+        };
+    }
+</script>
+</body>
+</html>

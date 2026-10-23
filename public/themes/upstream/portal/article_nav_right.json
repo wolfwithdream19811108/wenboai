@@ -1,0 +1,8 @@
+{
+    "name": "文章页（带右侧导航）",
+    "action": "portal/Article/index",
+    "description": "文章页（带右侧导航）",
+    "order": 10.0,
+    "more": {
+    }
+}

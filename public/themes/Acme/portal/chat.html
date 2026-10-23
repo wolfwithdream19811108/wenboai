@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通义千问聊天对话框（非流式输出）</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .chat-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background-color: #1890ff;
+            color: white;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .chat-messages {
+            height: 400px;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .user-message {
+            background-color: #1890ff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background-color: #e6e6e6;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        #message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 16px;
+        }
+        
+        #send-button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        #send-button:hover {
+            background-color: #1478d6;
+        }
+        
+        #send-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: none;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .cancel-button {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .message-loading {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-header">通义千问聊天（非流式输出）</div>
+        <div class="chat-messages" id="chat-messages">
+            <div class="typing-indicator" id="typing-indicator">通义千问正在输入...</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" id="message-input" placeholder="输入消息..." autofocus>
+            <button id="send-button">发送</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatMessages = document.getElementById('chat-messages');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const typingIndicator = document.getElementById('typing-indicator');
+            
+            // 通过同源后端调用模型，API 密钥仅保存在服务器环境变量中。
+            const API_URL = '/portal/chat/jianyuanai';
+
+            // 控制携带的对话轮数
+            const MAX_TURNS = 5;
+
+            // 对话历史
+            let conversationHistory = [];
+
+async function callTongyiAPI(message) {
+    // 在发送请求之前将用户消息保存到对话历史中
+    conversationHistory.push({ role: "user", content: message });
+
+    // 确保只携带最近的MAX_TURNS轮对话
+    const messagesToSend = [
+        { role: "system", content: "You are a helpful assistant." },
+        ...conversationHistory.slice(-MAX_TURNS),  // 保留最后5轮对话
+    ];
+
+    console.log('Sending messages:', messagesToSend); // 打印发送的消息内容，确保它包括了历史消息
+
+    const response = await fetch(API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: "qwen-plus",
+            messages: messagesToSend,
+            isStream: false
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`API请求失败: ${response.status}`);
+    }
+
+    return response.json(); // 返回JSON响应
+}
+
+// 处理非流式响应
+async function handleResponse(data) {
+    const botMessageDiv = document.createElement('div');
+    botMessageDiv.classList.add('message', 'bot-message');
+    chatMessages.appendChild(botMessageDiv);
+    
+    // 获取API响应中的内容并显示
+    try {
+        if (data && data.choices && data.choices[0] && data.choices[0].message) {
+            const content = data.choices[0].message.content;
+            botMessageDiv.textContent = content;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 将机器人的回复保存到对话历史中
+            conversationHistory.push({ role: "assistant", content: content });
+
+            console.log('Updated conversation history:', conversationHistory); // 打印更新后的对话历史
+        }
+    } catch (error) {
+        botMessageDiv.textContent = `出错了: ${error.message}`;
+    }
+}
+
+// 处理发送消息
+async function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message === '') return;
+    
+    // 禁用输入和按钮
+    messageInput.disabled = true;
+    sendButton.disabled = true;
+    
+    // 添加用户消息
+    addMessage(message, true);
+    messageInput.value = '';
+    
+    // 显示"正在输入"指示器
+    typingIndicator.style.display = 'block';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    try {
+        const data = await callTongyiAPI(message);
+        typingIndicator.style.display = 'none';
+        await handleResponse(data); // 使用API响应数据
+    } catch (error) {
+        typingIndicator.style.display = 'none';
+        addMessage('抱歉，获取回复时出错: ' + error.message, false);
+    } finally {
+        // 重新启用输入和按钮
+        messageInput.disabled = false;
+        sendButton.disabled = false;
+        messageInput.focus();
+    }
+}
+            
+            // 添加消息到聊天界面
+            function addMessage(text, isUser) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'bot-message');
+                messageDiv.textContent = text;
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+
+            
+            // 发送按钮点击事件
+            sendButton.addEventListener('click', sendMessage);
+            
+            // 输入框回车键事件
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // 初始欢迎消息
+            setTimeout(() => {
+                addMessage('你好！我是通义千问，有什么可以帮你的吗？', false);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

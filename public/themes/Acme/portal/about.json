@@ -1,0 +1,95 @@
+{
+    "name": "关于我们页",
+    "action": "portal/Page/index",
+    "description": "关于我们页面单页模板",
+    "order": 60.0,
+    "more": {
+        "widgets": {
+            "second": {
+                "title": "第二版块",
+                "display": "1",
+                "vars": {
+                    "section_name": {
+                        "title": "栏目名称",
+                        "value": "加入我们",
+                        "type": "text",
+                        "tip": "请输入该栏目名称"
+                    },
+                    "category_id": {
+                        "title": "文章分类id",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "placeholder": "请选择该栏目类别"
+                    },
+                    "count": {
+                        "title": "显示数量",
+                        "value": 4,
+                        "type": "number",
+                        "tip": "该页面显示信息的数量"
+                    }
+                }
+            },
+            "third": {
+                "title": "第三版块",
+                "display": "1",
+                "vars": {
+                    "category_id": {
+                        "title": "左侧轮播显示信息，文章分类id",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "placeholder": "请选择该栏目类别"
+                    },
+                    "section_name": {
+                        "title": "栏目名称",
+                        "value": "我们的优势",
+                        "type": "text",
+                        "tip": "请输入该栏目名称"
+                    },
+                    "skill_item": {
+                        "title": "优势项内容",
+                        "value": [],
+                        "type": "array",
+                        "item": {
+                            "skill_text": {
+                                "title": "文字",
+                                "value": "",
+                                "type": "text",
+                                "tip": "显示在温度计上的文字"
+                            },
+                            "skill_per": {
+                                "title": "数字",
+                                "value": "50",
+                                "type": "number",
+                                "tip": "因为是按百分比显示，因此数字最大为100"
+                            }
+                        }
+                    }
+                }
+            },
+            "fourth": {
+                "title": "第四版块",
+                "display": "1",
+                "vars": {
+                    "category_id": {
+                        "title": "文章分类id",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "placeholder": "请选择该栏目类别"
+                    }
+                }
+            }
+        }
+    }
+}

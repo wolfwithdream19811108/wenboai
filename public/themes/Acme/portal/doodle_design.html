@@ -1,0 +1,578 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+<meta charset="UTF-8"> 
+<script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+
+<script src="__TMPL__/public/assets/js/openseadragon-bin-2.4.0/openseadragon.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
+<link rel="stylesheet" href="__TMPL__/public/assets/js/lightgallery/css/lightgallery.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />
+ <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/base.css" type="text/css" media="screen" />-->
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+<link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__TMPL__/public/assets/js/doodle.js"></script>
+
+<block name="head">
+	<meta charset="'UTF-8'">
+	<title>涂鸦设计</title>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+	<meta name="description" content="{$site_info.site_seo_description|default=''}">
+	<meta name="author" content="Crazy">
+	<link rel="shortcut icon" href="__TMPL__/public/assets/imgs/favicon.png">
+	   
+	<include file="public@scripts"/>
+	 
+ <style type="text/css">
+ 
+     .doodle-container {
+      display: flex;
+      flex-direction: column;
+      height: 1200px;
+      margin: 0;
+    }
+      .reimaginePic {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }    
+ 
+ 
+	#cavs{
+		border: 1px solid #000000;
+		border-radius:25px;
+		box-shadow: 10px 10px 5px #888888;
+		 display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top:10px;
+        align-items: center;
+	}
+	#kuang{
+		margin-left: 40px;
+		width:1100px;
+		height: 50px;
+		margin-top: 15px;
+		border-radius:25px;
+		box-shadow: 10px 10px 5px #888888;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+		
+		
+	}
+	#k1{
+		float: left;
+		margin-left: 43px;
+	}
+	
+	
+  
+	
+    .input-container {
+      display: flex;
+      align-items: center;
+      width: 480px;
+      margin-top:15px;
+      border: 1px solid rgb(237, 241, 251);
+      background-color: rgb(237, 241, 251);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    
+    .input-field {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+
+
+      body {
+        width: 100%;
+        min-height: 100vh; /* 使用视口高度的百分比 */
+        margin: 0 auto; /* 水平居中 */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        font-family: 'Arial', sans-serif;
+        background-color: #f7f7f7;
+        overflow-x: hidden; /* 隐藏水平滚动条 */
+        overflow-y: auto; /* 垂直滚动仅在需要时出现 */
+      }
+
+      #drawingBoard {
+		border: 1px solid #3a373736;
+		border-radius:25px;
+		box-shadow: 0 0 35px rgba(160, 146, 146, 0.24);
+		 display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .divider {
+        width: 2px;
+        height: 24px;
+        background-color: #c3c3c3; /* 分割线颜色 */
+        margin: 0 10px;
+      }
+
+      .right-tools {
+        display: flex;
+        gap: 5px; /* 按钮间的间隙 */
+      }
+
+      .icon-btn {
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      /* 新增样式 - 用于显示箭头图标 */
+      .icon-btn.undo::before {
+        content: '\21B6'; /* 逆时针旋转箭头 Unicode */
+        display: inline-block;
+        font-size: 16px;
+      }
+
+      .icon-btn.redo::before {
+        content: '\21B7'; /* 顺时针旋转箭头 Unicode */
+        display: inline-block;
+        font-size: 16px;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 500px;
+        padding: 5px 15px;
+        /* 移除椭圆形背景样式 */
+      }
+
+      .tool-btn,
+      .icon-btn {
+        background: #d2e2ea; /* 浅蓝色背景 */
+        border: none;
+        padding: 8px 12px;
+        margin: 0 5px; /* 更新按钮间距 */
+        border-radius: 10px;
+        cursor: pointer;
+        outline: none;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+      }
+
+      /* 更新按钮悬停和激活状态背景色 */
+      .tool-btn:hover,
+      .icon-btn:hover,
+      .tool-btn.active,
+      .icon-btn.active {
+        background: rgb(0, 255, 236); /* 深蓝色背景 */
+      }
+
+      /* 新增 - 设置左侧按钮紧贴在一起的样式 */
+      .left-tools {
+        background: #add8e6; /* 浅蓝色背景 */
+        border-radius: 20px; /* 圆形边角 */
+        display: flex;
+      }
+
+      .left-tools .tool-btn {
+        border-radius: 0; /* 移除单独按钮圆角 */
+        margin: 0; /* 移除单独按钮间距 */
+      }
+      .left-tools .tool-btn:first-child {
+        border-top-left-radius: 20px; /* 第一个按钮左上角圆角 */
+        border-bottom-left-radius: 20px; /* 第一个按钮左下角圆角 */
+        border-right: 1px solid gray;
+      }
+      .left-tools .tool-btn:last-child {
+        border-top-right-radius: 20px; /* 最后一个按钮右上角圆角 */
+        border-bottom-right-radius: 20px; /* 最后一个按钮右下角圆角 */
+      }
+      /* 添加新的输入组样式 */
+      .input-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 600px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+
+      /* 输入框样式，使其与按钮风格保持一致 */
+      #textInput {
+        flex-grow: 1; /* 输入框占满剩余空间 */
+        margin-right: 5px; /* 与按钮的间距 */
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid #c3c3c3;
+        outline: none;
+      }
+
+  
+    
+    
+    
+    
+    
+    
+    
+    
+  </style>
+
+
+
+
+</block>
+
+
+
+<body style="background:transparent">
+    
+<div class="doodle-container">
+    
+    
+  <div class="toolbar">
+      <div class="left-tools">
+        <button class="tool-btn" id="drawBtn">画笔</button>
+        <button class="tool-btn" id="eraseBtn">橡皮擦</button>
+      </div>
+      <div>
+        <button class="tool-btn icon-btn" id="clearBtn">清除</button>
+        <button class="tool-btn icon-btn undo" id="undoBtn"></button>
+        <button class="tool-btn icon-btn redo" id="redoBtn"></button>
+      </div>
+    </div>
+    <canvas id="drawingBoard" ></canvas>
+    <div class="input-group">
+      <input type="text" id="textInput" class="input-field" placeholder="请输入要生成图片的提示语" />
+      <button class="tool-btn" id="generateBtn" onclick="generate()">生成</button>
+    </div>    
+    
+    <div class="reimaginePic">
+    
+        <img id="loading"  src="/themes/Acme/public/assets/img/loading.gif"/ style="display:none">
+        <img id="reimaginePic" style="width:500px" src="" style="display:none"/>
+    </div>
+    
+  
+    
+    
+    
+<!--    <div id="kuang">
+    	<div id="k1">
+    	<input type="color" id="color" class="button button2">
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="下载" id="xiazai" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="撤销" id="chexiao" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="清屏" id="qingping" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="线条" id="Line" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="橡皮" id="xpc" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input class="button button2" type="range" id="cuxi" value="3"  min="0" max="10">
+    	</div>
+	</div>-->
+    
+</div>
+
+ <script>
+ 
+ 
+ 
+ 
+ function generate(){
+     
+     
+        console.log('生成')
+        var loadingElement = document.getElementById("loading");
+        loadingElement.style.display='block'
+        var reimaginePicElement = document.getElementById("reimaginePic");
+        reimaginePicElement.style.display='none'
+     
+       var canvas = $('#drawingBoard')[0]; // 获取canvas元素
+       console.log(canvas.width)
+       console.log(canvas.height)
+        var type = 'image/png'; // 设置文件类型
+        const inputField = document.querySelector('.input-field');
+        const inputValue = inputField.value;
+
+
+        // 将canvas内容转换为Blob对象
+        canvas.toBlob(function(blob) {
+            // 创建File对象，将Blob对象作为参数传递
+            var file = new File([blob], 'canvas_image.png', { type: type });
+
+            // 创建FormData对象，并将File对象附加到FormData中
+            var form = new FormData();
+            form.append('sketch_file', file);
+            form.append('prompt', inputValue);
+            console.log("prompt:"+inputValue)
+
+            // 发送POST请求
+            fetch('https://clipdrop-api.co/sketch-to-image/v1/sketch-to-image', {
+                method: 'POST',
+                headers: {
+                    'x-api-key': 'ff7a98b864826af3c2a81ca8cf738d1de2f9d2c0a912fb468574ef93940a92ab2b3f5a848ba277a7991111059127324b',
+                },
+                body: form,
+            })
+                .then(response => response.arrayBuffer())
+                .then(buffer => {
+                    const byteArray = new Uint8Array(buffer);
+                    const imageBlob = new Blob([byteArray], { type: 'image/jpeg' });
+                    const imageUrl = URL.createObjectURL(imageBlob);
+                    console.log(imageUrl)
+                    var reimaginePicElement = document.getElementById("reimaginePic");
+                    reimaginePicElement.src = imageUrl;
+                    reimaginePicElement.style.display='block'
+                    var loadingElement = document.getElementById("loading");
+                    loadingElement.style.display='none'
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }, type);
+ }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+      document.addEventListener('DOMContentLoaded', function () {
+        const canvas = document.getElementById('drawingBoard');
+        const ctx = canvas.getContext('2d');
+        const drawBtn = document.getElementById('drawBtn');
+        const eraseBtn = document.getElementById('eraseBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const redoBtn = document.getElementById('redoBtn');
+        const colorPreview = document.getElementById('colorPreview');
+        const toolbar = document.querySelector('.toolbar');
+        const inputGroup = document.querySelector('.input-group');
+        function resizeCanvas() {
+          const viewportHeight = window.innerHeight;
+          const toolbarHeight = toolbar.offsetHeight;
+          const inputGroupHeight = inputGroup.offsetHeight;
+
+          // 计算画布的正确高度：视口高度减去工具栏和输入框高度
+          const canvasHeight = viewportHeight - 100;
+          canvas.width = 500;
+          canvas.height = 500;
+        }
+        let drawing = false;
+        let startX, startY, endX, endY;
+        let tool = 'draw';
+        let color = 'black';
+        let lineWidth = 8;
+        let eraseSize = 8;
+        let history = [];
+        let redoList = [];
+        resizeCanvas();
+
+        let drawings = []; // 存储所有的绘图操作
+        let offsetX = 0; // X轴偏移量
+        let offsetY = 0; // Y轴偏移量
+        let isDragging = false; // 是否正在拖动
+        let dragStartX, dragStartY;
+
+        function setActiveToolButton(activeBtn) {
+          const buttons = document.querySelectorAll('.tool-btn');
+          buttons.forEach((btn) => btn.classList.remove('active'));
+          activeBtn.classList.add('active');
+        }
+        function updateCanvasStyle() {
+          ctx.strokeStyle = color;
+          ctx.lineWidth = lineWidth;
+          ctx.lineCap = 'round';
+          ctx.lineJoin = 'round';
+          ctx.globalCompositeOperation =
+            tool === 'erase' ? 'destination-out' : 'source-over';
+        }
+
+        function saveState() {
+          history.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+          redoList = [];
+          if (history.length > 10) history.shift(); // Limit history array size
+        }
+
+        function drawArrow(fromX, fromY, toX, toY) {
+          const headLength = 10;
+          const dx = toX - fromX;
+          const dy = toY - fromY;
+          const angle = Math.atan2(dy, dx);
+          ctx.moveTo(fromX, fromY);
+          ctx.lineTo(toX, toY);
+          ctx.lineTo(
+            toX - headLength * Math.cos(angle - Math.PI / 6),
+            toY - headLength * Math.sin(angle - Math.PI / 6)
+          );
+          ctx.moveTo(toX, toY);
+          ctx.lineTo(
+            toX - headLength * Math.cos(angle + Math.PI / 6),
+            toY - headLength * Math.sin(angle + Math.PI / 6)
+          );
+        }
+
+        function drawShape() {
+          if (tool === 'line') {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+          } else if (tool === 'rect') {
+            ctx.beginPath();
+            ctx.rect(startX, startY, endX - startX, endY - startY);
+            ctx.stroke();
+          } else if (tool === 'circle') {
+            const radius = Math.sqrt(
+              Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
+            );
+            ctx.beginPath();
+            ctx.arc(startX, startY, radius, 0, Math.PI * 2, false);
+            ctx.stroke();
+          } else if (tool === 'arrow') {
+            ctx.beginPath();
+            drawArrow(startX, startY, endX, endY);
+            ctx.stroke();
+          }
+        }
+
+        function drawPreview() {
+          ctx.putImageData(imageData, 0, 0);
+          drawShape(startX, startY, endX, endY);
+        }
+        setTool('draw');
+        function setTool(newTool) {
+          tool = newTool;
+          setActiveToolButton(
+            newTool === 'draw'
+              ? drawBtn
+              : newTool === 'erase'
+              ? eraseBtn
+              : newTool === 'line'
+              ? lineBtn
+              : newTool === 'rect'
+              ? rectBtn
+              : newTool === 'circle'
+              ? circleBtn
+              : arrowBtn
+          );
+          updateCanvasStyle();
+        }
+
+        drawBtn.addEventListener('click', function () {
+          setTool('draw');
+        });
+
+        eraseBtn.addEventListener('click', function () {
+          setTool('erase');
+        });
+
+        clearBtn.addEventListener('click', function () {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          saveState();
+        });
+
+        undoBtn.addEventListener('click', function () {
+          if (history.length) {
+            redoList.push(history.pop());
+            if (history.length) {
+              ctx.putImageData(history[history.length - 1], 0, 0);
+            } else {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+          }
+        });
+
+        redoBtn.addEventListener('click', function () {
+          if (redoList.length) {
+            history.push(redoList.pop());
+            ctx.putImageData(history[history.length - 1], 0, 0);
+          }
+        });
+
+        canvas.addEventListener('mousedown', function (e) {
+          startX = e.offsetX;
+          startY = e.offsetY;
+          drawing = true;
+          imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          if (tool !== 'erase') {
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+          }
+        });
+
+        canvas.addEventListener('mousemove', function (e) {
+          if (!drawing) return;
+          endX = e.offsetX;
+          endY = e.offsetY;
+          if (tool === 'erase') {
+            // 保存当前状态
+            ctx.save();
+            // 为擦除预览绘制一个表示大小的圆圈
+            ctx.strokeStyle = 'rgba(100,200,100,1)'; // 设置边框样式为半透明
+            ctx.lineWidth = 2; // 设置线宽
+            ctx.beginPath();
+            ctx.arc(endX, endY, eraseSize / 2, 0, Math.PI * 2);
+            ctx.stroke();
+            // 设置为擦除模式并擦除路径
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.fill();
+            // 恢复之前的状态
+            ctx.restore();
+          } else if (['line', 'rect', 'circle', 'arrow'].includes(tool)) {
+            drawPreview();
+          } else if (tool === 'draw') {
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+          }
+        });
+
+        canvas.addEventListener('mouseup', function () {
+          if (drawing) {
+            if (['line', 'rect', 'circle', 'arrow'].includes(tool)) {
+              drawShape(startX, startY, endX, endY);
+            }
+            drawing = false;
+            saveState();
+          }
+        });
+
+        canvas.addEventListener('mouseout', function () {
+          if (drawing) {
+            if (['line', 'rect', 'circle', 'arrow'].includes(tool)) {
+              drawShape(startX, startY, endX, endY);
+            }
+            drawing = false;
+            saveState();
+          }
+        });
+      });
+    </script>
+</body>
+</html>

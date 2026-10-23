@@ -1,0 +1,107 @@
+<extend name="public@base" />
+
+<block name="head">
+  {__block__}
+  <style>
+    iframe {
+display: block; /* iframes are inline by default */
+background: #000;
+border: none; /* Reset default border */
+height: 800px; /* Viewport-relative units */
+width: 100%;
+}
+
+    @media only screen and (max-width: 990px) {
+      .box {
+        margin-bottom: 30px;
+      }
+    }
+  </style>
+</block>
+<block name="body">
+
+    <div class="header-title" style="text-align: center">
+      <h1 style="font-weight: bold">工美智库产业数据平台</h1>
+    </div>
+  
+  					<a target="_blank"  class="btn btn-success btn-similar-auction"  style="margin-top:10px;" onclick="changefile(1);">
+						<i class="fa fa-file-image-o"></i> 产业资产负债数据
+					</a>
+  					<a target="_blank"  class="btn btn-success btn-similar-auction"  style="margin-top:10px;" onclick="changefile(2);">
+						<i class="fa fa-file-image-o"></i> 产业收入利润数据
+					</a>
+  					<a target="_blank"  class="btn btn-success btn-similar-auction"  style="margin-top:10px;" onclick="changefile(3);">
+						<i class="fa fa-file-image-o"></i> 产业现金流量数据
+					</a>
+   					<a target="_blank"  class="btn btn-success btn-similar-auction"  style="margin-top:10px;" onclick="changefile(4);">
+						<i class="fa fa-file-image-o"></i> 产业财务指标数据
+					</a>
+     <iframe id="dataiframe" src="https://docs.qq.com/sheet/DZGRqR0RiS3NIS3NV?tab=BB08J2"></iframe>
+ 	<!-- <iframe src="https://work.jiushuyun.com/decision/home?tab=%7B%22cId%22%3A%228f5eb522d2a04f218343a802f38d5406%22%2C%22gId%22%3A%221f396c23703f44e7b2e13084be4cfb6c%22%7D#/home/885ccaa42c08482e8fcd9c1f6fbd602c"></iframe>  -->
+
+
+</block>
+
+<block name="scripts">
+  <script type="text/javascript">
+
+function openfile()
+{
+  	var height = window.innerHeight-400;
+	var width = window.innerWidth;	
+	
+	width = width + 'px'
+	height = height+'px'  
+        
+        var index = layer.open({
+            type: 2,
+            title: '灵感探索',
+            title:false,
+            scrollbar:false,
+            maxmin: true,
+            //  shade: [0.8, '#393D49'],
+            // shadeClose:true,
+            shade: true,
+            shade: [0.5],
+            shadeClose: true,
+            closeBtn: 0,
+            skin: 'shadows',
+            anim: 2,
+            area: [width,height],
+            offset: 'b',
+            
+            content: ['https://docs.qq.com/sheet/DZGRqR0RiS3NIS3NV?tab=BB08J2'],
+        
+        });
+
+  
+
+}
+    
+function changefile(fileid)
+{
+  var url = "https://docs.qq.com/sheet/DZE9sc210ek53dklq?tab=BB08J2"
+
+  if(fileid==1){
+    url = "https://docs.qq.com/sheet/DZE9sc210ek53dklq?tab=BB08J2"
+  }else if(fileid==2){
+    url = "https://docs.qq.com/sheet/DZHR4bHl0Z3Fid3BM?tab=BB08J2"
+  }else if(fileid==3){
+    url = "https://docs.qq.com/sheet/DZHRIREN5SlZDYWZR?tab=BB08J2"
+  }else if(fileid==4){
+    url = "https://docs.qq.com/sheet/DZGRqR0RiS3NIS3NV?tab=BB08J2"
+  }     
+  document.getElementById('dataiframe').setAttribute("src",url);
+  
+  
+
+}    
+
+    
+    
+    jQuery(document).ready(function ($) {
+   
+		//setNewIframe()
+    });
+  </script>
+</block>

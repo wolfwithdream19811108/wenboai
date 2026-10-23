@@ -1,0 +1,23 @@
+<!--footer start-->
+
+<!-- footer end -->
+<!--small footer start -->
+<footer class="footer-small">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="copyright">
+                    <p>
+                        {$theme_vars.copyright|default=''} &emsp;
+                        <notempty name="$site_info.site_icp">
+                            <a href="https://beian.miit.gov.cn//" target="_blank">{$site_info.site_icp}</a>
+                            <a id="number"></a>
+                            <else/>
+                            请在后台设置"网站信息"设置"备案信息"
+                        </notempty>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

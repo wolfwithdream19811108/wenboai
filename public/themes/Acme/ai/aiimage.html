@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="shortcut icon" href="__TMPL__/public/assets/img/favicon.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta   http-equiv= "Pragma"   content= "no-cache" /> 
+    <meta   http-equiv= "Cache-Control"   content= "no-cache" /> 
+    <meta   http-equiv= "Expires"   content= "0" /> 
+    <title>智绘东方AIGC生成平台</title>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/jquery.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/viewer/dist/viewer.js"></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/viewer/dist/viewer.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="__TMPL__/public/assets/css/aiimage.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="__TMPL__/public/assets/css/aiimagemain.css" type="text/css" media="screen" />
+    <link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/lightbox2-2.11.4/dist/js/lightbox-plus-jquery.js"></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/lightbox2-2.11.4/dist/css/lightbox.css" type="text/css" media="screen" />
+<!--    <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />-->
+<!--    <script src="__TMPL__/public/assets/js/jquerylightslider/js/jquery.lightSlider.js"></script> -->
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/lightgallery.umd.js"></script>
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/plugins/thumbnail/lg-thumbnail.umd.js"></script>
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/plugins/zoom/lg-zoom.umd.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/mp.mansory.js"></script> 
+    <script type="text/javascript" src="/themes/Acme/public/assets/js/hover-dropdown.js"></script>
+    
+ <link href="__TMPL__/public/assets/css/bootstrap.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/theme.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/bootstrap-reset.css" rel="stylesheet">
+
+
+<!-- Custom styles for this template -->
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/hovercss/component.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/demo.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/normalize.css" rel="stylesheet"/>
+
+
+
+    <script type="text/javascript" src="__TMPL__/public/assets/js/forge.min.js"></script>
+  
+   
+  
+
+    <script src="__STATIC__/js/frontend.js"></script>
+    
+    
+</head>
+
+
+ <style>
+ 
+.header {
+  text-align: left;
+  margin: 0 auto;
+  padding: 10px;
+  color: white;
+  height: 60px;
+  background: black;
+  font-size: 21px;
+  font-weight: bolder;
+} 
+.head-section {
+  border-bottom: 1px solid #151212;
+  color: black;
+  background-color: black;
+}
+.head-section .navbar {
+  min-height: 60px;
+
+  background-color: black;
+margin-left: 10px;
+  margin-right: 10px;
+}
+.navbar-default .navbar-brand {
+  color: white;
+}
+.header a {
+  margin-right: 30px;
+  color: white;
+  text-decoration: none;
+  margin-left: 30px;
+  font-size: 16px;
+}
+.header a.active {
+    color: rgb(0, 255, 236);
+}
+.aiimge-select-main {
+  width: 100%;
+  max-width: 465px;
+  
+}
+.aiimge-select-basemodel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.aiimge-select {
+display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  overflow-y: scroll;
+}
+
+.aiimge-slect-box {
+  width: 80px;
+  height: 80px;
+  margin: 2px;
+  position: relative;
+   /* 添加点击选中时的边框样式 */
+  border: 1px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.aiimge-slect-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aiimge-img-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aiimge-slect-box:hover .aiimge-img-mask {
+  opacity: 1;
+}
+.aiimge-slect-box.selected {
+  /* 添加选中时的边框样式 */
+  border-color: #fff;
+}
+.aiimge-slect-box span {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.aiimge-hover-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.aiimge-hover-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aiimge-slect-box:hover .aiimge-hover-mask {
+  opacity: 1;
+}
+
+.aiimge-slect-box .text-mask {
+  position: absolute;
+  left: 0px;
+  width: 100%;
+  height: 25%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+}
+
+.aiimge-slect-box .text-mask span {
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+}
+
+
+
+ .graph-d20-search-wrapper-camera {
+      position: absolute;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      margin-top: 8px;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/camera.png)
+        no-repeat;
+      background-size: contain;
+    }
+    
+    .graph-d20-search-wrapper-input {
+      width: 90%;
+      color: #222;
+      font-size: 16px;
+      height: 16px;
+      line-height: 17px;
+      padding: 12px 0;
+      text-indent: 14px;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      border-radius: 10px 0 0 10px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .dashed-box {
+      width: 100%;
+      height: 100px;
+      border: 1px dashed #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 12px;
+      flex-direction: column;
+
+    }
+    
+    .dashed-box:hover {
+      cursor: pointer;
+    }
+    
+    .upload-area-icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+.ref-img-container {
+  display: flex;
+  align-items: center;
+}
+.navbar-default .navbar-nav > li > a {
+  color: white;
+  font-weight: bold;
+  font-size:18px;
+}
+.headicon {
+    display: inline-block; /* 或者使用 display: inline; */
+    vertical-align: middle; /* 确保图片和文本在同一行 */
+}
+
+.user-nickname {
+    display: inline-block; /* 或者使用 display: inline; */
+    vertical-align: middle; /* 确保文本和图片在同一行 */
+    margin-left: 5px; /* 根据需要调整图片和文本之间的间距 */
+    font-size:16px;
+}
+.image-container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.icons {
+  display: flex;
+}
+
+.delete-icon,
+.change-icon {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.ref-img-row {
+  display: flex;
+}
+
+/* 其他样式代码 */
+
+
+.ref-img-weight {
+  border: 2px solid #242424;
+  border-radius: 10px;
+  padding: 10px;
+  display: none;
+  margin-left: 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* 其他样式代码 */
+
+
+.slider-container {
+  position: relative;
+  width: 150px;
+  margin-top: 20px;
+  font-size:14px;
+}
+.slider-description {
+  font-size:11px;
+  display: inline-block;
+}
+#slider {
+  width: 100%;
+  background-image: linear-gradient(to right, rgb(0, 255, 236) 0%, rgb(0, 255, 236) calc((var(--value) - 1) * 10%), transparent calc((var(--value) - 1) * 10%), transparent 100%);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  border-radius: 10px;
+  height: 5px;
+}
+
+.slider-value {
+  position: absolute;
+  top: -20px;
+  left: calc((var(--value) - 1) * 10% + 10px);
+  transform: translateX(-50%);
+  text-align: center;
+  color: rgb(0, 255, 236);
+}
+.baseModels {
+    display: flex;
+    color: white;
+}
+#min-value {
+  color: rgb(0, 255, 236);
+  position: absolute;
+  top: -20px;
+}
+#max-value {
+  color: rgb(0, 255, 236);
+  position: absolute;
+  top: -20px;
+  right:-10px;
+}
+
+
+.myskin{
+        background-color: transparent;/*背景透明*/
+        box-shadow: 0 0 0 rgba(0,0,0,0);/*前景无阴影*/
+    }
+
+/* 移除默认的Webkit样式 */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+/* 清除Firefox和IE的内边距 */
+select::-ms-expand {
+    display: none;
+}
+/* 样式化下拉框 */
+.baseModels {
+    position: relative;
+    display: inline-block;
+    display: flex;
+    color: white;
+    align-items: center;
+}
+.baseModels select {
+    display: inline-block;
+    padding: 2px 15px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #000;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+.baseModels select:focus {
+    border-color: #999;
+}
+/* 隐藏弹出层 */
+  .listoverlay{
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  /* 显示弹出层 */
+  .listoverlay.active {
+    display: block;
+  }
+
+/* 弹出表单样式 */
+.table-container {
+    width: 100%;
+    max-width: 1000px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: '楷体', 'KaiTi', 'STKaiti', serif;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid black;
+  font-size:20px;
+/*  padding: 8px;*/
+}
+
+.tablebody {
+  display: block;
+  height: 400px; /* 设置表格的高度 */
+  overflow-y: scroll; /* 添加垂直滚动条 */
+}
+
+thead{
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* 固定表格布局 */
+}
+.tabletr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* 固定表格布局 */
+}
+
+
+.tabletr.highlight {
+  background-color: rgba(0, 255, 236, 0.71); /* 设置高亮背景颜色 */
+  outline: none; /* 去除默认的焦点边框 */
+}
+
+
+/*自动chatdesign设计遮罩层*/
+#chat-design-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid rgba(0, 255, 236, 0.71);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.message {
+  color: #fff;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+#gptInput{
+  display: flex;
+  height: 30px;
+  margin: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  align-items: center;
+  font-size: 22px;
+}
+.gptBtn {
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 120px;
+  height: 30px;
+  background: rgb(0, 255, 236);
+  border-radius: 10px;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  color: black;
+  align-items: center;
+  border-radius: 10px;
+  justify-content: center;
+  background-color: rgb(0, 255, 236);
+  font-weight: border;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  display: flex;  
+  
+}
+.gptBtn:hover {
+    background: rgba(0, 255, 236, 0.5);
+}
+
+
+
+/* 弹出表单样式 */
+.popup-img-grid {
+    width: 100%;
+    height: 80%;
+    max-width: 1200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: '楷体', 'KaiTi', 'STKaiti', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.my-gallery-container {
+    overflow-y: auto;
+}
+
+
+.lg-toolbar-next:before {
+  content: "\e094";
+}
+.lg-toolbar-prev:before {
+  content: "\e095";
+}
+
+/** Below CSS is completely optional **/
+
+.gallery-item {
+  width: 200px;
+  padding: 5px;
+}
+.item {
+/*  border: #2e7ca2 2px solid;*/
+  width: 100%;
+  background-color: white;
+  min-height: 100px;
+  max-height: 500px;
+  display: block;
+  justify-content: center;
+/*  padding: 5px;*/
+  margin: 10px 0px;
+/*  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 2px;*/
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: bold;
+}
+.item.selected {
+  border: rgba(0, 255, 236, 0.5) 2px solid;
+}
+
+.user-points {
+  color: white;
+  font-size: 15px;
+  margin-top: 10px;
+  font-weight: bolder;
+}
+.user-charge{
+  font-size: 14px;
+  margin-top: 10px;
+  color: rgb(0, 255, 236);
+  margin-left: 10px;
+  font-weight: bold;
+}
+.blog-img img.loraimg {
+  max-height: 400px;
+  width: full;
+}
+
+
+
+/* 内容区域默认不显示 */
+.tabcontent {
+  display: none;
+/*  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;*/
+}
+
+/* 选项卡按钮的样式 */
+.tabs button {
+  display: inline-block; /* 使按钮并排显示 */
+  background-color: transparent; /* 背景色透明 */
+  color: #aaa; /* 字体颜色设置为灰色 */
+  border: none; /* 无边框 */
+  cursor: pointer;
+  padding-right: 10px;
+  text-decoration: none; /* 去除链接的下划线 */
+  font-size: 16px; /* 字体大小 */
+}
+
+/* 选项卡按钮悬停效果 */
+.tabs button:hover {
+  color: #fff; /* 鼠标悬停时字体颜色变白 */
+}
+
+/* 激活的选项卡按钮样式 */
+.tablinks.active {
+  color: #fff; /* 激活状态时字体颜色为白色 */
+  border-radius: 5px; /* 圆角边框 */
+}
+
+/* 显示第一个选项卡的内容 */
+#craft {
+  display: block;
+}
+
+
+.input_textarea_container .textarea_detail {
+  text-align: right;
+  font-size: 12px;
+  color: #fff; 
+}
+
+/* 切换按钮 */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px; /* 减小宽度 */
+    height: 24px; /* 减小高度 */
+}
+
+.switch input { 
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 24px; /* 使滑块圆角更明显 */
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px; /* 减小滑块大小 */
+    width: 18px; /* 减小滑块大小 */
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 50%; /* 使滑块圆角更明显 */
+}
+
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(18px); /* 调整滑块移动距离 */
+    -ms-transform: translateX(18px);
+    transform: translateX(18px);
+}
+
+.switch-text {
+    position: absolute;
+    left: 24px; /* 调整文字位置 */
+    font-size: 12px; /* 减小文字大小 */
+    color: #000;
+}
+
+ </style>
+
+<body>
+   
+    
+<header class="head-section">
+    <div class="navbar navbar-default navbar-static-top">
+        <div class="navbar-header">
+            <button class="navbar-toggle" data-target=".navbar-collapse" data-toggle="collapse"
+                    type="button"><span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="__ROOT__">
+                <notempty name="theme_vars.logo">
+                    <img src="{$theme_vars.logo|cmf_get_image_url}" style="max-height: 65px"/>
+                    <else/>
+                     智绘东方AIGC生成平台
+                </notempty>
+            </a>
+        </div>
+
+        <div class="navbar-collapse collapse">
+            
+
+            <!--导航部分-->
+            <ul id="main-menu" class="nav navbar-nav">
+                
+                <li class="menuitem">
+                    <a  class="active">AI创艺</a>
+                </li>              
+                 <li class="menuitem">
+                    <a  onclick="poemToArt()">诗文成艺</a>
+                </li>           
+                 <li class="menuitem">
+                    <a  onclick="storyToArt()">古籍创艺</a>
+                </li>   
+                 <li class="menuitem">
+                    <a  onclick="everythingToArt()">万物成艺</a>
+                </li>         
+                 <li class="menuitem">
+                    <a  onclick="productToArt()">国潮产品</a>
+                </li>  
+<!--                 <li class="menuitem">
+                    <a href="#" onclick="autoArt()">3D生成</a>
+                </li>   
+                 <li class="menuitem">
+                    <a href="http://view3d.hongmengyishu.com">3D查看器</a>
+                </li> -->   
+                 <li class="menuitem">
+                    <a href="https://www.hongmengyishu.com">工美图谱</a>  
+                </li>
+<!--            <a href="#" onclick="autoArt()">自动设计</a>
+            <a href="#" onclick="javascript:uploadOneImage('图片上传','#image_url','image_url','portal',autoDesign)">一键变款</a>  -->          
+<!--            <a href="#" onclick="javascript:uploadOneImage('图片上传','#image_url','image_url','portal',analysisPrompt)">图解prompt</a>-->
+<!--            <a href="#" onclick="styleShift()">风格迁移</a>
+            <a href="https://www.hongmengyishu.com/portal/aiimage/doodle">涂鸦设计</a>
+            <a href="http://prompt.hongmengyishu.com">咒语生成</a>-->
+            <!--<a href="#" onclick="wjAddQpsOrChannel('CHANNEL',141)">提升通道</a>-->
+
+<!--登录部分-->
+            <ul id="main-menu-user" class="nav navbar-nav navbar-right">
+                <php>$user=cmf_get_current_user();</php>
+                <if condition="empty($user['id'])">
+                    <li class="dropdown user offline">
+                        <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
+                            <img src="__TMPL__/public/assets/img/headicon.png" class="headicon">
+                            登录<b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="{:cmf_url('user/Login/index')}"><i class="fa fa-sign-in"></i> &nbsp;登录</a></li>
+    						<!--<li><a href="{:cmf_plugin_url('Qrlogin://Index/index')} "><i class="fa fa-sign-in"></i> &nbsp;微信登录</a></li>-->
+    						<li><a href="{:cmf_plugin_url('ThirdLogin://Login/auth',['type' => 'wechat'])} "><i class="fa fa-sign-in"></i> &nbsp;微信登录</a></li>
+                            <li><a href="{:cmf_url('user/Register/index')}"><i class="fa fa-user"></i> &nbsp;注册</a></li>
+                        </ul>
+                    </li>
+                <else/>
+                    <li class="user-points" id="user-points">积分：{$points}</li>
+                    <li class="user-charge" id="user-charge" onclick="charge()">充值</li>
+                    <li class="dropdown user login">
+                        <a class="dropdown-toggle user" data-toggle="dropdown" href="#">
+                            <php>$user=cmf_get_current_user();</php>
+                            <if condition="empty($user['avatar'])">
+                                <img src="__TMPL__/public/assets/img/headicon.png" class="headicon">
+                                <else/>
+                                <img src="{:cmf_get_user_avatar_url($user['avatar'])}" class="headicon" width="30"/>
+                            </if>
+                            <span class="user-nickname"></span><b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="{:cmf_url('/ai/myworks')}"><i class="fa fa-home"></i> &nbsp;我的作品</a></li>
+                            <li><a href="{:cmf_url('user/Index/logout')}"><i class="fa fa-sign-out"></i> &nbsp;退出</a></li>
+                        </ul>
+                    </li>               
+                </if>
+
+
+            </ul>
+              <!--
+				 <li>
+					<button id='searchenter' class="btn btn-primary"  onclick="search()">搜索</button>
+				 </li>
+				-->
+            </ul>
+        </div>
+    </div>
+</header>
+    
+    <div class="out-container">
+        <div class="main">
+            <div class="main-left">
+                <!-- 文本框 -->
+                <div class="input_textarea_container">
+                    <textarea id="input_textarea" maxlength="400" class="no_scroll" rows="4" cols="50"
+                        placeholder="回复内容"></textarea>
+                    <div class="textarea_detail">
+                        <span class="detail_num">
+                            <span id="now_text_num" class="now">0</span> / <span id="total" class="total">
+                                400
+                            </span>
+                        </span>
+                        <span id="prompt_shape" class="prompt_shape">
+                            | <span class="prompt_shape">造型</span>
+                        </span>      
+                        <span id="prompt_material" class="prompt_material">
+                            | <span class="prompt_material">材质</span>
+                        </span>                         
+                        <span id="prompt_pattern" class="prompt_pattern">
+                            | <span class="prompt_pattern">纹样</span>
+                        </span>                         
+                         <span id="prompt_optimiz" class="prompt_optimiz">
+                            | <span class="prompt_optimiz">优化</span>
+                        </span>                        
+                        
+                        
+                        <span id="prompt_random" class="prompt_preset">
+                            | <span class="prompt_preset">随机</span>
+                        </span>
+                        <span id="prompt_preset" class="prompt_preset">
+                            | <span class="prompt_preset">预设</span>
+                        </span>
+                        <span id="detail_clean" class="detail_clean">
+                            | <span class="clean_text">清空</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="input-item">
+                    <div class="input-label">生成图片数量
+                        <div class="plush">
+                            <div id="count_prev" class="J_btnDelCount">-</div>
+                            <input id="count_input" class="J_inputCount" type="text" value="1" />
+                            <div id="count_next" class="J_btnAddCount">+</div>
+                        </div>
+                    </div>
+
+                </div>
+                
+              
+
+                 <!-- 选项卡 -->
+                <div class="tabs">
+                  <button class="tablinks active" onclick="openTab(event, 'craft')">工艺</button>
+                 <!-- <button class="tablinks" onclick="openTab(event, 'chinese')">国潮</button>-->
+              <!--    <button class="tablinks" onclick="openTab(event, 'material')">材质</button>-->
+                  <button class="tablinks" onclick="openTab(event, 'shape')">造型</button>
+                  <button class="tablinks" onclick="openTab(event, 'pattern')">纹样</button>
+                </div>               
+                
+
+                
+                <div id="craft" class="tabcontent">
+                    <div class="aiimge-select-main">
+                      <div class="aiimge-select">
+                        <foreach name="craftModelList" item="vo">
+                            <if condition="$vo['open'] eq 1 ">
+                                <div class="aiimge-slect-box" id="{$vo.id}" onclick="selectModel('{$vo.id}','{$vo.model_name}','{$vo.is_lora}')">
+                                  <img src="{$vo.model_pic}"/>
+                                  <div class="aiimge-img-mask"></div>
+                                    <div class="text-mask">
+                                    <span>{$vo.model_name}</span>
+                                    </div>
+                                  <div class="aiimge-hover-mask"></div>
+                                </div>
+                            </if>
+                        </foreach>
+                      </div>
+                    </div>
+                    <div class="baseModels">
+                        <div class="input-label">选择基模型：
+                        </div>
+                        <select id="baseModels" name="baseModels" onchange="getBaseModel()">
+                            <option value="0">智能</option>
+                            <option value="141">工美</option>
+                            <option value="127">SDXL</option>
+                            <option value="303">表现</option>
+                            <!--<option value="304">MJ6</option>-->
+                        </select>
+                    </div>                    
+ 
+                </div>
+                
+                
+                <div id="chinese" class="tabcontent">
+                    <div class="aiimge-select-main">
+                      <div class="aiimge-select">
+                        <foreach name="chineseloraList" item="vo">
+                            <div class="aiimge-slect-box" id="{$vo.id}" onclick="loadlora('{$vo.id}','{$vo.model_name}','{$vo.lora_id}','{$vo.lora_weight}','{$vo.trigger_word}','{$vo.base_model}',false)">
+                              <img src="{$vo.model_pic}"/>
+                              <div class="aiimge-img-mask"></div>
+                                <div class="text-mask">
+                                <span>{$vo.model_name}</span>
+                                </div>
+                              <div class="aiimge-hover-mask"></div>
+                            </div>
+                        </foreach>
+                      </div>
+                    </div>
+                </div>                
+                
+               <div id="material" class="tabcontent">
+                    <div class="aiimge-select-main">
+                      <div class="aiimge-select">
+                        <foreach name="materialloraList" item="vo" >
+                            <div class="aiimge-slect-box" id="{$vo.id}" onclick="loadlora('{$vo.id}','{$vo.model_name}','{$vo.lora_id}','{$vo.lora_weight}','{$vo.trigger_word}','{$vo.base_model}',false)">
+                              <img src="{$vo.model_pic}"/>
+                              <div class="aiimge-img-mask"></div>
+                                <div class="text-mask">
+                                <span>{$vo.model_name}</span>
+                                </div>
+                              <div class="aiimge-hover-mask"></div>
+                            </div>
+                        </foreach>
+                      </div>
+                    </div>
+                </div>   
+
+
+               <div id="pattern" class="tabcontent">
+                    <div class="aiimge-select-main">
+                      <div class="aiimge-select">
+                        <foreach name="patternmodelList" item="vo" >
+                            <div class="aiimge-slect-box" id="{$vo.id}" onclick="openPattern('{$vo.name}')">
+                              <img src="{$vo.image}!thumb"/>
+                              <div class="aiimge-img-mask"></div>
+                                <div class="text-mask">
+                                <span>{$vo.name}</span>
+                                </div>
+                              <div class="aiimge-hover-mask"></div>
+                            </div>
+                        </foreach>
+                      </div>
+                    </div>
+                </div>                 
+
+
+                <div class="input-item">
+                    <div class="ref_image_label_row" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="input-label">参考图:</div>
+                        <div style="display: flex; align-items: center;display:none">
+                            <label>
+                                万物成艺：
+                            </label> 
+                            <label class="switch" style="margin-left: 10px;">
+                                <input type="checkbox" id="toggle-switch">
+                                <span class="slider round"></span>
+                                <span class="switch-text" id="switch-text"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="dashed-box" id="dashed-box" onclick="javascript:uploadOneImage('图片上传','#ref_image_url','ref_image_url','portal',getRefImage,true,false)">
+                        <i class="fa fa-plus"></i>
+                        
+                        <div class="upload-area-icon">
+                            <div style="margin-top: 5px;">点击或拖拽图片上传，支持PNG、JPG，20M以内</div>
+                            <div>或从<span class="my-work" style="text-decoration: underline;">我的作品</span>或
+                                <span class="my-work" style="text-decoration: underline;" onclick="openYunku(event)">艺术云库</span>中点击选择
+                            </div>
+                        </div>                   
+                    </div>
+
+                   
+
+                    <div class="ref-img-row" id="ref-img-row">
+                      <div class="ref-img-container">
+                        <div class="image-container">
+                          <img src="" class="ref_image_url"  width="100" height="100" name="ref_image_url" id="ref_image_url">
+                          <div class="overlay">
+                            <div class="icons">
+                              <i class="fa fa-trash-o delete-icon" onclick="deleteRefImage()"></i>
+                              <i class="fa fa-refresh change-icon" onclick="javascript:uploadOneImage('图片上传','#ref_image_url','ref_image_url','portal',getRefImage,true,false)"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="content1"></div>
+                      </div>
+                    
+                      <div class="ref-img-weight">
+                        <div class="slider-description">影响比重：数值越大参考图影响越大</div>
+                        <div class="slider-container">
+                          <div class="slider-value" id="min-value">1</div>
+                          <input type="range" id="slider" min="1" max="10" value="3" step="1" style="--value: 3;">
+                          <div class="slider-value" id="selected-value" style="--value: 3;">3</div>
+                          <div class="slider-value" id="max-value">10</div>
+                        </div>
+                      </div>
+                    </div>
+
+                </div>  
+                <div class="aifooter">
+                    <div id="submit_btn" class="submit-btn">立即生成</div>
+                </div>
+            </div>
+            <div class="main-right">
+                <div id="img_container" class="img-container">
+                </div>
+            </div>
+            
+ 
+ 
+            <div id="chat-design-loading">
+                <div class="loader"></div>
+                <div class="message">AI生成中...</div>
+            </div>
+    
+ 
+            <div class="listoverlay" id="listoverlay">
+              <div class="table-container" id="table-container">
+               <!-- 动态创建自动设计prompt表格的slot    -->     
+                
+              </div>
+            </div>   
+            
+            <div class="listoverlay" id="everything">
+                
+                <div class="popup-img-grid" id="everything2art">
+                    <div class="my-gallery-container" id="my-gallery-container">
+                    	<foreach name="everythingimgArray" item="vo">
+                    		<div class="item" onclick="activeItem(this)">
+                    
+                    			<div  align="left" class="blog-img img">
+                    			    <figure class="effect-ruby">
+                                              <img class="img002" src="{$vo.url}"  onclick="fillPrompt('everythingPrompt','{$vo.prompt}')"/>
+                    				</figure>
+                    				
+                    			</div>
+                    
+                    		</div>
+                    	</foreach>
+                    </div>               	
+                    <div id="gptInput">
+                            <input id="everythingPrompt" type="text" placeholder="请输入想要生成的物体名称，需与图片保持一致" style="height: 30px; font-size: 22px; width: 600px;" autocomplete="off" >
+                            <button class="gptBtn" onclick="everythingDesign()">生成</button>
+                            <button class="gptBtn" onclick="javascript:uploadOneImage('图片上传','#ref_image_url','ref_image_url','portal',addUploadImgInEverythin)">上传图片</button>  
+                    </div>                
+                </div>
+                
+            </div>       
+            
+            <div class="listoverlay" id="product">
+                
+                <div class="popup-img-grid" id="product2art">
+                    <div class="my-gallery-container" id="product-gallery-container">
+                    	<foreach name="productArray" item="vo">
+                    		<div class="item" onclick="activeItem(this);">
+                    
+                    			<div  align="left" class="blog-img img">
+                    			    <figure class="effect-ruby">
+                                        <img class="img002" src="{$vo.url}" data-product='<?= htmlspecialchars(json_encode($vo), ENT_QUOTES) ?>'
+                                         onclick="setProductInfo('productPrompt', JSON.parse(this.dataset.product))" 
+                    				</figure>
+                    				
+                    			</div>
+                    
+                    		</div>
+                    	</foreach>
+                    </div>               	
+                    <div id="gptInput">
+                            <input id="productPrompt" type="text" placeholder="请输入想要生成的产品名称，需与图片保持一致" style="height: 30px; font-size: 22px; width: 600px;" autocomplete="off" >
+                            <button class="gptBtn" onclick="productDesign()">生成</button>
+                            <button class="gptBtn" onclick="javascript:uploadOneImage('图片上传','#ref_image_url','ref_image_url','portal',addUploadImgInEverythin)">上传图片</button>  
+                    </div>                
+                </div>
+                
+            </div>   
+            
+            <div class="listoverlay" id="yunkuimglist">
+                <div class="popup-img-grid" id="everything2art">
+                    <div class="my-gallery-container" id="yunku-gallery-container">
+                    	
+                    </div> 
+                	<div class="text-center">
+		                <ul class="pagination">{$page|default=''}</ul>
+	                </div>                    
+                </div>
+                
+            </div>              
+
+
+        </div>
+        
+        
+        <div class="listoverlay" id="lora">
+                    
+                <div class="popup-img-grid" id="everything2art">
+                                            
+                    <div class="my-gallery-container" id="lora-gallery-container">
+                    	<foreach name="materialloraList" item="vo">
+                    		<div class="item" onclick="loadMaterialLoraAndCreateImg('{$vo.id}','{$vo.model_name}','{$vo.lora_id}','{$vo.lora_weight}','{$vo.trigger_word}','{$vo.base_model}','{$vo.is_lora}')">
+                    
+                    			<div  align="left" class="blog-img img">
+                    			    <figure class="effect-ruby">
+                                              <img class="loraimg" src="{$vo.model_pic}" />
+                    				</figure>
+                    			</div>
+                    			{$vo.model_name}
+                    
+                    		</div>
+                    	</foreach>
+                    
+                    </div>              
+                        
+                </div>
+            </div>
+            
+            
+     <!--       
+     <iframe id="iframeB" src="https://www.hongmengyishu.com/ai/index/ref_img_list" style="width: 100%; height: 500px;"></iframe>              
+    -->
+
+
+    </div>
+
+    
+    <script>    
+
+
+
+
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/"
+    };
+    
+window.open3d = <?php echo json_encode($open3d); ?>; 
+      
+
+
+  
+
+const slider = document.getElementById("slider");
+const selectedValue = document.getElementById("selected-value");
+
+
+slider.addEventListener("input", function() {
+  const value = parseInt(slider.value);
+  selectedValue.textContent = value;
+
+  // 设置CSS变量，用于计算背景渐变的高度
+  slider.style.setProperty("--value", value);
+  selectedValue.style.setProperty("--value", value);
+});
+
+slider.addEventListener("change", function() {
+  // 吸附到最近的整数值
+  console.log(slider.value)
+  const value = Math.round(parseFloat(slider.value));
+  slider.value = value;
+  selectedValue.textContent = value;
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // 获取立即生成按钮的DOM元素
+    var submitButton = document.getElementById('submit_btn');
+
+    // 为整个文档添加键盘事件监听器
+    document.addEventListener('keydown', function(event) {
+        // 检查按下的是否是回车键（keyCode 13）或者 Enter 键（key 'Enter'）
+        if (event.keyCode === 13 || event.key === 'Enter') {
+            // 阻止默认行为，例如在文本框中输入时不会换行
+            event.preventDefault();
+            // 触发立即生成按钮的点击事件
+            submitButton.click();
+        }
+    });
+});
+
+function openYunku(event) {
+        // 使用layer.open方法打开iframe层
+    layer.open({
+      type: 2, // 表示这是一个iframe层
+      title: '选择作品', // 弹出层的标题
+      shade: 0.3, // 遮罩透明度
+      shadeClose: true, // 点击遮罩关闭层
+      area: ['1400px', '800px'], // 弹出层的宽高
+      content: '/ai/index/ref_img_list', // iframe的URL
+      success: function(layero, index){
+        // layero是弹出层的DOM对象，index是弹出层的索引
+        console.log(layero, index);
+      }
+    });
+//    document.getElementById('yunkuimglist').classList.add('active');
+    if (event) {
+        event.stopPropagation();
+    }
+   
+
+}
+
+function selectRefImage(imgUrl) {
+    setRefImage(imgUrl)
+    
+}    
+// a-page-script.js
+window.addEventListener('message', function(event) {
+    // 检查消息来源是否可信
+    if (event.origin !== 'https://www.hongmengyishu.com') {
+        return; // 如果来源不是B网页的域名，忽略消息
+    }  
+    if (event.data.action === 'imageClicked') {
+        setRefImage(event.data.imageUrl)
+        layer.closeAll();     
+ 
+    }
+});
+
+function handleImageURL(imageUrl) {
+    console.log('Received image URL:', imageUrl);
+    // 这里可以进一步处理，比如显示图片或将其存储起来
+}
+        
+    </script>
+<script type="text/javascript" src="__TMPL__/public/assets/js/aiimage.js"> </script>
+    <script src="__STATIC__/js/wind.js"></script>
+</body>
+
+</html>

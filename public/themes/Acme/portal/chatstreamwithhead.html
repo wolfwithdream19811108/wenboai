@@ -1,0 +1,158 @@
+<!DOCTYPE html>      
+<html lang="zh">      
+<head>      
+    <meta charset="UTF-8">      
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">      
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">      
+    <meta name="renderer" content="webkit">      
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>      
+      
+    <title>鉴渊-文博工艺美术大模型</title>      
+    <link rel="shortcut icon" href="__TMPL__/public/assets/img/favicon.png">      
+      
+    <!-- jQuery -->      
+    <script type="text/javascript" src="__TMPL__/public/assets/js/jquery-3.6.0.min.js"></script>      
+    <link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>   
+      
+    <script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>      
+    <script src="__TMPL__/public/assets/js/wow.min.js"></script>    
+    <script src="__STATIC__/js/frontend.js"></script>    
+    <script type="text/javascript" src="__TMPL__/public/assets/js/current.js"></script>       
+    <script type="text/javascript" src="__TMPL__/public/assets/js/head.js"></script>       
+    <script src="__STATIC__/js/wind.js"></script>      
+      
+    <!-- AI Chat 相关 -->      
+    <script src="__TMPL__/public/assets/js/marked.min.js" defer></script>      
+    <script src="__TMPL__/public/assets/js/aichat/aichat.js" defer></script>      
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/aichat/aichat.css" type="text/css" media="screen" />      
+      
+<style>  
+/* ==================== Reset ==================== */  
+
+</style>  
+</head>      
+<body>      
+      
+<header class="head-section">      
+    <nav class="navbar">  
+        <!-- Logo -->  
+        <a class="navbar-brand" href="__ROOT__">鉴渊</a>  
+          
+        <!-- 移动端菜单按钮 -->  
+        <button class="navbar-toggle" id="navbarToggle">  
+            <span class="icon-bar"></span>  
+            <span class="icon-bar"></span>  
+            <span class="icon-bar"></span>  
+        </button>  
+          
+        <!-- 导航内容 -->  
+        <div class="navbar-content" id="navbarContent">  
+            <!-- 导航标签 -->  
+              
+   
+              
+            <!-- 占位 -->  
+            <div class="navbar-spacer"></div>  
+              
+            <!-- 用户区域 -->  
+            <div class="user-area" id="userArea">  
+                <php>$user=cmf_get_current_user();</php>  
+                <if condition="empty($user['id'])">  
+                    <div class="user-toggle">  
+                        <img src="__TMPL__/public/assets/img/headicon.png" class="headicon">  
+                        <span class="user-name">登录</span>  
+                        <span class="caret"></span>  
+                    </div>  
+                    <ul class="dropdown-menu">  
+                        <li><a href="{:cmf_url('user/Login/index')}"><i class="fa fa-sign-in"></i>登录</a></li>  
+                        <li><a href="{:cmf_plugin_url('ThirdLogin://Login/auth',['type' => 'wechat'])}"><i class="fa fa-wechat"></i>微信登录</a></li>  
+                        <li><a href="{:cmf_url('user/Register/index')}"><i class="fa fa-user-plus"></i>注册</a></li>  
+                    </ul>  
+                <else/>  
+                    <div class="user-toggle">  
+                        <if condition="empty($user['avatar'])">  
+                            <img src="__TMPL__/public/assets/img/headicon.png" class="headicon">  
+                        <else/>  
+                            <img src="{:cmf_get_user_avatar_url($user['avatar'])}" class="headicon">  
+                        </if>  
+                        <span class="user-name">{$user.user_nickname|default='用户'}</span>  
+                        <span class="caret"></span>  
+                    </div>  
+                    <ul class="dropdown-menu">  
+                        <li><a href="{:cmf_url('user/Index/logout')}"><i class="fa fa-sign-out"></i>退出</a></li>  
+                    </ul>  
+                </if>  
+            </div>  
+        </div>  
+    </nav>  
+</header>      
+      
+<!-- 主体内容 -->      
+<div class="row-container" id="ai-chat-container"></div>      
+      
+<footer class="footer-small">      
+    <div class="container">      
+        <div class="row">      
+            <div class="col-md-12">      
+                <div class="copyright">      
+                    <p>      
+                        {$theme_vars.copyright|default=''} &emsp;      
+                        <notempty name="$site_info.site_icp">      
+                            <a href="https://beian.miit.gov.cn/" target="_blank">{$site_info.site_icp}</a>      
+                        <else/>      
+                            请在后台设置"网站信息"设置"备案信息"      
+                        </notempty>      
+                    </p>      
+                </div>      
+            </div>      
+        </div>      
+    </div>      
+</footer>      
+  
+<!-- 导航栏交互 JS -->  
+<script>  
+document.addEventListener('DOMContentLoaded', function() {  
+    // 用户下拉菜单  
+    const userArea = document.getElementById('userArea');  
+    if (userArea) {  
+        const userToggle = userArea.querySelector('.user-toggle');  
+        if (userToggle) {  
+            userToggle.addEventListener('click', function(e) {  
+                e.stopPropagation();  
+                userArea.classList.toggle('open');  
+            });  
+        }  
+    }  
+      
+    // 点击其他地方关闭下拉菜单  
+    document.addEventListener('click', function(e) {  
+        if (userArea && !userArea.contains(e.target)) {  
+            userArea.classList.remove('open');  
+        }  
+    });  
+      
+    // 移动端菜单切换  
+    const navbarToggle = document.getElementById('navbarToggle');  
+    const navbarContent = document.getElementById('navbarContent');  
+    if (navbarToggle && navbarContent) {  
+        navbarToggle.addEventListener('click', function() {  
+            navbarContent.classList.toggle('show');  
+        });  
+    }  
+});  
+</script>  
+  
+<script>      
+    document.addEventListener('DOMContentLoaded', function() {      
+        window.displayAnalysisObject = <?php echo json_encode($analysis_object); ?>;      
+        console.log(window.displayAnalysisObject)      
+        const questions = [<foreach name="questions" item="question">'{$question}',</foreach>];      
+        new AIChatComponent(      
+            document.getElementById('ai-chat-container'),      
+            { questions: questions }      
+        );      
+    });      
+</script>      
+      
+</body>      
+</html>  

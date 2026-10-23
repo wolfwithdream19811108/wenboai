@@ -1,0 +1,16 @@
+{
+    "name": "文章列表页",
+    "action": "portal/List/index",
+    "description": "文章列表模板文件",
+    "order": 20.0,
+    "more": {
+        "vars": {
+            "page_count": {
+                "title": "每页文章数量",
+                "value": 32,
+                "type": "number",
+                "tip": "列表页每页显示文章的数量"
+            }
+        }
+    }
+}

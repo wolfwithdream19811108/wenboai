@@ -1,0 +1,111 @@
+{
+  "name": "底部公共部分",
+  "action": "public/Footer",
+  "description": "版权，链接，地址等信息设置",
+  "is_public": "1",
+  "order": 1.0,
+  "more": {
+    "vars": {
+      "site_copyright": {
+        "title": "底部版权信息",
+        "value": "",
+        "type": "textarea",
+        "tip": "请输入网站底部版权信息",
+        "rule": {
+          "require": true
+        },
+        "message": {
+          "require": "不能为空"
+        }
+      }
+    },
+    "widgets": {
+      "footer": {
+        "title": "网站底部通栏信息",
+        "display": "1",
+        "vars": {
+          "footer_logo": {
+            "title": "上传网站底部LOGO",
+            "value": "",
+            "type": "image",
+            "tip": "上传显示LOGO图片，不上传显示底部关于我们标题"
+          },
+          "footAboutTitle": {
+            "title": "底部关于我们标题",
+            "value": "关于我们",
+            "type": "text",
+            "tip": "如果没有上传底部LOGO就显示该标题文字"
+          },
+          "footAbouttId": {
+            "title": "选择关于我们数据",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/page/index",
+              "multi": false
+            },
+            "placeholder": "请选择分类",
+            "tip": "选择关于我们的单页ID，底部会显示单页中描述字段内容，详细内容显示在首页的关于里",
+            "rule": {
+              "require": true
+            }
+          },
+          "footNavTitle": {
+            "title": "底部导航标题",
+            "value": "快速导航",
+            "type": "text",
+            "tip": "请输入底部导航栏标题",
+            "rule": {
+              "require": true
+            },
+            "message": {
+              "require": "不能为空"
+            }
+          },
+          "footNavId": {
+            "title": "输入底部导航的栏目ID数据",
+            "value": "2",
+            "type": "text",
+            "placeholder": "输入导航ID号",
+            "tip": "输入对应底部导航的分类号，可以在设置->导航管理中查看",
+            "rule": {
+              "require": true
+            }
+          },
+          "footContactTitle": {
+            "title": "联系我们标题",
+            "value": "联系我们",
+            "type": "text",
+            "tip": "请输入底部联系我们标题",
+            "rule": {
+              "require": true
+            },
+            "message": {
+              "require": "不能为空"
+            }
+          },
+          "footContactId": {
+            "title": "选择联系我们数据",
+            "value": "",
+            "type": "text",
+            "dataSource": {
+              "api": "portal/page/index",
+              "multi": false
+            },
+            "placeholder": "请选择分类",
+            "tip": "选择联系我们的单页ID，底部会显示对应内容",
+            "rule": {
+              "require": true
+            }
+          },
+          "qcode": {
+            "title": "上传联系二维码",
+            "value": "",
+            "type": "image",
+            "tip": "上传微信等各种二维码"
+          }
+        }
+      }
+    }
+  }
+}

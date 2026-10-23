@@ -1,0 +1,23 @@
+{
+    "name": "头部信息",
+    "action": "public/Header",
+    "description": "网站头部信息内容",
+    "is_public": "1",
+    "order": 1.0,
+    "more": {
+        "vars": {
+            "logo": {
+                "title": "网站LOGO",
+                "value": "",
+                "type": "image",
+                "tip": "请选择LOGO图片，建议图片底色为白色(.jpg)或透明(.png)。"
+            },
+            "site_name": {
+                "title": "网站名称",
+                "value": "艺术云库",
+                "type": "text",
+                "tip": "名称为双色显示，前部为黑色，后部为青色，用\"|\"分开，如：M|icrosoft，某某|有限公司。单独显示青色：|某某公司"
+            }
+        }
+    }
+}

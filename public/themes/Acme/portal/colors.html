@@ -1,0 +1,293 @@
+<extend name="public@base" />
+<block name="head">
+  {__block__}
+        <meta charset="utf-8" />
+        <title>MapVGL</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style>
+
+    /* 新增z-index设置 */
+    .color-wheel, .color-wheel-bg {
+      z-index: 1;
+    }
+    
+    .color-display {
+      z-index: 2;
+    }
+
+    /* 其他原有样式保持不变 */
+    .color-wheel-container {
+      position: relative;
+      width: 800px;
+      height: 800px;
+      margin: 0 auto;
+    }
+    
+    .color-wheel-bg, .color-wheel {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .color-wheel-bg {
+      opacity: 0.8;
+    }
+    
+    .color-wheel {
+      transition: transform 0.5s ease;
+    }
+    
+    .color-wheel path {
+      transition: opacity 0.2s;
+      stroke: rgba(255,255,255,0.2);
+      stroke-width: 0.5;
+      cursor: pointer;
+    }
+    
+    .color-wheel path:hover {
+      opacity: 0.8;
+    }
+    
+    .center-circle {
+      fill: rgba(200,200,200,0.25);
+    }
+    
+    .color-display {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial, sans-serif;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    
+    .color-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #eee;
+    }
+    
+    .color-code {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+    
+
+
+    /* 对于小型设备（如手机） */
+    @media screen and (max-width: 768px) {
+      .color-wheel-container {
+        max-width: 500px; /* 更小的最大宽度 */
+      }
+
+      .color-display {
+        width: 120px;
+        height: 120px;
+      }
+
+      .color-preview {
+        width: 50px;
+        height: 50px;
+      }
+
+      .color-wheel-bg, .color-wheel {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    
+    /* 对于超小型设备（如小屏幕手机） */
+    @media screen and (max-width: 480px) {
+      .color-wheel-container {
+        max-width: 350px; /* 更小的最大宽度 */
+      }
+
+      .color-display {
+        width: 100px;
+        height: 100px;
+      }
+
+      .color-preview {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+
+
+</block>
+<block name="body">
+ <div class="color-wheel-container">
+    <svg class="color-wheel-bg" viewBox="0 0 1300 1300">
+      <circle cx="650" cy="650" r="680" fill="rgba(255,255,255,0.15)"></circle>
+      <circle cx="650" cy="650" r="110" class="center-circle"></circle>
+    </svg>
+    
+    <svg class="color-wheel" viewBox="0 0 1300 1300">
+      <g transform="translate(650 650)">
+        <!-- 颜色轮盘将通过JavaScript动态生成 -->
+      </g>
+    </svg>
+    
+    <div class="color-display">
+      <div class="color-preview" id="colorPreview"></div>
+      <!--<div class="color-code" id="colorCode">#FFFFFF</div>-->
+    </div>
+  </div>
+ <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const colorWheelGroup = document.querySelector('.color-wheel g');
+      colorWheelGroup.innerHTML = generateColorWheel();
+      
+      const colorPaths = document.querySelectorAll('.color-wheel path');      
+      const colorPreview = document.getElementById('colorPreview');
+      let rotation = 0;
+      let rotationInterval;
+      
+      // 启动旋转动画
+      function startRotation() {
+        rotationInterval = setInterval(() => {
+          rotation = (rotation + 0.5) % 360;
+          document.querySelector('.color-wheel').style.transform = `rotate(${-rotation}deg)`;
+        }, 20);
+      }
+      
+      // 停止旋转动画
+      function stopRotation() {
+        clearInterval(rotationInterval);
+      }
+      
+      // 初始启动旋转
+      startRotation();      
+      
+      // 添加焦点事件监听 - 用于显示颜色
+      colorPaths.forEach(path => {
+        path.addEventListener('mouseenter', function() {
+          // 停止旋转
+          stopRotation();
+          
+          // 更新颜色显示
+          const hexColor = this.getAttribute('value');
+          colorPreview.style.backgroundColor = `#${hexColor}`;
+        });
+        
+        path.addEventListener('mouseleave', function() {
+          // 恢复旋转
+          startRotation();
+        });          
+        
+        
+        
+      });      
+      
+      
+            // 添加点击事件监听 - 仅用于跳转
+      colorPaths.forEach(path => {
+        path.addEventListener('click', function(e) {
+          e.preventDefault();
+          const hexColor = this.getAttribute('value');
+          window.location.href = `/portal/samecolor/.html?color=${hexColor}`;
+        });
+        
+        
+        
+      });
+      
+            
+      
+
+    });
+    
+    function generateColorWheel() {
+      const center = {x: 0, y: 0};
+      const minRadius = 110;
+      const maxRadius = 575;
+      const hueSteps = 24;  // 增加色相细分
+      const lightnessSteps = 18; // 增加明度细分
+      
+      let paths = [];
+      
+      for(let h = 0; h < hueSteps; h++) {
+        for(let l = 0; l < lightnessSteps; l++) {
+          const startAngle = (h / hueSteps) * 2 * Math.PI;
+          const endAngle = ((h + 1) / hueSteps) * 2 * Math.PI;
+          const innerRadius = minRadius + (l / lightnessSteps) * (maxRadius - minRadius);
+          const outerRadius = minRadius + ((l + 1) / lightnessSteps) * (maxRadius - minRadius);
+          
+          const pathData = generateSectorPath(center, innerRadius, outerRadius, startAngle, endAngle);
+          
+          const hue = (h / hueSteps) * 360;
+          const saturation = 100;
+          const lightness = 10 + (l / lightnessSteps) * 75;
+          
+          const hexColor = hslToHex(hue, saturation, lightness);
+          
+          paths.push(`
+            <path 
+              d="${pathData}" 
+              fill="hsl(${hue},${saturation}%,${lightness}%)" 
+              data-hex="#${hexColor}"
+              data-hsl="${hue},${saturation},${lightness}"
+              value="${hexColor}"
+            />
+          `);
+        }
+      }
+      
+      return paths.join('');
+    }
+    
+    /* 其他工具函数保持不变 */
+    function generateSectorPath(center, innerRadius, outerRadius, startAngle, endAngle) {
+      const startInner = polarToCartesian(center, innerRadius, endAngle);
+      const endInner = polarToCartesian(center, innerRadius, startAngle);
+      const startOuter = polarToCartesian(center, outerRadius, endAngle);
+      const endOuter = polarToCartesian(center, outerRadius, startAngle);
+      
+      const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
+      
+      return [
+        "M", startInner.x, startInner.y,
+        "L", startOuter.x, startOuter.y,
+        "A", outerRadius, outerRadius, 0, largeArcFlag, 0, endOuter.x, endOuter.y,
+        "L", endInner.x, endInner.y,
+        "A", innerRadius, innerRadius, 0, largeArcFlag, 1, startInner.x, startInner.y,
+        "Z"
+      ].join(" ");
+    }
+    
+    function polarToCartesian(center, radius, angle) {
+      return {
+        x: center.x + radius * Math.sin(angle),
+        y: center.y - radius * Math.cos(angle)
+      };
+    }
+    
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = s * Math.min(l, 1 - l) / 100;
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `${f(0)}${f(8)}${f(4)}`;
+    }
+  </script>    
+  
+</block>
+
+

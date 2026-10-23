@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>后台管理</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+</head>
+<body>
+<div class="wrap">
+    <div class="guestbook-detail">
+        <h3>【编辑】{$detail.name} 的通讯录
+            <small>{:date('Y-m-d H:i',$detail['create_time'])}</small>
+        </h3>
+        <form  action="{:cmf_plugin_url('MessageBoard://AdminIndex/msg_save')}" method="post">
+        <input type="hidden" name="id" id="id" value="{$detail.id}" />
+		<input type="hidden" name="cid" id="cid" value="999" />
+        <table class="table table-bordered table-hover">
+            <tr>
+                <td width="15%">负责区域</td>
+                <td><input type="text" name="area" id="id_area" value="{$detail.area}" style="border: 0px;width: 100%"/></td>
+            </tr>
+             <tr>
+                <td>职务or部门单位</td>
+                <td><input type="text" name="company" id="id_company" value="{$detail.company}" style="border: 0px;width: 100%" /></td>
+            </tr>
+             <tr>
+                <td>姓名</td>
+                <td><input type="text" name="name" id="id_name" value="{$detail.name}" style="border: 0px;width: 100%" /></td>
+            </tr>
+            <tr>
+                <td>手机</td>
+                <td><input type="text" name="mobile" id="id_mobile" value="{$detail.mobile}" style="border: 0px;width: 100%" /></td>
+            </tr>
+            <tr>
+                <td>固话</td>
+                <td><input type="text" name="tel" id="id_tel" value="{$detail.tel}" style="border: 0px;width: 100%" /></td>
+            </tr>
+            <tr>
+                <td>传真</td>
+                <td><input type="text" name="fax" id="id_fax" value="{$detail.fax}" style="border: 0px;width: 100%" /></td>
+            </tr>
+            <tr>
+                <td>邮箱</td>
+                <td><input type="text" name="email" id="id_email" value="{$detail.email}" style="border: 0px;width: 100%" /></td>
+            </tr>
+            <tr>
+                <td>详细地址</td>
+                <td><input type="text" name="address" id="id_address" value="{$detail.address}" style="border: 0px;width: 100%" /></td>
+            </tr>
+        </table>
+        <input class="btn btn-primary" type="submit" value="保存" />
+        <a href="{:cmf_plugin_url('MessageBoard://AdminIndex/contact')}" class="btn btn-primary">返回</a>
+        </form>
+    </div>
+</div>
+<include file="public/scripts"/>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+    "name": "文章列表页双列显示",
+    "action": "portal/List/index",
+    "description": "文章列表双列模板文件",
+    "order": 25.0,
+    "more": {
+        "vars": {
+            "page_count": {
+                "title": "每页文章数量",
+                "value": 8,
+                "type": "number",
+                "tip": "列表页每页显示文章的数量"
+            }
+        }
+    }
+}

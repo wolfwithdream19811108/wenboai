@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>一键生成xml</title>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>一键生成xml</a></li>
+    </ul>
+    <div class="common-form">
+        <div class="well">
+            <p>
+                <form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Sitemap://AdminIndex/addxml',array(),true)}">
+                <b><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">一键生成xml</button></b>
+                </form>
+            </p>
+            <p>
+                <b>xml地址:</b><a href="{$host}/sitemap.xml" target="_blank">{$host}/sitemap.xml</a><br>
+                <b>txt地址:</b><a href="{$host}/sitemap.txt" target="_blank">{$host}/sitemap.txt</a>
+            </p>
+            <p>
+            <form method="post" class="js-ajax-form" action="{:cmf_plugin_url('Sitemap://AdminIndex/pushBaidu',array(),true)}">
+                <b><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">推送百度</button></b>
+            </form>
+            </p>
+        </div>
+    </div>
+</div>
+<include file="public/scripts"/>
+</body>
+</html>

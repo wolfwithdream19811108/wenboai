@@ -1,0 +1,175 @@
+<include file="public@head"/>
+<style>
+.display_mode{ display:none;}
+</style>
+</head>
+<body>
+	<div class="wrap">
+		<ul class="nav nav-tabs">
+			<li><a href="{:cmf_plugin_url('DuanshiAd://AdminIndex/index')}">广告列表</a></li>
+			<li class="active"><a>编辑广告</a></li>
+		</ul>
+		<form method="post" class="form-horizontal js-ajax-form margin-top-20" action="{:cmf_plugin_url('DuanshiAd://AdminIndex/editPost')}">
+			<div class="form-group">
+				<label for="input-name" class="col-sm-2 control-label">名称<span class="form-required">*</span></label>
+				<div class="col-md-6 col-sm-10">
+					<input type="text" class="form-control" id="input-name" name="name" value="{$result.name}" required>
+				</div>
+			</div>
+            <div class="form-group">
+            <label for="input-name" class="col-sm-2 control-label">完整地址<span class="form-required">*</span></label>
+            <div class="col-md-6 col-sm-10">
+                <input type="text" class="form-control" id="input-name" name="url" placeholder="http://xxx.xx.xx" value="{$result.url}" required>
+            </div>
+        </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label">广告图<span class="form-required">*</span></label>
+                <div class="col-md-6 col-sm-10">
+                    <input type="text" class="form-control" name="img" value="{$result.img}" id="thumbnail" required>
+                    <div>
+                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                <if $result.img>
+                                <img src="/upload/{$result.img}" id="thumbnail-preview" width="120" style="cursor: pointer">
+                                <else>
+                                <img src="/themes/admin_simpleboot3/public/assets/images/default-thumbnail.png" id="thumbnail-preview" width="120" style="cursor: pointer">
+                                </if>
+                                </a>
+                                <input type="button" class="btn btn-sm btn-cancel-thumbnail" value="取消图片">
+                   </div>
+                </div>
+            </div>
+			<div class="form-group">
+				<label for="input-remark" class="col-sm-2 control-label">备注</label>
+				<div class="col-md-6 col-sm-10">
+					<textarea class="form-control" id="input-remark" name="remark">{$result.remark}</textarea>
+				</div>
+			</div>
+            <div class="form-group">
+                <label class="col-sm-2 control-label">打开方式</label>
+                <div class="col-md-6 col-sm-10">
+                    <select class="form-control" name="target">
+                        <option value="" <if $result.target == ''>selected</if>>默认方式</option>
+                        <option value="_blank" <if $result.target == '_blank'>selected</if>>新窗口打开</option>
+                    </select>
+                </div>
+            </div>
+        <div class="form-group">
+                <label class="col-sm-2 control-label">展示方式</label>
+                <div class="col-md-6 col-sm-10">
+                    <select class="form-control" id="display_mode" name="display">
+                        <option value="0" <if $result.display == 0>selected</if>>静态展示</option>
+                        <option value="1" <if $result.display == 1>selected</if>>浮窗展示</option>
+                    </select>
+                </div>
+            </div>
+        <div class="form-group display_mode">
+                <label class="col-sm-2 control-label">浮窗位置<span class="form-required">*</span></label>
+                <div class="col-md-6 col-sm-10">
+                    <select class="form-control" name="offset" required>
+                        <option value="0">居中</option>
+                        <option value="t" <if $result.offset == 't'>selected</if>>正上居中</option>
+                        <option value="b" <if $result.offset == 'b'>selected</if>>正下居中</option>
+                        <option value="l" <if $result.offset == 'l'>selected</if>>左侧居中</option>
+                        <option value="lt" <if $result.offset == 'lt'>selected</if>>左上角</option>
+                        <option value="tb" <if $result.offset == 'lb'>selected</if>>左下角</option>
+                        <option value="r" <if $result.offset == 'r'>selected</if>>右侧居中</option>
+                        <option value="rt" <if $result.offset == 'rt'>selected</if>>右上角</option>
+                        <option value="rb" <if $result.offset == 'rb'>selected</if>>右下角</option>
+                    </select>
+                </div>
+            </div>
+        <div class="form-group display_mode">
+                <label class="col-sm-2 control-label">浮窗动画<span class="form-required">*</span></label>
+                <div class="col-md-6 col-sm-10">
+                    <select class="form-control" name="anim" required>
+                        <option value="-1" <if $result.anim == '-1'>selected</if>>禁用</option>
+                        <option value="0" <if $result.anim == '0'>selected</if>>展开</option>
+                        <option value="1" <if $result.anim == '1'>selected</if>>从上弹出</option>
+                        <option value="2" <if $result.anim == '2'>selected</if>>从下弹出</option>
+                        <option value="3" <if $result.anim == '3'>selected</if>>从左弹出</option>
+                        <option value="4" <if $result.anim == '4'>selected</if>>旋转弹出</option>
+                        <option value="5" <if $result.anim == '5'>selected</if>>无</option>
+                        <option value="6" <if $result.anim == '6'>selected</if>>抖动</option>
+                    </select>
+                </div>
+            </div>
+        <div class="form-group display_mode">
+            <label for="input-name" class="col-sm-2 control-label">弹出时间<span class="form-required">*</span></label>
+            <div class="col-md-6 col-sm-10">
+                <input type="number" min="0" class="form-control" id="input-name" name="show_time" value="{$result.show_time}" required>
+                <p class="help-block">多长时间后弹出，0=页面加载显示，单位/秒</p>
+            </div>
+        </div>
+        <div class="form-group display_mode">
+            <label for="input-name" class="col-sm-2 control-label">展示时长<span class="form-required">*</span></label>
+            <div class="col-md-6 col-sm-10">
+                <input type="number" min="0" class="form-control" id="input-name" name="duration_time" value="{$result.duration_time}" required>
+                <p class="help-block">弹出后显示的时长，0=无限，单位/秒</p>
+            </div>
+        </div>
+            <div class="form-group">
+				<label for="input-remark" class="col-sm-2 control-label">广告开始时间</label>
+				<div class="col-md-6 col-sm-10">
+					<input class="form-control js-bootstrap-datetime" type="text" id="input-start_time" name="start_time" value="{:date('Y-m-d H:i',$result['start_time'])}">
+				</div>
+			</div>
+
+            <div class="form-group">
+				<label for="input-remark" class="col-sm-2 control-label">广告结束时间</label>
+				<div class="col-md-6 col-sm-10">
+					<input class="form-control js-bootstrap-datetime" type="text" name="end_time" value="{:date('Y-m-d H:i',$result['end_time'])}">
+				</div>
+			</div>
+
+            <div class="form-group">
+				<label for="input-remark" class="col-sm-2 control-label">最后更新时间</label>
+				<div class="col-md-6 col-sm-10">
+					<input class="form-control" type="text" value="{:date('Y-m-d H:i',$result['update_time'])}">
+				</div>
+			</div>
+
+            <div class="form-group">
+				<label for="input-remark" class="col-sm-2 control-label">创建时间</label>
+				<div class="col-md-6 col-sm-10">
+					<input class="form-control" type="text" value="{:date('Y-m-d H:i',$result['create_time'])}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-10">
+					<input type="hidden" name="id" value="{$result.id}">
+					<button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+					<a class="btn btn-default" href="{:cmf_plugin_url('DuanshiAd://AdminIndex/index')}">{:lang('BACK')}</a>
+				</div>
+			</div>
+		</form>
+	</div>
+	<script src="__STATIC__/js/admin.js"></script>
+<script>
+    $(function () {
+        $("#display_mode").change(function () {
+            var $this = $(this);
+            var label = $(this).val();
+			if(label == 1)
+			{
+				$(".display_mode").css("display","block");
+			}
+			else
+			{
+				$(".display_mode").css("display","none");
+			}
+        });
+		
+		$('.btn-cancel-thumbnail').click(function () {
+            $('#thumbnail-preview').attr('src', '/themes/admin_simpleboot3/public/assets/images/default-thumbnail.png');
+            $('#thumbnail').val('');
+        });
+    });
+var display_mode = '{$result.display}';
+if(display_mode == 1)
+{
+	$(".display_mode").css("display","block");
+}
+</script>
+</body>
+</html>

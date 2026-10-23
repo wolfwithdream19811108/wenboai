@@ -1,0 +1,184 @@
+{
+    "name": "首页",
+    "action": "portal/Index/index",
+    "description": "首页模板文件",
+    "order": 10.0,
+    "more": {
+        "vars": {
+            "top_slide": {
+                "title": "顶部幻灯片",
+                "value": "1",
+                "type": "text",
+                "dataSource": {
+                    "api": "admin/Slide/index",
+                    "multi": false
+                },
+                "placeholder": "请选择顶部幻灯片",
+                "tip": "顶部幻灯片",
+                "rule": {
+                    "require": true
+                }
+            }
+        },
+        "widgets": {
+            "first_section": {
+                "title": "第一版块",
+                "display": "1",
+                "vars": {
+                    "category_id": {
+                        "title": "文章分类ID",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "placeholder": "请选择分类",
+                        "rule": {
+                            "require": true
+                        }
+                    }
+                }
+            },
+            "second_section": {
+                "title": "第二版块",
+                "display": "1",
+                "vars": {
+                    "page_id": {
+                        "title": "内容单面ID",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Page/index",
+                            "multi": false
+                        },
+                        "placeholder": "请选择页面",
+                        "tip": "该版块为单页内容，请选择页面",
+                        "rule": {
+                            "require": true
+                        }
+                    },
+                    "btn_display": {
+                        "title": "是否显示下方按钮",
+                        "value": "1",
+                        "type": "select",
+                        "options": {
+                            "1": "显示",
+                            "2": "隐藏"
+                        },
+                        "rule": {
+                            "require": true
+                        }
+                    },
+                    "btn_title": {
+                        "title": "按钮文字",
+                        "value": "了解详情",
+                        "type": "text",
+                        "tip": "该文字最终显示在按钮上，因此字数不建议超过6个",
+                        "placeholder": "请输入按钮名称"
+                    },
+                    "btn_link": {
+                        "title": "按钮链接",
+                        "value": "javascript:;",
+                        "type": "text",
+                        "tip": "点击按钮后的跳转链接地址，或javascript操作"
+                    }
+                }
+            },
+            "third_section": {
+                "title": "第三版块",
+                "display": "1",
+                "vars": {
+                    "news": {
+                        "title": "新闻版块",
+                        "value": [],
+                        "type": "array",
+                        "item": {
+                            "category_id": {
+                                "title": "文章类别ID",
+                                "value": "",
+                                "type": "text",
+                                "dataSource": {
+                                    "api": "portal/Category/index",
+                                    "multi": false
+                                },
+                                "tip": "请选择新闻类别"
+                            },
+                            "count": {
+                                "title": "文章显示数量",
+                                "value": 3,
+                                "type": "number",
+                                "tip": "每个栏目文章数量"
+                            }
+                        }
+                    },
+                    "slide": {
+                        "title": "展示版块",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        }
+                    }
+                }
+            },
+            "fourth_section": {
+                "title": "第四版块",
+                "display": "1",
+                "vars": {
+                    "category_id": {
+                        "title": "文章类别ID",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "tip": "请选择新闻类别"
+                    },
+                    "count": {
+                        "title": "文章显示最大数量",
+                        "value": 10,
+                        "type": "number",
+                        "tip": "显示文章最大数量"
+                    }
+                }
+            },
+            "fifth_section": {
+                "title": "第五版块",
+                "display": "1",
+                "vars": {
+                    "category_id": {
+                        "title": "分类信息ID集",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        },
+                        "tip": "请选择父类别，系统会自动获取下边的子类展示"
+                    }
+                }
+            },
+            "sixth_section": {
+                "title": "友情链接",
+                "display": "1",
+                "vars": {
+                    "section_name": {
+                        "title": "版块名称",
+                        "value": "我们的客户",
+                        "type": "text",
+                        "tip": "显示在友情链接左侧的名称"
+                    },
+                    "excerpt": {
+                        "title": "介绍文字",
+                        "value": "",
+                        "type": "text",
+                        "tip": "版块介绍文字"
+                    }
+                }
+            }
+        }
+    }
+}

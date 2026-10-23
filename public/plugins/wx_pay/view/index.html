@@ -1,0 +1,83 @@
+<div>
+    <div class="form-group">
+        <label for="input-birthday">支付金额</label>
+        <input class="form-control" type="number" name="money" id="money" value="0.01">
+    </div>
+    <button id="wxpay">微信支付</button>
+    <div id="pay_bolck" style="display: none;">
+        <div id="pay_qrcode"></div>
+        <span id="pay_text"></span>
+    </div>
+</div>
+
+<script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/jquery.qrcode/1.0/jquery.qrcode.min.js"></script>
+
+<script>
+
+    var ua = window.navigator.userAgent.toLowerCase();
+    var out_trade_no = '';
+    var jsApiParameters = '';
+
+
+    $('#wxpay').click(function (e) {
+
+        // 微信公众号支付
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            window.location.href = "{:cmf_plugin_url('WxPay://Index/jsapi')}?money=" + $("#money").val();
+        } else if ("{:cmf_is_mobile()}") {
+            window.location.href = "{:cmf_plugin_url('WxPay://Index/h5')}?money=" + $("#money").val();
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "{:cmf_plugin_url('WxPay://Index/qrcode')}",
+                data: { "money": $("#money").val() },
+                dataType: "json",
+                success: function (response) {
+                    if (response.code == 1) {
+                        $("#pay_bolck").css('display', 'block');
+                        $("#pay_qrcode").html('');
+                        out_trade_no = response.out_trade_no;
+                        $("#pay_qrcode").qrcode({
+                            width: 200,
+                            height: 200,
+                            text: response.url,
+                            // background:,//背景色,
+                            // foreground://前景色
+                        })
+                        $("#pay_text").text("打开微信，扫描二维码支付");
+                    }
+                    else {
+                        alert(response.msg);
+                    }
+                }
+            });
+        }
+    });
+
+    //轮询订单状态
+    $(document).ready(function () {
+        setInterval("ajaxstatus()", 3000);
+    });
+
+    function ajaxstatus() {
+        if (out_trade_no != '') {
+            $.ajax({
+                url: "{:cmf_plugin_url('WxPay://Index/payFind')}?out_trade_no=" + out_trade_no,
+                type: "POST",
+                dataType: "json",
+                data: "",
+                success: function (data) {
+                    if (data.code == 1) { //订单状态为1表示支付成功
+                        window.location.href = "/";
+                    }
+                },
+                error: function () {
+                    alert("请求订单状态出错");
+                }
+            });
+        }
+    }
+
+</script>

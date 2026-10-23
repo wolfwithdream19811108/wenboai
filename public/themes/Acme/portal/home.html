@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鉴渊 - 中国文博数字典藏平台</title>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/jquery-2.0.0.min.js"></script>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/layer-v3.1.1/layer/layer.js"></script>    
+
+    <script src="__STATIC__/js/frontend.js"></script>
+     
+    <script src="__TMPL__/public/assets/js/marked.min.js" defer></script>
+    <script src="__TMPL__/public/assets/js/aichat/aichat.js" defer></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/aichat/aichat.css" type="text/css" media="screen" />    
+    <style>
+        /* 基础样式与字体 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        @font-face {
+            font-family: 'FangZheng';
+            src: local('FZShuTi'), local('STKaiti');
+            font-weight: normal;
+            font-style: normal;
+        }
+        
+        body {
+            font-family: 'FangZheng', 'SimSun', serif;
+            background-color: #f8f4e9; /* 宣纸色 */
+            color: #333;
+            line-height: 1.6;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' opacity='0.03'%3E%3Cpath d='M20,20 C30,10 70,10 80,20 C90,30 90,70 80,80 C70,90 30,90 20,80 C10,70 10,30 20,20 Z' fill='none' stroke='%23000' stroke-width='0.5'/%3E%3C/svg%3E");
+        }
+        
+        /* 布局样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部样式 */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            position: relative;
+        }
+        
+        .site-title {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #3a5e45; /* 深绿色 */
+            margin-bottom: 10px;
+            letter-spacing: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .site-title::after {
+            content: "";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: #a52a2a; /* 朱红色 */
+        }
+        
+        .site-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-top: 10px;
+        }
+        
+        .seal {
+            position: absolute;
+            right: 25%;
+            bottom: 20px;
+            width: 60px;
+            height: 60px;
+            background: #a52a2a; /* 朱红色 */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+            transform: rotate(15deg);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 功能区块样式 - 通用 */
+        .feature-section {
+            margin: 60px 0;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #d9b87c;
+        }
+        
+        .section-icon {
+            font-size: 2.5rem;
+            margin-right: 15px;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--icon-color) 0%, var(--icon-gradient) 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #3a5e45;
+            margin: 0;
+        }
+        
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        /* 鉴渊AI - 大模型问答样式 */
+        .ai-chat-section {
+            background: linear-gradient(135deg, rgba(198, 68, 65, 0.05) 0%, rgba(255, 235, 215, 0.05) 100%);
+        }
+        .ai-chat-section .section-icon {
+            --icon-color: #c64441; /* 朱砂红 */
+            --icon-gradient: #e87c7c;
+        }
+        
+        /* 河洛典库 - 文博图库样式 */
+        .gallery-section {
+            background: linear-gradient(135deg, rgba(58, 94, 69, 0.05) 0%, rgba(217, 184, 124, 0.05) 100%);
+        }
+        .gallery-section .section-icon {
+            --icon-color: #3a5e45; /* 石青 */
+            --icon-gradient: #5a8c7c;
+        }
+        
+        /* 艺术大家 - 大师作品列表样式 */
+        .masters-section {
+            background: linear-gradient(135deg, rgba(217, 184, 124, 0.05) 0%, rgba(165, 42, 42, 0.05) 100%);
+        }
+        .masters-section .section-icon {
+            --icon-color: #d9b87c; /* 杏黄 */
+            --icon-gradient: #f0d8a8;
+            color: #5a4c3f;
+        }
+        
+        /* 文博图谱 - 知识图谱样式 */
+        .knowledge-graph-section {
+            background: linear-gradient(135deg, rgba(74, 35, 90, 0.05) 0%, rgba(135, 95, 154, 0.05) 100%);
+        }
+        .knowledge-graph-section .section-icon {
+            --icon-color: #4a235a; /* 黛紫 */
+            --icon-gradient: #875f9a;
+        }
+        
+        /* 识色 - 调色盘样式 */
+        .color-search-section {
+            background: linear-gradient(135deg, rgba(184, 69, 68, 0.05) 0%, rgba(240, 208, 168, 0.05) 100%);
+        }
+        .color-search-section .section-icon {
+            --icon-color: #b84544; /* 胭脂红 */
+            --icon-gradient: #e87c7c;
+        }
+        
+        /* 识物 - 图片识别样式 */
+        .image-search-section {
+            background: linear-gradient(135deg, rgba(68, 108, 184, 0.05) 0%, rgba(168, 200, 240, 0.05) 100%);
+        }
+        .image-search-section .section-icon {
+            --icon-color: #446cb8; /* 靛蓝 */
+            --icon-gradient: #7ca0e8;
+        }
+        
+        /* 鉴渊AI - 大模型问答样式 */
+        .chat-container {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            padding: 20px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        }
+        
+        .chat-input textarea {
+            width: 100%;
+            height: 120px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: none;
+            font-size: 1rem;
+        }
+        
+        .chat-input button {
+            background: #3a5e45;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 6px;
+            margin-top: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+        
+        .chat-input button:hover {
+            background: #2d4a38;
+        }
+        
+        .chat-examples {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .example-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .example-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* 河洛典库 - 文博图库样式 */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .gallery-item {
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-item-overlay {
+            transform: translateY(0);
+        }
+        
+        /* 艺术大家 - 大师作品列表样式 */
+        .masters-carousel {
+            display: flex;
+            overflow-x: auto;
+            gap: 25px;
+            padding: 15px 5px;
+            scrollbar-width: thin;
+            scrollbar-color: #d9b87c transparent;
+        }
+        
+        .masters-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .masters-carousel::-webkit-scrollbar-thumb {
+            background: #d9b87c;
+            border-radius: 4px;
+        }
+        
+        .master-card {
+            flex: 0 0 auto;
+            width: 280px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s;
+        }
+        
+        .master-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .master-image {
+            height: 180px;
+            overflow: hidden;
+        }
+        
+        .master-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .master-info {
+            padding: 15px;
+        }
+        
+        .master-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3a5e45;
+            margin-bottom: 5px;
+        }
+        
+        .master-dynasty {
+            color: #a52a2a;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+        
+        .master-desc {
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        /* 文博图谱 - 知识图谱样式 */
+        .graph-container {
+            height: 400px;
+            background: #f0ebe0;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .graph-visual {
+            width: 90%;
+            height: 90%;
+            position: relative;
+        }
+        
+        .graph-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: #3a5e45;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 0 0 10px rgba(58, 94, 69, 0.2);
+            z-index: 10;
+        }
+        
+        .graph-node {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: #d9b87c;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-size: 0.8rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .graph-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .graph-connection {
+            position: absolute;
+            height: 2px;
+            background: rgba(58, 94, 69, 0.3);
+            transform-origin: 0 0;
+        }
+        
+        /* 识色 - 调色盘样式 */
+        .color-picker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+        
+        .color-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: conic-gradient(red, yellow, lime, aqua, blue, magenta, red);
+            position: relative;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .color-selector {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+        }
+        
+        .color-controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .color-slider {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 80px;
+        }
+        
+        .color-slider input {
+            width: 100%;
+        }
+        
+        .color-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .color-result-item {
+            height: 120px;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* 识物 - 图片识别样式 */
+        .image-upload {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            padding: 30px;
+            border: 2px dashed #d9b87c;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #3a5e45;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .upload-btn {
+            background: #3a5e45;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-top: 10px;
+        }
+        
+        .upload-btn:hover {
+            background: #2d4a38;
+        }
+        
+        .upload-preview {
+            margin-top: 30px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .preview-container {
+            width: 250px;
+            height: 250px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f9f9f9;
+        }
+        
+        .preview-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .chat-container {
+                flex-direction: column;
+            }
+            
+            .gallery-container {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+            
+            .site-title {
+                font-size: 3.5rem;
+            }
+            
+            .section-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .feature-section {
+                padding: 20px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .color-wheel {
+                width: 250px;
+                height: 250px;
+            }
+            
+            .color-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .site-title {
+                font-size: 2.8rem;
+                letter-spacing: 8px;
+            }
+            
+            .seal {
+                width: 45px;
+                height: 45px;
+                font-size: 0.7rem;
+                right: 20%;
+            }
+            
+            .section-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.8rem;
+                margin-right: 10px;
+            }
+        }
+        
+        
+/*     .row-container {
+        position: relative;
+        width: 100%;  
+        max-width: 800px;  
+        height: 100vh;  
+        margin: 0 auto;  
+        box-sizing: border-box; 
+    }   */    
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        /* 底部样式 */
+        footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 50px;
+            color: #777;
+            font-size: 0.9rem;
+            border-top: 1px solid #e8e1d0;
+        }
+    </style>
+</head>
+<body>
+   
+    
+    <div class="container">
+        <header>
+            <h1 class="site-title">河洛典库</h1>
+            <p class="site-subtitle">承千年文脉，启数字典藏</p>
+            <div class="seal">文博典藏</div>
+        </header>
+        
+
+        
+        <!-- 鉴渊AI - 大模型问答 -->
+        <section class="feature-section ai-chat-section">
+            <div class="section-header">
+                <div class="section-icon">🤖</div>
+                <div>
+                    <h2 class="section-title">鉴渊AI</h2>
+                    <p class="section-subtitle">文博领域专业大模型，智能问答与内容生成</p>
+                </div>
+            </div>
+            
+             <div class="row-container" id="ai-chat-container"></div>    
+            
+            <div class="chat-container">
+                <div class="chat-input">
+                    <textarea placeholder="请输入关于文物的问题..."></textarea>
+                    <button>发送问题</button>
+                </div>
+                
+                <div class="chat-examples">
+                    <div class="example-card">
+                        <strong>青铜器鉴别</strong>
+                        <p>如何鉴别商周时期青铜器的真伪？</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>瓷器历史</strong>
+                        <p>请介绍明代青花瓷的发展历程</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>书画赏析</strong>
+                        <p>解析《清明上河图》的艺术价值</p>
+                    </div>
+                    <div class="example-card">
+                        <strong>文化符号</strong>
+                        <p>龙纹在中国古代器物中的象征意义</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 河洛典库 - 文博图库 -->
+        <section class="feature-section gallery-section">
+            <div class="section-header">
+                <div class="section-icon">📚</div>
+                <div>
+                    <h2 class="section-title">河洛典库</h2>
+                    <p class="section-subtitle">1200万件文博与工艺美术珍品</p>
+                </div>
+            </div>
+            
+            <div class="gallery-container">
+                <div class="gallery-item">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23d9b87c'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='20' fill='%23333' text-anchor='middle'%3E青铜鼎%3C/text%3E%3C/svg%3E" alt="青铜鼎">
+                    <div class="gallery-item-overlay">
+                        <div>商代青铜鼎</div>
+                        <small>祭祀礼器，国家一级文物</small>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%233a5e45'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='20' fill='%23fff' text-anchor='middle'%3E青花瓷%3C/text%3E%3C/svg%3E" alt="青花瓷">
+                    <div class="gallery-item-overlay">
+                        <div>元青花瓷瓶</div>
+                        <small>景德镇窑，海外回流珍品</small>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23a52a2a'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='20' fill='%23fff' text-anchor='middle'%3E玉器%3C/text%3E%3C/svg%3E" alt="玉器">
+                    <div class="gallery-item-overlay">
+                        <div>汉代玉璧</div>
+                        <small>和田白玉，龙纹雕刻</small>
+                    </div>
+                </div>
+                
+                <div class="gallery-item">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='200' viewBox='0 0 300 200'%3E%3Crect width='300' height='200' fill='%23555'/%3E%3Ctext x='150' y='100' font-family='Arial' font-size='20' fill='%23fff' text-anchor='middle'%3E书画%3C/text%3E%3C/svg%3E" alt="书画">
+                    <div class="gallery-item-overlay">
+                        <div>明代山水画</div>
+                        <small>文徵明，纸本水墨</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 艺术大家 - 大师作品列表 -->
+        <section class="feature-section masters-section">
+            <div class="section-header">
+                <div class="section-icon">🎨</div>
+                <div>
+                    <h2 class="section-title">艺术大家</h2>
+                    <p class="section-subtitle">中国艺术大师经典作品鉴赏</p>
+                </div>
+            </div>
+            
+            <div class="masters-carousel">
+                <div class="master-card">
+                    <div class="master-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='180' viewBox='0 0 280 180'%3E%3Crect width='280' height='180' fill='%23d9b87c'/%3E%3Ctext x='140' y='90' font-family='Arial' font-size='16' fill='%23333' text-anchor='middle'%3E齐白石作品%3C/text%3E%3C/svg%3E" alt="齐白石">
+                    </div>
+                    <div class="master-info">
+                        <div class="master-name">齐白石</div>
+                        <div class="master-dynasty">近现代</div>
+                        <div class="master-desc">中国近现代绘画大师，世界文化名人，擅长画花鸟、虫鱼、山水、人物。</div>
+                    </div>
+                </div>
+                
+                <div class="master-card">
+                    <div class="master-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='180' viewBox='0 0 280 180'%3E%3Crect width='280' height='180' fill='%233a5e45'/%3E%3Ctext x='140' y='90' font-family='Arial' font-size='16' fill='%23fff' text-anchor='middle'%3E徐悲鸿作品%3C/text%3E%3C/svg%3E" alt="徐悲鸿">
+                    </div>
+                    <div class="master-info">
+                        <div class="master-name">徐悲鸿</div>
+                        <div class="master-dynasty">近现代</div>
+                        <div class="master-desc">中国现代美术奠基者，杰出画家和美术教育家，尤以画马闻名于世。</div>
+                    </div>
+                </div>
+                
+                <div class="master-card">
+                    <div class="master-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='180' viewBox='0 0 280 180'%3E%3Crect width='280' height='180' fill='%23a52a2a'/%3E%3Ctext x='140' y='90' font-family='Arial' font-size='16' fill='%23fff' text-anchor='middle'%3E张大千作品%3C/text%3E%3C/svg%3E" alt="张大千">
+                    </div>
+                    <div class="master-info">
+                        <div class="master-name">张大千</div>
+                        <div class="master-dynasty">近现代</div>
+                        <div class="master-desc">中国泼墨画家、书法家，被西方艺坛赞为"东方之笔"。</div>
+                    </div>
+                </div>
+                
+                <div class="master-card">
+                    <div class="master-image">
+                        <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='180' viewBox='0 0 280 180'%3E%3Crect width='280' height='180' fill='%23555'/%3E%3Ctext x='140' y='90' font-family='Arial' font-size='16' fill='%23fff' text-anchor='middle'%3E八大山人作品%3C/text%3E%3C/svg%3E" alt="八大山人">
+                    </div>
+                    <div class="master-info">
+                        <div class="master-name">八大山人</div>
+                        <div class="master-dynasty">清代</div>
+                        <div class="master-desc">明末清初画家，中国画一代宗师，擅长水墨写意，画风奇特。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 文博图谱 - 知识图谱 -->
+        <section class="feature-section knowledge-graph-section">
+            <div class="section-header">
+                <div class="section-icon">🔍</div>
+                <div>
+                    <h2 class="section-title">文博图谱</h2>
+                    <p class="section-subtitle">探索文物之间的知识关系网络</p>
+                </div>
+            </div>
+            
+            <div class="graph-container">
+                <div class="graph-visual">
+                    <div class="graph-center">中国文物</div>
+                    
+                    <!-- 知识图谱节点 -->
+                    <div class="graph-node" style="top: 20%; left: 20%;">青铜器</div>
+                    <div class="graph-node" style="top: 20%; left: 80%;">瓷器</div>
+                    <div class="graph-node" style="top: 80%; left: 20%;">书画</div>
+                    <div class="graph-node" style="top: 80%; left: 80%;">玉器</div>
+                    <div class="graph-node" style="top: 40%; left: 40%;">礼器</div>
+                    <div class="graph-node" style="top: 40%; left: 60%;">纹饰</div>
+                    <div class="graph-node" style="top: 60%; left: 40%;">工艺</div>
+                    <div class="graph-node" style="top: 60%; left: 60%;">材质</div>
+                    
+                    <!-- 知识图谱连接线 (使用JavaScript动态生成) -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- 识色 - 调色盘搜索 -->
+        <section class="feature-section color-search-section">
+            <div class="section-header">
+                <div class="section-icon">🎨</div>
+                <div>
+                    <h2 class="section-title">识色</h2>
+                    <p class="section-subtitle">通过色彩探索文博作品</p>
+                </div>
+            </div>
+            
+            <div class="color-picker">
+                <div class="color-wheel">
+                    <div class="color-selector"></div>
+                </div>
+                
+                <div class="color-controls">
+                    <div class="color-slider">
+                        <label>色相</label>
+                        <input type="range" min="0" max="360" value="180">
+                    </div>
+                    <div class="color-slider">
+                        <label>饱和度</label>
+                        <input type="range" min="0" max="100" value="80">
+                    </div>
+                    <div class="color-slider">
+                        <label>明度</label>
+                        <input type="range" min="0" max="100" value="60">
+                    </div>
+                </div>
+                
+                <button class="upload-btn">搜索该色彩文物</button>
+            </div>
+            
+            <div class="color-results">
+                <div class="color-result-item" style="background: #d9b87c;"></div>
+                <div class="color-result-item" style="background: #3a5e45;"></div>
+                <div class="color-result-item" style="background: #a52a2a;"></div>
+                <div class="color-result-item" style="background: #556;"></div>
+                <div class="color-result-item" style="background: #8c531b;"></div>
+                <div class="color-result-item" style="background: #3c7269;"></div>
+            </div>
+        </section>
+        
+        <!-- 识物 - 图片识别 -->
+        <section class="feature-section image-search-section">
+            <div class="section-header">
+                <div class="section-icon">🔎</div>
+                <div>
+                    <h2 class="section-title">识物</h2>
+                    <p class="section-subtitle">上传图片识别文博作品</p>
+                </div>
+            </div>
+            
+            <div class="image-upload">
+                <div class="upload-icon">📸</div>
+                <div class="upload-text">
+                    <p>上传文物图片，AI将自动识别并匹配相似文物</p>
+                    <small>支持 JPG、PNG 格式，最大 10MB</small>
+                </div>
+                
+                <button class="upload-btn">选择图片</button>
+                
+                <div class="upload-preview">
+                    <div class="preview-container">
+                        <span>图片预览区</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            <p>© 2023 鉴渊文博数字典藏平台 | 传承中华文明，弘扬传统文化</p>
+            <p>地址：中国北京市海淀区中关村南大街33号 | 联系电话：010-88888888</p>
+        </footer>
+    </div>
+
+    <script>
+    
+
+        var GV = {
+            ROOT: "__ROOT__/",
+            WEB_ROOT: "__WEB_ROOT__/",
+            JS_ROOT: "static/js/"
+        };        
+
+    
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            window.displayAnalysisObject = <?php echo json_encode($analysis_object); ?>; 
+            console.log(window.displayAnalysisObject)
+            // 获取预设问题
+            const questions = [<foreach name="questions" item="question">'{$question}',</foreach>];
+            
+            // 实例化聊天组件
+            new AIChatComponent(
+                document.getElementById('ai-chat-container'), 
+                { questions: questions }
+            );
+        });
+  
+       
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        // 交互效果
+        document.querySelectorAll('.example-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const question = this.querySelector('p').textContent;
+                document.querySelector('.chat-input textarea').value = question;
+            });
+        });
+        
+        document.querySelector('.chat-input button').addEventListener('click', function() {
+            const question = document.querySelector('.chat-input textarea').value;
+            if (question) {
+                alert('AI正在思考：' + question);
+            } else {
+                alert('请输入问题');
+            }
+        });
+        
+        document.querySelectorAll('.graph-node').forEach(node => {
+            node.addEventListener('click', function() {
+                const concept = this.textContent;
+                alert('探索概念：' + concept);
+            });
+        });
+        
+        document.querySelector('.color-search-section .upload-btn').addEventListener('click', function() {
+            alert('正在搜索相似色彩的文物...');
+        });
+        
+        document.querySelector('.image-search-section .upload-btn').addEventListener('click', function() {
+            alert('请选择要识别的文物图片');
+        });
+    </script>
+    <script src="https://static.hongmengyishu.com/public/static/js/wind.js"></script>  
+</body>
+</html>

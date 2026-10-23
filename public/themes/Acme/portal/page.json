@@ -1,0 +1,5 @@
+{
+    "name": "单页模板",
+    "action": "portal/Page/index",
+    "description": "页面单页模板"
+}

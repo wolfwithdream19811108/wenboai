@@ -1,0 +1,209 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+<meta charset="UTF-8"> 
+<script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+
+
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+
+<script src="__TMPL__/public/assets/js/openseadragon-bin-2.4.0/openseadragon.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
+<link rel="stylesheet" href="__TMPL__/public/assets/js/lightgallery/css/lightgallery.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />
+ <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/base.css" type="text/css" media="screen" />-->
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+<link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="__TMPL__/public/assets/js/doodle.js"></script>
+
+<block name="head">
+	<meta charset="'UTF-8'">
+	<title>涂鸦设计</title>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+	<meta name="description" content="{$site_info.site_seo_description|default=''}">
+	<meta name="author" content="Crazy">
+	<link rel="shortcut icon" href="__TMPL__/public/assets/imgs/favicon.png">
+	   
+	<include file="public@scripts"/>
+	 
+ <style type="text/css">
+ 
+     .doodle-container {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+      .reimaginePic {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }    
+ 
+ 
+	#cavs{
+		border: 1px solid #000000;
+		border-radius:25px;
+		box-shadow: 10px 10px 5px #888888;
+		 display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-top:10px;
+        align-items: center;
+	}
+	#kuang{
+		margin-left: 40px;
+		width:1100px;
+		height: 50px;
+		margin-top: 15px;
+		border-radius:25px;
+		box-shadow: 10px 10px 5px #888888;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+		
+		
+	}
+	#k1{
+		float: left;
+		margin-left: 43px;
+	}
+	
+	
+     .button-container {
+        display: flex;
+        justify-content:space-between;
+    }	
+.left-buttons {
+    order: 1;
+}
+
+.right-buttons {
+    order: 2;
+}
+	.button {
+    background-color: #F9D448; /* 土黄色 */
+    border: none;
+    color: white;
+    padding: 6px 15px;
+    text-align: center;
+    border-radius:25px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+}
+	.button2:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24),0 17px 50px 0 rgba(0,0,0,0.19);
+}
+    .input-container {
+      display: flex;
+      align-items: center;
+      width: 480px;
+      margin-top:15px;
+      border: 1px solid rgb(237, 241, 251);
+      background-color: rgb(237, 241, 251);
+      padding: 5px;
+      border-radius: 5px;
+    }
+    
+    .input-field {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    .submit-button {
+      padding: 10px 20px;
+      background-color: #f9f9f9;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+
+
+
+
+</block>
+
+
+
+<body style="background:transparent">
+    
+<div class="doodle-container">
+    
+    
+    <div class="button-container">
+        <div class="left-buttons">
+            <button id="Line">画笔</button>
+            <button id="xpc">橡皮</button>
+        </div>
+        <div class="right-buttons">
+            <button id="qingping">清屏</button>
+            <button id="chexiao">撤销</button>
+            <button id="restore">恢复</button>
+        </div>
+    </div>
+    
+  
+	<canvas id = "cavs" width ="500" height="500"></canvas>
+
+
+	
+    <div class="input-container">
+        <input type="text" class="input-field" placeholder="请输入要生成图片的提示语">
+        <button class="submit-button" id="xiazai">生成</button>
+    </div>	
+	
+	
+	
+
+    <div class="reimaginePic">
+    
+        <img id="loading"  src="/themes/Acme/public/assets/img/loading.gif"/ style="display:none">
+        <img id="reimaginePic" style="width:500px" src="" style="display:none"/>
+    </div>
+    
+    
+    
+    
+<!--    <div id="kuang">
+    	<div id="k1">
+    	<input type="color" id="color" class="button button2">
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="下载" id="xiazai" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="撤销" id="chexiao" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="清屏" id="qingping" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="线条" id="Line" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input type="button" value="橡皮" id="xpc" class="button button2" >
+    	</div>
+    	<div id="k1">
+    	<input class="button button2" type="range" id="cuxi" value="3"  min="0" max="10">
+    	</div>
+	</div>-->
+    
+</div>
+
+
+</body>
+</html>

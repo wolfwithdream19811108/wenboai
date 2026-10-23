@@ -1,0 +1,265 @@
+.knowledgegraph {
+    position: relative;
+    background-color: black;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: calc(100vh - 120px);
+    overflow: hidden;
+}
+
+#graph {
+    width: 100%;
+    height: 100%;
+    background: black;
+}
+
+.control-panel {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 180px;
+}
+
+.control-button {
+    width: 100%;
+    padding: 8px 12px;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.control-select {
+    width: 100%;
+    padding: 8px;
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+#ref_image_url {
+    display: none;
+}
+
+.slider-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.slider-label {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.slider-value-container {
+    display: flex;
+    width: 150px;
+    align-items: center;
+    gap: 10px;
+}
+
+.range-slider {
+    flex-grow: 1;
+    background: #333;
+    accent-color: #555;
+    height: 8px;
+    border-radius: 4px;
+}
+
+.slider-value {
+    color: white;
+    min-width: 40px;
+}
+
+.context-menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 6px 0;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    width: 220px;
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow: hidden;
+}
+
+.context-menu li {
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #495057;
+    white-space: nowrap;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.context-menu li:last-child {
+    border-bottom: none;
+}
+
+.context-menu li:hover {
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+#loadingIndicator {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.loading-inner {
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Artwork popup styles */
+.artwork-image-fullwidth {
+    width: 100%;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.artwork-image-fullwidth img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: 4px;
+    display: block;
+}
+
+.artwork-details {
+    padding: 0 15px;
+    position: relative;
+}
+
+.artwork-details h3 {
+    margin: 0 0 10px 0;
+    font-size: 22px;
+    color: #fff;
+}
+
+.artist {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+.meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.meta-item {
+    background-color: #222;
+    padding: 12px;
+    border-radius: 4px;
+}
+
+.meta-label {
+    display: block;
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.meta-value {
+    font-size: 14px;
+    color: #fff;
+}
+
+.image-count {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    background: rgba(0,0,0,0.7);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.layui-layer {
+    background: black !important;
+}
+
+.layui-layer-title {
+    display: none !important;
+}
+
+.layui-layer-setwin {
+    filter: invert(1) !important;
+}
+
+.detail-buttons-right {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.detail-button {
+    background-color: #1E88E5;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    width: 100px;
+    text-align: center;
+}
+
+.detail-button:hover {
+    background-color: #1565C0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.detail-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.2);
+}

@@ -1,0 +1,7 @@
+*
+!.gitignore
+!install.lock
+!conf/
+conf/*
+!conf/database.local.php
+!conf/config.local.php

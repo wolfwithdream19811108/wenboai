@@ -1,0 +1,81 @@
+<include file="public@head"/>
+<include file="public@scripts"/>
+
+<block name="body">
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                    <h1>搜索结果:{$keyword}</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+   
+
+  <!--container start-->
+    <div class="container">
+        <div class="" id="my-gallery-container">
+            <!--文章列表-->
+<!--                <php>
+
+					$where['post.post_title|post.post_author|post.post_age|post.post_museum']    = ['like', "%$keyword%"];
+                </php>-->
+  
+                <foreach name="articles" item="vo">
+					<div class="item" onclick="openImage('{$vo.more.thumbnail}')">
+						<notempty name="$vo.more.thumbnail">
+							<div  align="left" class="blog-img img">
+									
+                                  <if condition="$vo.firstpic_width gt $vo.firstpic_height*4"><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!longimg'); ?>" />
+                                  <elseif condition="$vo.firstpic_height gt $vo.firstpic_width*2"><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!shuimg'); ?>" />  
+                                  <else /><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!300X'); ?>" />
+                                  </if>
+							</div>
+						</notempty>
+								{$vo.post_title}| {$vo.post_age}| {$vo.post_museum}
+
+                    </div>
+                    
+                    
+                    
+                </foreach>
+                    
+        </div>
+
+    </div>
+
+	<div class="text-center">
+		<ul class="pagination">
+			<page/>
+		</ul>
+	</div>
+    <!--container end-->
+
+
+
+<script type="text/javascript">
+
+
+ function openImage(imgUrl) {
+    // 向A网页发送消息
+    window.parent.postMessage({
+        action: 'imageClicked',
+        imageUrl: imgUrl
+    }, 'https://www.hongmengyishu.com'); // 指定确切的来源以提高安全性       
+        
+        
+}
+
+       
+
+</script>
+
+
+
+
+
+
+</block>

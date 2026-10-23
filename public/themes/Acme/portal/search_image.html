@@ -1,0 +1,636 @@
+<extend name="public@base" />
+
+<block name="head">
+  <meta charset="UTF-8" />
+  <meta name="keywords" content="{$site_info.site_seo_keywords|default=''}" />
+  <meta
+    name="description"
+    content="{$site_info.site_seo_description|default=''}"
+  />
+  <meta name="author" content="Crazy" />
+  <link rel="shortcut icon" href="__TMPL__/public/assets/img/favicon.png" />
+  <title>识物</title>
+
+  <style>
+  .container1 {
+justify-content:center;
+align-items:center;
+display:-webkit-flex;
+  
+}
+    .page-search {
+      position: absolute;
+/*      left: 52%;
+      -webkit-transform: translate(-50%);
+      transform: translate(-50%);*/
+      top: 470px;
+      z-index: 9;
+    }
+    .page-recom {
+      margin: 0 auto;
+      padding: 40px 0 0;
+      overflow: hidden;
+    }
+    .page-recom-item {
+      height: 157px;
+      margin: 0 20px 20px 0;
+      float: left;
+      background-size: cover;
+      background-position: 50%;
+      position: relative;
+    }
+    .page-recom-item img {
+      max-width: 100%;
+      max-height: 100%;
+      opacity: 0;
+    }
+    .page-recom-item .title {
+      position: absolute;
+      height: 60px;
+      line-height: 80px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 0 0 20px;
+      color: #fff;
+      font-size: 18px;
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAAA7CAMAAACXH2WSAAAAS1BMVEUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADmYDp0AAAAGXRSTlNoFW1hCwcCOXEPP11WUk1JRDMvKiUhHVoZI1+LSAAAAZxJREFUeNrtkelywyAMhDd2D+Ped9//SRsVzAZGaodm6l/7xbYOJAEbXAkXCSNhxsClcJEwEmYMXAgXCSNhxkASLhImFOaQSeWTkn3tNadgyXRSs3k1Vyu5yKm0KdGk0l9DNrXdKe/eZOjar92ln8GQx2Alb2CWM1Es72nwpNsqJeEKc6zkIvO0TV9/YjbRaY/LfLDIU/QzuBGP2HT1t8VB9EiYn8CncMG7cJEwAXgTLhImAK/CRcIE4EW4SJgAPAsXCROAJ+EiYQJwLVwkTCjMmp3VHDPEgpVBSbCYtqb7acxzkTDm4O3HRYuY7rPO4esCa5rp1WPv9hKswkXCBOBRuEiYADwIFwkTgHvhImECcCdcJEwAboWLhAnAh3DBjXCRMAGYhYuECUD5Yg89sfMfiDPGoDBjAJbv0cXW85vmwfaZ9veHbYNP2/XfGxp/P4EQo0zCRcJImFFhlmlZ7P3mGE3ml9f8GllcauypPbllKh7rc4KGu5QqBlP+HbGQE8mU60735ExWliIzhIVmaG1EvX52eFEswkPCRHwBXm6KJFkJjWAAAAAASUVORK5CYII=);
+      background-repeat: no-repeat;
+      background-size: auto 60px;
+    }
+    .page-footer {
+      margin: 30px 0 50px;
+      width: 100%;
+      text-align: center;
+    }
+    .page-footer a {
+      color: #333;
+      font-size: 14px;
+    }
+
+    .graph-d20-search {
+      position: relative;
+      color: #333;
+      float: left;
+      z-index: 10;
+    }
+    @media (min-width: 1180px) {
+      .graph-d20-search-result {
+        width: 672px;
+      }
+    }
+    @media (max-width: 1180px) {
+      .graph-d20-search-result {
+        width: 560px;
+      }
+    }
+    .graph-d20-search-wrapper {
+      position: relative;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-radius: 10px 0 0 10px;
+      border: 2px solid #c4c7ce;
+      border-right: 0;
+      background: #fff;
+      float: left;
+      width: 350px;
+      height: 45px;
+    }
+    .graph-d20-short-search-wrapper {
+      position: relative;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      border-radius: 10px 0 0 10px;
+      border: 2px solid #c4c7ce;
+      border-right: 0;
+      background: #fff;
+      float: left;
+      width: 250px;
+      height: 45px;
+    }
+    @media (min-width: 1180px) {
+      .graph-d20-search-wrapper-result {
+        width: 558px;
+      }
+    }
+    @media (max-width: 1180px) {
+      .graph-d20-search-wrapper-result {
+        width: 446px;
+      }
+    }
+    .graph-d20-search-wrapper-input {
+      width: 90%;
+      color: #222;
+      font-size: 16px;
+      height: 16px;
+      line-height: 17px;
+      padding: 12px 0;
+      text-indent: 14px;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      border-radius: 10px 0 0 10px;
+      margin-top: 5px;
+    }
+    .graph-d20-search-wrapper-input-focus {
+      border: 2px solid #4e6ef2 !important;
+      border-right: 0 !important;
+    }
+    .graph-d20-search-wrapper-input-result {
+      padding: 10px 0;
+    }
+    .graph-d20-search-wrapper:hover {
+      border: 2px solid #a7aab5;
+      border-right: 0;
+    }
+    .graph-d20-search-wrapper input::-webkit-input-placeholder {
+      color: #9195a3;
+    }
+    .graph-d20-search-wrapper-camera {
+      position: absolute;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      margin-top: 8px;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/camera.png)
+        no-repeat;
+      background-size: contain;
+    }
+    .graph-d20-search-wrapper-camera-title {
+      display: none;
+      width: 84px;
+      height: 34px;
+      line-height: 35px;
+      font-size: 13px;
+      text-align: center;
+      background: #fff;
+      position: absolute;
+      right: -16px;
+      bottom: -44px;
+      -webkit-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+    }
+    .graph-d20-search-wrapper-camera-selected,
+    .graph-d20-search-wrapper-camera:hover {
+      cursor: pointer;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/cameraSel.png)
+        no-repeat;
+      background-size: contain;
+    }
+    .graph-d20-search-wrapper-camera:hover
+      + .graph-d20-search-wrapper-camera-title {
+      display: block;
+    }
+    .graph-d20-search-wrapper-camera-result {
+      margin-top: 6px;
+    }
+    .graph-d20-search-wrapper-error {
+      position: absolute;
+      top: 0;
+      right: 15px;
+      font-size: 14px;
+      color: #9195a3;
+      padding-left: 20px;
+      height: 40px;
+      line-height: 40px;
+      background: #fff
+        url(https://mms-graph.cdn.bcebos.com/activity/pc/waring.png) no-repeat 0;
+      background-size: 16px 16px;
+    }
+    .graph-d20-search-wrapper-error-result {
+      height: 36px;
+      line-height: 36px;
+    }
+    .graph-d20-search-btn {
+      float: left;
+      width: 100px;
+      background: #48cfad;
+      font-size: 17px;
+      color: #fff;
+      height: 44px;
+      /*      line-height: 45px;
+          text-indent: 22px;*/
+      border-radius: 0 10px 10px 0;
+      cursor: pointer;
+    }
+    .graph-d20-search-btn:hover {
+      background: #3eb798;
+    }
+    .graph-d20-search-btn-result {
+      width: 112px;
+      height: 40px;
+      line-height: 41px;
+    }
+    .graph-d20-search-layer {
+      position: absolute;
+      top: 48px;
+      left: 0;
+      right: 0;
+      background: #fff;
+      z-index: 99;
+      -webkit-box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      color: #9195a3;
+      font-size: 13px;
+    }
+    .graph-d20-search-layer-loading {
+      text-align: center;
+      margin-top: 45px;
+      margin-bottom: 45px;
+    }
+    .graph-d20-search-layer-error {
+      text-align: center;
+      line-height: 1;
+      margin-top: 33px;
+      margin-bottom: 33px;
+    }
+    .graph-d20-search-layer-error > p {
+      padding: 0 65px;
+    }
+    .graph-d20-search-layer-error-text {
+      display: inline-block;
+      word-break: break-all;
+      height: auto;
+      line-height: 16px;
+      font-size: 0;
+      text-indent: 20px;
+      padding: 1px 0;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/waring.png)
+        no-repeat 0 0;
+      background-size: 16px 16px;
+    }
+    .graph-d20-search-layer-error-text > span {
+      font-size: 13px;
+    }
+    .graph-d20-search-layer-error-reupload {
+      color: #315efb;
+    }
+    .graph-d20-search-layer-error-reupload:hover {
+      cursor: pointer;
+    }
+    .graph-d20-search-layer-error-format {
+      font-size: 13px;
+      margin-top: 7px;
+    }
+    .graph-d20-search-layer-contain {
+      display: -webkit-box;
+      display: -ms-flexbox;
+      display: flex;
+      -webkit-box-orient: vertical;
+      -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -webkit-box-flex: 1;
+      -ms-flex: 1;
+      flex: 1;
+      margin-left: 24px;
+      margin-right: 24px;
+    }
+    .graph-d20-search-layer-drag {
+      height: 60px;
+      line-height: 60px;
+      margin-top: 24px;
+      text-align: center;
+      background: #fff;
+      border: 1px dashed #d7d9e0;
+      border-radius: 6px;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+    }
+    .graph-d20-search-layer-drag-dragover {
+      background: #f5f5f6;
+    }
+    .graph-d20-search-layer-choose {
+      position: relative;
+      width: 78px;
+      height: 30px;
+      line-height: 31px;
+      text-align: center;
+      color: #fff;
+      margin: 16px auto 24px;
+      background: #4e6ef2;
+      border-radius: 6px;
+    }
+    .banner-descr-text {
+      position: absolute;
+      color: #fff;
+      top: 380px;
+      font-size: 17px;
+      letter-spacing: 8px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .graph-d20-search-layer-choose:active,
+    .graph-d20-search-layer-choose:hover {
+      background: #4662d9;
+    }
+    .graph-d20-search-layer-close {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/close.png)
+        no-repeat;
+      background-size: 16px 16px;
+      cursor: pointer;
+    }
+    .graph-d20-search-layer-close:hover {
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/closeSel.png)
+        no-repeat;
+      background-size: 16px 16px;
+    }
+
+    .banner-text {
+      position: absolute;
+      color: #fff;
+/*      left: 52%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);*/
+      top: 300px;
+      font-size: 56px;
+      letter-spacing: 8px;
+      font-weight: 600;
+      line-height: 1;
+    }
+    .banner-search-img {
+      position: absolute;
+      color: #fff;
+      left: 52%;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      top: 550px;
+      font-size: 56px;
+      letter-spacing: 8px;
+      font-weight: 600;
+      line-height: 1;
+      box-shadow: 0px 0 35px #0d0d0d;
+    }
+    .banner-qr-img {
+      position: absolute;
+      display: none;
+      color: #fff;
+      right: 1px;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+      top: 550px;
+      box-shadow: 0px 0 35px #0d0d0d;
+    }
+    .graph-d20-search-wrapper-input-focus {
+      border: 2px solid #4e6ef2 !important;
+      border-right: 0 !important;
+    }
+    .graph-d20-search-wrapper-input-result {
+      padding: 10px 0;
+    }
+  </style>
+</block>
+
+<block name="body">
+  <!--breadcrumbs start-->
+  <!--<div class="breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-sm-4">
+                <h1>用户登录</h1>
+            </div>
+            <div class="col-lg-8 col-sm-8">
+                <ol class="breadcrumb pull-right">
+                    <li><a href="#">首页</a></li>
+                    <li class="active">用户登录</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>-->
+  <!--breadcrumbs end-->
+
+  <!--container start-->
+  <div
+    class="login-bg"
+    style="
+      background-image: url('https://www.hongmengyishu.com/upload/portal/%E5%A4%9A%E5%AE%9D%E5%9B%BE2.jpg');
+      background-size: cover;
+      height: 700px;
+    "
+  ></div>
+
+  <div class="container1">
+    <div class="banner-text">识物 鉴真</div>
+    <div class="banner-descr-text">以经典识物 以馆藏鉴真</div>
+    <div class="page-search">
+      <div class="graph-d20-search">
+        <if condition="cmf_is_mobile()">    
+            <span class="graph-d20-short-search-wrapper">
+                <input placeholder="粘贴图片网址或点击上传" class="graph-d20-search-wrapper-input" name="image_url" id="image_url"/>       
+        <else />
+            <span class="graph-d20-search-wrapper">
+                <input placeholder="此处粘贴图片网址，或点击相机上传图片" class="graph-d20-search-wrapper-input" name="image_url" id="image_url"/>    			
+    	</if>
+
+        <input id="image_url-base64" type="hidden" value="">
+          <span
+            class="graph-d20-search-wrapper-camera" 
+            onclick="javascript:uploadOneImage('图片上传','#image_url','image_url','portal',search_image)"
+            onmouseover="displayQr()"
+             onmouseout="dismissQr()"
+            
+          ></span>
+ 
+          <span class="graph-d20-search-wrapper-camera-title"
+            >本地上传</span>
+ 
+ 
+            
+      
+
+        </span>
+        <button class="graph-d20-search-btn" onclick="search_image();"   onmouseover="displayQr()" onmouseout="dismissQr()">
+          点击识物
+        </button>
+        <div class="graph-d20-search-layer" style="display: none">
+          <p class="graph-d20-search-layer-loading" style="display: none">
+            <span>正在上传图片...</span>
+          </p>
+          <div class="graph-d20-search-layer-error" style="display: none">
+            <p>
+              <span class="graph-d20-search-layer-error-text"
+                ><span>图片上传失败，请</span>
+                <span class="graph-d20-search-layer-error-reupload">
+                  重新上传
+                </span></span
+              >
+            </p>
+            <div class="graph-d20-search-layer-error-format">
+              仅支持20M以下jpg，jpeg，png，bmp，gif等格式的图片
+            </div>
+          </div>
+          <div class="graph-d20-search-layer-contain" style="display: none">
+            <div class="graph-d20-search-layer-drag">拖拽图片到此处</div>
+            <div class="graph-d20-search-layer-choose">
+              <span>选择文件</span>
+              <div
+                data-v-697bd736=""
+                class="general-upload graph-d20-search-layer-upload"
+              >
+                <form data-v-697bd736="" class="general-upload-imgform">
+                  <input
+                    data-v-697bd736=""
+                    name="file"
+                    type="file"
+                    accept="image/*"
+                    autocomplete="off"
+                    class="general-upload-file"
+                  />
+                </form>
+              </div>
+            </div>
+          </div>
+          <i class="graph-d20-search-layer-close"></i>
+        </div>
+      </div>
+    </div>
+
+    <notempty name="$imageUrl">
+      <div class="banner-search-img">
+        <figure class="effect-chico">
+          <img id="searchImgUrl" src="{$imageUrl}" class="headicon" height="200" onclick="javascript:uploadOneImage('图片上传','#image_url','image_url','portal',search_image)" />
+
+          
+        </figure>
+      </div>
+    </notempty>
+    
+         <div class="banner-qr-img" id="miniporgram-qr">
+        <figure class="effect-chico">
+          <img  src="/upload/site/qr.png" height="150"  />
+
+          
+        </figure>
+      </div>
+      
+  </div>
+
+ 
+  <notempty name="$articles">
+    <div class="container">
+      <div class="col-lg-12">
+        <div class="row">
+          <div class="" id="my-gallery-container">
+            <foreach name="articles" item="vo">
+              <div class="item">
+                <notempty name="$vo.more.thumbnail">
+                  <div align="left" class="blog-img img">
+                    <figure class="effect-ruby">
+                      <a
+                        href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}"
+                      >
+                        <if
+                          condition="$vo['firstpic_width'] gt $vo['firstpic_height']*8 "
+                        >
+                          <img
+                            class="img002"
+                            src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!longimg'); ?>"
+                          />
+                          <elseif
+                            condition="$vo['firstpic_height'] gt $vo['firstpic_width']*2"
+                          />
+                          <img
+                            class="img002"
+                            src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!shuimg'); ?>"
+                          />
+                          <else />
+                          <img
+                            class="img002"
+                            src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!300X'); ?>"
+                          />
+                        </if>
+                      </a>
+                    </figure>
+                  </div>
+                </notempty>
+                <a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+                  <!--	{$vo.post_title}| {$vo.post_age}| {$vo.firstpic_width}| {$vo.firstpic_height}-->
+                  {$vo.post_title}|{$vo.post_age}| {$vo.post_author}|
+                  {$vo.post_museum}
+                </a>
+              </div>
+            </foreach>
+          </div>
+        </div>
+      </div>
+    </div>
+  </notempty>
+  <!--container end-->
+  <include file="public@scripts" />
+  <script src="__STATIC__/js/frontend.js"></script>
+</block>
+
+<block name="scripts">
+  <script type="text/javascript">
+ /*    $(function () {
+      $(".graph-d20-search-wrapper-camera").click(function () {
+        uploadOneImage("图片上传", "#photo-0");
+      });
+    });*/
+    
+  
+    
+    function displayQr(){
+         //alert(111)
+       //  $('#miniporgram-qr').css("display","block");
+         $('#miniporgram-qr').fadeIn(1500);
+    }
+    function dismissQr(){
+        //$('#miniporgram-qr').css("display","none");
+        $('#miniporgram-qr').fadeOut(1500);
+    }
+
+    function search_image() {
+  
+      var image_url = $(".graph-d20-search-wrapper-input").val();
+      if(image_url==""){
+            layer.msg(
+              "请上传图片或者粘贴图片网址",
+              {
+                icon: 1,
+                time: 2000, //2秒关闭（如果不配置，默认是3秒）
+              },
+              function () {}
+            );
+            return 
+      }else if (image_url.search("/portal/") == -1 && image_url.search("http") == -1) {
+        image_url = "https://www.hongmengyishu.com/upload/" + image_url;
+/*        var searchImgUrlObj = document.getElementById("searchImgUrl");  
+        searchImgUrlObj.src = image_url;*/
+      } 
+      var href ="{:url('portal/searchimage/index')}" + "?image_url=" + image_url;
+      window.location = href;
+      var index = layer.load();
+    }
+
+     function uploadImage() {
+        uploadOneImage('图片上传','#image_url','image_url','portal',search_image)
+    }
+    
+    
+
+    $(document).ready(function () {
+     
+      error = "<?php echo $error; ?>";
+      if (error != "") {
+        layer.msg(
+          error,
+          {
+            icon: 1,
+            time: 2000, //2秒关闭（如果不配置，默认是3秒）
+          },
+          function () {}
+        );
+      }
+    });
+  </script>
+</block>

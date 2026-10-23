@@ -1,0 +1,176 @@
+<head>
+
+    
+</head>
+
+<extend name="public@base"/>
+
+<block name="head">
+    <title>{$site_info.site_name|default=''}:{$article.title}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''},{$article.title},{$article.author},{$article.auction_group},{$article.auction_year}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''},{$article.title},{$article.author},{$article.auction_group},{$article.auction_year}:估价：{$article.estimate}成交价：{$article.price}货币{$article.unit}：描述：{$article.desc}"/>
+    <meta name="author" content="{$article.author}"> 
+</block>
+
+<block name="body">
+    <include file="public@breadcrumb"/>
+
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-8">
+                      
+   						<ul id="imageGallery" >
+							<foreach name="$article['more']['photos']" item="vo">
+								<li data-thumb="<?php echo cmf_get_image_url_with_token($vo['url'],'!w300'); ?>" data-src="">
+								  <if condition="cmf_is_mobile()">  
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" />  
+								  
+								  <else />
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" />  
+								  </if> 
+								</li>
+							</foreach>
+						</ul>                   
+                      
+					
+
+						<hook name="before_content" />
+							<div class="mar-b-30">{$article.desc}</div>
+							<notempty name="$article.page">
+								<ul class="pagination">
+									{$article.page}
+								</ul>
+							</notempty>
+			</div>
+			
+			
+			
+
+            <!--右侧栏目-->
+            <div class="col-lg-3 mar-b-30">
+                <ul class="artwork">
+	
+				    <span style="font-weight:bold;font-size:25px">{$article.title}</span>
+					<li>作者： <a target="_blank" href="{:cmf_url('portal/artist_article_list/index',['author'=>$article.author])}">{$article.author}</a></span></li>
+                    <li>年代： <a target="_blank" >{$article.age}</a></span></li>
+					<li>规格： {$article.size}</span></li>
+					<li>估价： {$article.estimate}</span></li>
+					<li>成交价： {$article.price}{$article.unit}</span></li>
+					<li>拍卖专场： {$article.auction_group}</span></li>
+					<li>拍卖会： {$article.auction_meeting}</span></li>
+					<li>拍卖时间： {$article.auction_year}</span></li>
+					<a href="{:url('user/favorite/add')}" id="js-favorite-btn" class="js-favorite-btn btn btn-success" data-title="{:base64_encode($article.title)}"
+					   data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}"
+					   data-table="portal_post" data-id="{$article['id']}"  style="margin-top:10px;" >
+						<i class="fa fa-star-o"></i> 收藏
+					</a>
+			<!--		开放以后会有爬虫触发，巨量消耗百度接口，之后考虑接口鉴权-->
+					<a target="_blank"  class="btn btn-success btn-similar-works"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 相似藏品
+					</a>
+                </ul>
+            </div>
+            <!--blog end-->
+
+
+
+        </div>
+    </div>
+    <!--container end-->
+	
+
+	
+
+
+</block>
+
+
+<block name="scripts">
+  
+<script>
+
+
+	var viewer = new Viewer(document.getElementById('imageGallery'), {
+		url: 'data-original',
+		maxZoomRatio:50,
+		title:true,
+		show: function() {
+		 //  fullScreen();
+		},
+		viewed: function() {
+		   viewer.fullImage($(document).width()-100);
+		},
+		hide: function() {
+	//	   fullScreen();
+		}
+	});
+
+
+	$(document).ready(function() {
+		$('#imageGallery').lightSlider({
+		gallery:true,
+		minSlide:1,
+		maxSlide:1,
+		currentPagerPosition:'centercenter'  
+		});  
+
+	});
+
+
+
+/*
+ * 浏览器全屏
+ */
+function fullScreen() {
+
+	/*判断是否全屏*/
+   	var isFullscreen = document.fullScreenElement//W3C
+			    	||document.msFullscreenElement //IE
+			    	||document.mozFullScreenElement //火狐
+			    	||document.webkitFullscreenElement //谷歌
+			    	||false;
+   	if(!isFullscreen){
+	   	var el = document.documentElement;
+   		if (el.requestFullscreen) { 
+   			el.requestFullscreen(); 
+	    } else if (el.mozRequestFullScreen) { 
+	    	el.mozRequestFullScreen(); 
+	    } else if (el.webkitRequestFullscreen) { 
+	    	el.webkitRequestFullscreen(); 
+	    } else if (el.msRequestFullscreen) { 
+	    	el.msRequestFullscreen(); 
+	    } 
+   	}else{
+   		if (document.exitFullscreen) { 
+   			document.exitFullscreen(); 
+	    } else if (document.msExitFullscreen) { 
+	    	document.msExitFullscreen(); 
+	    } else if (document.mozCancelFullScreen) { 
+	    	document.mozCancelFullScreen(); 
+	    } else if (document.webkitCancelFullScreen) { 
+	    	document.webkitCancelFullScreen(); 
+	    } 
+   	}
+
+
+}
+    $(function () {
+        $('.btn-similar-works').click(function(event){
+            if(event && event.originalEvent !== undefined) {
+                console.log('真实点击');
+                window.location.href = "/portal/searchimage/index?image_url={:cmf_get_image_url_with_token($article['more']['photos'][0]['url'],'!300X')}";
+                
+            } else {
+                console.log('模拟触发');
+                alert("sss11");
+            }
+        });
+    });
+
+</script>
+
+
+
+</block>

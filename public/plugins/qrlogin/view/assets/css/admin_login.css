@@ -1,0 +1,185 @@
+a {
+	text-decoration: none
+}
+
+a:active,
+a:focus,
+a:hover {
+	text-decoration: none;
+	color: red
+}
+
+.header {
+	height: 50px;
+	border-bottom: 1px solid #e2e2e2;
+	position: relative;
+	font-family: microsoft yahei
+}
+
+.header .switch {
+	height: 45px;
+	position: absolute;
+	left: 60px;
+	bottom: 0;
+	font-size: 16px
+}
+
+.header .switch #switch_qrlogin {
+	margin-right: 85px
+}
+
+.header .switch .switch_btn {
+	color: #999;
+	display: inline-block;
+	height: 45px;
+	line-height: 45px;
+	outline: 0;
+	*hide-focus: expression(this.hideFocus=true)
+}
+
+.header .switch .switch_btn_focus {
+	color: #333;
+	display: inline-block;
+	height: 45px;
+	line-height: 45px;
+	outline: 0;
+	*hide-focus: expression(this.hideFocus=true)
+}
+
+.header .switch .switch_btn:hover {
+	color: #333;
+	text-decoration: none
+}
+
+.header .switch .switch_btn_focus:hover {
+	text-decoration: none
+}
+
+#switch_bottom {
+	position: absolute;
+	bottom: -1px;
+	_bottom: -2px;
+	border-bottom: 2px solid #848484
+}
+
+.web_login {
+	width: 370px;
+	position: relative
+}
+
+#web_login {
+	_left: 60px;
+	*left: 0
+}
+
+.web_login .login_form {
+	width: 302px;
+	margin: 0 auto
+}
+
+
+.login {
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-top: -209px;
+	margin-left: -185px;
+	width: 370px;
+	border: 2px solid #eee;
+	border-bottom: 0;
+
+	padding: 5px 0;
+	background: #fff;
+	-webkit-box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, .3);
+	box-shadow: 1px 1px 2px 0 rgba(0, 0, 0, .3)
+}
+.header-title{
+	position: fixed;
+	left: 50%;
+	top: 50%;
+	margin-top: -209px;
+	margin-left: -240px;
+	width: 480px;
+}
+.header-title h1 {
+	text-align: center;
+	margin-top: -80px;
+	color: #fff;
+	font-size: 35px;
+	font-weight: 700;
+	text-shadow: 0 1px 1px #555
+}
+
+.web_login {
+	padding-bottom: 20px
+}
+
+
+.web_login .login_form {
+	margin-top: 30px
+}
+
+
+.header .switch {
+	left: 70px
+}
+
+.qr_login {
+	margin: 30px auto 20px;
+	width: 260px;
+}
+
+.qr_login img {
+	width: 260px;
+	height: 260px;
+}
+
+.login-title {
+	margin-top: 0px;
+	font-size: 22px;
+	letter-spacing: 1px;
+	text-align: center;
+}
+
+.qrcode-msg {
+	position: absolute;
+	display: none;
+	top: 0px;
+	left: 0px;
+	margin: 20px;
+	width: 260px;
+	height: 260px;
+	background: rgba(255, 255, 255, 0.95);
+	text-align: center;
+}
+
+.msg-title {
+	margin-top: 90px;
+	font-size: 20px;
+}
+
+.msg-sub {
+	font-size: 20px;
+}
+
+.qrcode-msg button {
+	font-family: "Microsoft YaHei", "Roboto", sans-serif;
+	text-transform: uppercase;
+	outline: 0;
+	display: none;
+	background: #1aad19;
+	width: 80%;
+	border: 0;
+	padding: 10px;
+	color: #FFFFFF;
+	font-size: 16px;
+	-webkit-transition: all 0.3 ease;
+	transition: all 0.3 ease;
+	cursor: pointer;
+}
+
+.qrcode-msg button:hover,
+.qrcode-msg button:active,
+.qrcode-msg button:focus {
+	background: #129611;
+}

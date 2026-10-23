@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+	<head>
+		<title>管理员微信绑定管理</title>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<include file="public/head" />
+		<style type="text/css">
+			.login-bg {
+				position: fixed;
+				background: rgba(0,0,0,0.8);
+				width: 100%;
+				height: 100%;
+				left: 0px;
+				top: 0px;
+			}
+			.login-box {
+				position: fixed;
+				background: #FFFFFF;
+				width: 300px;
+				height: 360px;
+				left: 50%;
+				top: 50%;
+				z-index: 1;
+				margin: -180px 0px 0px -150px;
+				text-align: center;
+				box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+			}
+			.login-title {
+				margin-top: 0px;
+				font-size: 22px;
+				letter-spacing: 1px;
+			}
+
+			.qrcode {
+				padding: 20px;
+			}
+
+			.qrcode-msg {
+				position: absolute;
+				display: none;
+				top: 0px;
+				left: 0px;
+				margin: 20px;
+				width: 260px;
+				height: 260px;
+				background: rgba(255, 255, 255, 0.95);
+				text-align: center;
+			}
+
+			.msg-title {
+				margin-top: 90px;
+				font-size: 20px;
+			}
+
+			.msg-sub {
+				font-size: 20px;
+			}
+
+			.qrcode img {
+				width: 260px;
+			}
+
+			.qrcode-msg button {
+				font-family: "Microsoft YaHei", "Roboto", sans-serif;
+				text-transform: uppercase;
+				outline: 0;
+				display: none;
+				background: #1aad19;
+				width: 80%;
+				border: 0;
+				padding: 10px;
+				color: #FFFFFF;
+				font-size: 16px;
+				-webkit-transition: all 0.3 ease;
+				transition: all 0.3 ease;
+				cursor: pointer;
+			}
+
+			.qrcode-msg button:hover,
+			.qrcode-msg button:active,
+			.qrcode-msg button:focus {
+				background: #129611;
+			}
+		</style>
+	</head>
+	<body>
+<div class="wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>管理员微信绑定管理</a></li>
+		<li><a  class="btn" id="login-show">添加管理员微信</a></li>
+    </ul>
+    <form method="post" class="js-ajax-form margin-top-20">
+        <table class="table table-hover table-bordered">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>头像</th>
+				<th>微信昵称</th>
+                <th>绑定账号</th>
+                <th>首次登录时间</th>
+                <th>最后登录时间</th>
+                <th>最后登录IP</th>
+                <th>登录次数</th>
+                <th align="center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <foreach name="lists" item="vo">
+                <tr>
+                    <td>{$key+1}</td>
+                    <td><img width="25" height="25" src="{$vo.more}"/></td>
+					<td>{$vo.nickname}</td>
+                    <td>{$vo.user_login}</td>
+                    <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                    <td>{:date('Y-m-d H:i:s',$vo['last_login_time'])}</td>
+                    <td>{$vo.last_login_ip}</td>
+                    <td>{$vo.login_times}</td>
+                    <td>
+                        <a class="btn btn-xs btn-danger js-ajax-delete"
+                           href="{:cmf_plugin_url('Qrlogin://AdminIndex/delete',array('id'=>$vo['id']))}">删除</a>
+                    </td>
+                </tr>
+            </foreach>
+            </tbody>
+        </table>
+        <ul class="pagination">{$page}</ul>
+    </form>
+	
+		<div class="login-box">
+			<div class="qrcode">
+				<div id="qrcode_img"></div>
+				<div class="qrcode-msg">
+					<p class="msg-title">扫码成功！</p>
+					<p class="msg-sub">请在微信上确认绑定管理员</p><button id="refresh">刷新二维码</button>
+				</div>
+			</div>
+			<p class="login-title">使用管理员微信扫码</p>
+		</div>
+	<div class="login-bg"></div>
+</div>
+		<include file="public/scripts" />
+		<script type="text/javascript" src="__PLUGIN_TMPL__/assets/js/jquery.qrcode.min.js"></script>
+		<script type="text/javascript">
+			var interval = '';
+			function getQrcode() {
+				$.ajax({
+					type: "GET",
+					url: "{:cmf_plugin_url('Qrlogin://AdminIndex/QrUuid')}",
+					data: {},
+					success: function(data) {
+						if (data.code == 1) {
+							//显示二维码
+							var str = '{:cmf_plugin_url("Qrlogin://Index/QrLogin")}?t=bind&q=' + data.msg;
+							$("#qrcode_img").empty();
+							$('#qrcode_img').qrcode({
+								render: "canvas",
+								width: 260,
+								height: 260,
+								text: str,
+							});
+							//console.log(data.msg);
+							//轮询QrUuid的状态，直到登录成功或过期
+							interval = setInterval(function() {
+								$.ajax({
+									type: "GET",
+									url: "{:cmf_plugin_url('Qrlogin://AdminIndex/checkQrUuid')}",
+									data: {
+										'q': data.msg,
+										't': 'bind'
+									},
+									success: function(data) {
+										//console.log(data.msg);
+										if (data.code == 0) {
+											clearInterval(interval);
+											$('.qrcode-msg').show();
+											$('#refresh').show();
+											$('.msg-title').text('二维码已失效');
+											$('.msg-sub').hide();
+										} else {
+											if (data.msg == 2) {
+												$('.qrcode-msg').show();
+												$('.msg-title').text('扫码成功！');
+												$('.msg-sub').show();
+												//alert('扫码成功！');
+											}
+											if (data.msg == 3) {
+												$('.msg-title').text('绑定成功...');
+												$('.msg-sub').hide();
+												//停止轮询
+												clearInterval(interval);
+												//跳转到上一页
+												location.reload();
+												// window.history.go(-1);
+
+											}
+										}
+									}
+								});
+							}, 1000); //频率1秒
+						}
+					}
+				});
+			}
+			refreshQrcode();
+			function refreshQrcode() {
+				clearInterval(interval);
+				getQrcode();
+				$('.qrcode-msg').hide();
+				$('#refresh').hide();
+			}
+			$("#refresh").click(function() {
+				refreshQrcode();
+			});
+			$(".login-bg").click(function() {
+				$('.login-bg').hide();
+				$('.login-box').hide();
+			});
+			$("#login-show").click(function() {
+				$('.login-bg').show();
+				$('.login-box').show();
+				refreshQrcode();
+			});
+		</script>
+	</body>
+</html>

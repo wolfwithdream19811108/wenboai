@@ -1,0 +1,370 @@
+<!doctype html>
+<html>
+<style>
+    .required {
+        color: #ff2222;
+    }
+
+</style>
+<head>
+    <include file="public/head"/>
+    <title>表单选项设置</title>
+</head>
+<body>
+<div class="wrap js-check-wrap margin-top-10">
+    <ul class="nav nav-tabs">
+        <li><a href="{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableIndex',
+        ['keyword'=>$keyword])}">数据表</a></li>
+        <li class="active"><a>字段设置</a></li>
+    </ul>
+    <h5 class="text-primary">&nbsp;&nbsp;数据表:
+        <span class="text-danger" style="font-weight: bolder">{$tablename}</span>
+    </h5>
+    <form class="well form-inline js-ajax-form" method="post" style="padding-top: 5px"
+          action="">
+        <div style="margin-top: 5px;margin-bottom: 5px;">
+            <a href="javascript:window.location.reload();">
+                <i class="fa fa-refresh" aria-hidden="true">&nbsp;刷新</i></a>
+            &nbsp;
+            <button type="submit" data-msg="重置所有字段吗?"
+                    class="btn btn-sm btn-default js-ajax-submit"
+                    data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldReset'
+                    ,['tablename'=>$tablename])}">字段重置
+            </button>
+            &nbsp;
+            <label class="text-danger" style="margin-left: 20px">生成目标:</label>
+            <label class="checkbox-inline" style="margin-bottom: 3px">
+                <input type="checkbox" id="target_index" value="2">列表页
+            </label>
+            <label class="checkbox-inline" style="margin-bottom: 3px">
+                <input type="checkbox" id="target_add" value="3">添加页
+            </label>
+            <label class="checkbox-inline" style="margin-bottom: 3px">
+                <input type="checkbox" id="target_edit" value="4">编辑页
+            </label>
+            &nbsp;
+            <a href="javascript:showmake('{$tablename}');" class="btn btn-sm btn-success">生成代码</a>
+            <span style="margin-left: 10px;" class="text-danger">同时生成控制器和数据模型文件!已存在的文件会被覆盖!</span>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70" class="text-center">ID</th>
+                <th width="50" class="text-center">
+                    <button type="submit" data-msg="保存排序数据吗?"
+                            class="btn btn-sm btn-warning js-ajax-submit"
+                            data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/saveSort')}">排序
+                        <i class="fa fa-sort-desc" aria-hidden="true"></i>
+                    </button>
+                    </th>
+                <th width="100" class="text-center">字段名称<br>字段类型</th>
+                <th width="100" class="text-center">主键|非空<br>默认值</th>
+                <th width="150" class="text-center">
+                    <button type="submit" data-msg="保存所有字段标识吗?"
+                        class="btn btn-sm btn-warning js-ajax-submit"
+                        data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/saveTag')}">
+                        字段标识
+                    </button>
+                </th>
+                <th width="60" class="text-center">数据<br>类型</th>
+                <th width="80" class="text-center text-warning">列表页<br>
+                    <button type="submit" data-msg="选中的字段将在列表中显示,确定保存吗?"
+                            class="btn btn-sm btn-warning js-ajax-submit"
+                            data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/saveUsedList')}">
+                        列表字段
+                    </button>
+
+                </th>
+                <th width="150" class="text-center text-success">列表页<br>
+                    <button type="submit" data-msg="选中的字段将在列表底部进行汇总,确定保存吗?"
+                            class="btn btn-sm btn-warning js-ajax-submit"
+                            data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/saveCountInfo')}">
+                        汇总字段
+                    </button>
+                </th>
+                <th width="80" class="text-center">增改页<br>
+                    <button type="submit"
+                        data-msg="选中的字段将出现在添加数据页或编辑数据页,确定保存吗?"
+                        class="btn btn-sm btn-warning js-ajax-submit"
+                        data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/saveAddEdit')}">
+                        使用字段
+                    </button>
+                </th>
+                <th  class="text-center text-primary">(列表页搜索)<br>
+                    控件类型|字段匹配</th>
+            </thead>
+            <notempty name="list">
+                <foreach name="list" item="vo">
+                    <tr>
+                        <td class="text-center text-muted">
+                            <b>{$vo.id}</b>
+                            <input type="hidden" name="myids[]" value="{$vo.id}">
+                        </td>
+                        <td>
+                            <input type="text" class="form-control" data-id="{$vo.id}" name='order[{$vo.id}]'
+                                   value="{$vo.order}" style="width: 50px">
+                        </td>
+                        <td>
+                            <span class="text-danger" style="font-weight: bolder">{$vo.field_name}</span>
+                            <br>
+                            <span class="text-muted">{$vo.field_datatype}</span>
+                        </td>
+                        <td class="text-center">
+                            <switch name="vo.field_key">
+                                <case value="PRI">
+                                    <i title="主键" class="fa fa-key text-danger" aria-hidden="true"></i>
+                                </case>
+                                <default/>
+                            </switch>
+
+                            <switch name="vo.field_null">
+                                <case value="NO">
+                                    <i title="非空" class="fa fa-check-square-o" aria-hidden="true"></i>
+                                </case>
+                                <case value="YES">
+                                    <i title="可空" class="fa fa-square-o" aria-hidden="true"></i>
+                                </case>
+                                <default/>
+                            </switch>
+                            <br>
+                            <span title="默认值" class="text-muted">{$vo.field_default|default=''}</span>
+                            <if condition="$vo.field_extra eq 'auto_increment'">
+                                <i title="自动递增" class="fa fa-forward text-danger" aria-hidden="true"></i>
+                                <else/>
+                                {$vo.field_extra|default=''}
+                            </if>
+                        </td>
+                        <td>
+                            <input type="text"  name='tags[{$vo.id}]'   value="{$vo.field_tag}"
+                                   placeholder="输入字段标识" style="width: 100%">
+                        </td>
+                        <td class="text-center">
+                            <switch name="vo.field_typename">
+                                <case value="number"  ><span class="text-success">数值型</span></case>
+                                <case value="text"    ><span class="text-primary">字符型</span></case>
+                                <case value="datetime"><span>日期型</span></case>
+                                <default>####</default>
+                            </switch>
+                        </td>
+                        <td class="text-center">
+                            <php>
+                                $chk = "";
+                                if($vo['used_list'] === 1){
+                                $chk = "checked";
+                                }
+                            </php>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="used_list[]"
+                                       value="{$vo.id}" {$chk}>启用
+                            </label>
+                        </td>
+                        <td class="text-center">
+                            <php>
+                                $chk_sum = "";  $chk_avg = "";
+                                $chk_max = "";  $chk_min = "";
+                                if($vo['used_count_sum'] === 1){
+                                $chk_sum = "checked";
+                                }
+                                if($vo['used_count_avg'] === 1){
+                                $chk_avg = "checked";
+                                }
+                                if($vo['used_count_max'] === 1){
+                                $chk_max = "checked";
+                                }
+                                if($vo['used_count_min'] === 1){
+                                $chk_min = "checked";
+                                }
+                            </php>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="count_sum[]"
+                                       value="{$vo.id}" {$chk_sum}>求和
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="count_avg[]"
+                                       value="{$vo.id}" {$chk_avg}>平均
+                            </label>
+                            <br>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="count_max[]"
+                                       value="{$vo.id}" {$chk_max}>最大
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="count_min[]"
+                                       value="{$vo.id}" {$chk_min}>最小
+                            </label>
+                        </td>
+                        <td class="text-center">
+                            <php>
+                                $chk_add = "";  $chk_edit = "";
+                                if($vo['used_add'] === 1){
+                                $chk_add = "checked";
+                                }
+                                if($vo['used_edit'] === 1){
+                                $chk_edit = "checked";
+                                }
+                            </php>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="row_add[]"
+                                       value="{$vo.id}" {$chk_add}>添加
+                            </label>
+                            <br>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" name="row_edit[]"
+                                       value="{$vo.id}" {$chk_edit}>编辑
+                            </label>
+                        </td>
+                        <td>
+                            <switch name="vo.control_type">
+                                <case value="text">
+                                    <input type="text" class="form-control"
+                                           style="width: 150px" placeholder="请输入{$vo.field_tag}">
+                                </case>
+                                <case value="text-year">
+                                    <input type="text" class="form-control js-bootstrap-year"
+                                           style="width: 150px" placeholder="请输入{$vo.field_tag}">
+                                </case>
+                                <case value="text-date">
+                                    <input type="text" class="form-control js-bootstrap-date"
+                                           style="width: 150px" placeholder="请输入{$vo.field_tag}">
+                                </case>
+                                <case value="text-datetime">
+                                    <input type="text" class="form-control js-bootstrap-datetime"
+                                           style="width: 150px" placeholder="请输入{$vo.field_tag}">
+                                </case>
+                                <case value="list">
+                                    <select title="请选择{$vo.field_tag}" class="form-control"
+                                            style="width: 150px">
+                                        <option value="0">选项1</option>
+                                        <option value="1">选项2</option>
+                                        <option value="2">选项3</option>
+                                    </select>
+                                </case>
+                                <case value="check">
+                                    <label title="请确认{$vo.field_tag}" class="checkbox-inline">
+                                        <input type="checkbox" value="1">
+                                        {$vo.field_tag}
+                                    </label>
+                                </case>
+                                <default></default>
+                            </switch>
+                            <php>
+                                $ctname = trim($vo['control_type']);
+                                $ctname = substr($ctname,0,4);
+                            </php>
+                            <a title="编辑" href="javascript:showFieldOptionEdit({$vo['id']},'{$ctname}');"
+                                  class="btn btn-xs btn-default">
+                                <i class="fa fa-pencil-square text-warning" aria-hidden="true"></i>
+                            </a>
+                            <notempty name="vo.control_type">
+                                <button type="submit" title="删除" data-msg="删除设置吗?"
+                                        data-action="{:cmf_plugin_url('DiyAdminForm://AdminFields/deleteFieldControl',['id'=>$vo.id])}"
+                                        class="btn btn-xs btn-default js-ajax-submit">
+                                    <i class="fa fa-times text-danger" aria-hidden="true"></i>
+                                </button>
+                            </notempty>
+                            <br>
+                            <span title="{$vo.compare_type}" class="text-primary">
+                                {$vo.compare_desc}</span>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+        </table>
+    </form>
+</div>
+<include file="public/scripts"/>
+<script>
+    //显示列表页顶部查询字段设置
+    function showFieldOptionEdit(Id,controlType) {
+        var editurl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlEdit')}";
+        var posturl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlEditPost')}";
+        var edittxt = "字段控件选项";
+        //根据控件类型选择网页,默认为文本类型 text list check
+        if(controlType === 'list'){
+            editurl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlList')}";
+        }else if(controlType === 'chec'){
+            editurl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlCheck')}";
+        }
+        // console.log('type:',controlType);
+        // console.log('page:',editurl);
+        openIframeLayer(editurl + "?id=" + Id, edittxt, {
+            area: ['700px', '550px'],
+            btn: ['确定'],//, '取消'
+            yes: function (index, layero) {
+                var iframeWin = window[layero.find('iframe')[0]['name']];
+                var rs = iframeWin.confirm();
+                //异步执行
+                $.ajax({
+                    url: posturl, type: "post", cache: false, dataType: "json",async:false,
+                    data: {id:rs.id,tt: rs.tt,mt:rs.mt,si:rs.si,ci:rs.ci
+                        ,cd:rs.cd,cm:rs.cm,c1:rs.c1,c0:rs.c0,cv:rs.cv},
+                    success: function (data) {
+                        if(data.code === 1){
+                            //alert(data.msg);
+                            reloadPage(window);
+                        }else{
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出现错误,保存失败!");
+                        //reloadPage(window);
+                    }
+                });
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            },
+            cancel:function (index, layero) {
+                //右上角关闭事件
+                //reloadPage(window);
+                //console.log('cancel:',index);
+            }
+        });
+    }
+
+    function showmake(tableName) {
+        var target = [];
+        target.push(-1);//顶级菜单任务
+        target.push(0);//控制器任务
+        target.push(1);//数据模型任务
+        $targetIndex = $('#target_index');//2
+        $targetAdd   = $('#target_add');//3
+        $targetEdit  = $('#target_edit');//4
+
+        if($targetIndex.is(":checked")){
+            target.push(2);
+        }
+        if($targetAdd.is(":checked")){
+            target.push(3);
+        }
+        if($targetEdit.is(":checked")){
+            target.push(4);
+        }
+        var targetStr = target.join('_');//把数组转为字符串 [1,2,3] -> "1_2_3"
+        //console.log(targetStr);
+        showMakeCode(tableName,targetStr);
+    }
+
+
+    //生成代码任务
+    function showMakeCode(tableName,targetstr) {
+        var url = "{:cmf_plugin_url('DiyAdminForm://AdminIndex/startMakeCode')}";
+        var txt = "生成代码已完成！";
+        openIframeLayer(url + "?tablename=" + tableName + "&target=" + targetstr, txt, {
+            area: ['800px', '450px'],
+            btn: ['关闭'],//, '取消'
+            yes: function (index, layero) {
+                //var iframeWin = window[layero.find('iframe')[0]['name']];
+                //var rs = iframeWin.confirm();
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            },
+            cancel:function (index, layero) {
+                //右上角关闭事件
+                //reloadPage(window);
+                //console.log('cancel:',index);
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<extend name="public@base"/>
+<block name="head">
+    <title>搜索结果</title>
+</block>
+<block name="body">
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                    <h1>搜索结果:{$keyword}</h1>
+                </div>
+                <div class="col-lg-8 col-sm-8">
+                    <ol class="breadcrumb pull-right">
+                        <li><a href="__ROOT__/">首页</a></li>
+                        <li class="active">搜索结果</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--breadcrumbs end-->
+   
+
+  <!--container start-->
+    <div class="container">
+        <div class="" id="my-gallery-container">
+            <!--文章列表-->
+<!--                <php>
+
+					$where['post.post_title|post.post_author|post.post_age|post.post_museum']    = ['like', "%$keyword%"];
+                </php>-->
+  
+                <foreach name="articles" item="vo">
+					<div class="item">
+	
+							<div  align="left" class="blog-img img">
+								<a href="{:cmf_url('portal/Article/index',['id'=>$vo['_source']['id']])}">
+									
+                                  <if condition="$vo._source.firstpic_width gt $vo._source.firstpic_height*4"><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['_source']['more']['thumbnail'],'!longimg'); ?>" />
+                                  <elseif condition="$vo._source.firstpic_height gt $vo._source.firstpic_width*2"><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['_source']['more']['thumbnail'],'!shuimg'); ?>" />  
+                                  <else /><img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['_source']['more']['thumbnail'],'!300X'); ?>" />
+                                  </if>
+								</a>
+							</div>
+				
+							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['_source']['id']])}">
+								{$vo._source.post_title}| {$vo._source.post_age}| {$vo._source.post_museum}
+							</a>
+
+                    </div>                    
+                    
+                    
+                </foreach>
+                    
+        </div>
+
+    </div>
+
+	<div class="text-center">
+		<ul class="pagination">
+			<page/>
+		</ul>
+	</div>
+    <!--container end-->
+
+
+
+
+
+
+
+
+
+
+</block>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>第三方登录</title>
+	<style>
+		.container{
+			width:500px;
+			margin:200px auto 0;
+		}
+		.container .user-info{
+			height: 50px;
+			margin-bottom: 20px;
+			position: relative;
+		}
+		.container .user-info img{
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			position: absolute;
+			left:50%;
+			top:0;
+			margin-left: -25px;
+		}
+		.container .user-info .name{
+			padding-left: 280px;
+		}
+		.container .user-info .name span{
+			display: block;
+		}
+		.container .third-login{
+			text-align: center;
+		}
+		.container .third-login a{
+			display: inline-block;
+			font-size: 24px;
+			margin-bottom: 20px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<notempty name="user">
+			<div class="user-info">
+				<img src="{:url('user/public/avatar',array('id'=> $user['id']))}" alt="">
+				<div class="name">
+					<span>{$user['user_nickname']}</span>
+					<a href="{:cmf_url('user/Index/logout')}">退出</a>
+				</div>
+			</div>
+		</notempty>
+		<div class="third-login">
+			<a href="{:cmf_plugin_url('ThirdLogin://Login/auth',['type' => 'qq'])}">qq登录</a><br/>
+			<a href="{:cmf_plugin_url('ThirdLogin://Login/auth',['type' => 'sina'])}">新浪微博登录</a><br/>
+			<a href="{:cmf_plugin_url('ThirdLogin://Login/auth',['type' => 'wechat'])}">微信登录</a>
+		</div>
+	</div>
+</body>
+</html>

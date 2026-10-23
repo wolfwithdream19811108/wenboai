@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$page.post_title}</title>
+    <meta name="keywords" content="{$page.post_keywords}"/>
+    <meta name="description" content="{$page.post_excerpt}">
+    <include file="public@head"/>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/api?v=2.0&ak={$theme_vars.baidu_apikey}"></script>
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.js"></script>
+    <link rel="stylesheet" href="http://api.map.baidu.com/library/SearchInfoWindow/1.5/src/SearchInfoWindow_min.css"/>
+    <style>
+        #allmap {
+            height: 500px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .BMapLib_nav_tab_content * {
+            -webkit-box-sizing: content-box;
+            -moz-box-sizing: content-box;
+            box-sizing: content-box;
+        }
+    </style>
+    <hook name="before_head_end"/>
+</head>
+
+<body>
+<include file="public@header"/>
+<php>
+    $company_location=empty($theme_vars['company_location'])?'120.372666,31.508623':$theme_vars['company_location'];
+    $company_location=explode(',',$company_location);
+    $company_location_lng=$company_location[0];
+    $company_location_lat=$company_location[1];
+</php>
+<div class="section no-mar no-pad section-map">
+    <div id="allmap"></div>
+    <script type="text/javascript">
+        // 百度地图API功能
+        var map = new BMap.Map('allmap');
+        var poi = new BMap.Point("{$company_location_lng}", "{$company_location_lat}");
+        map.centerAndZoom(poi, 16);
+        map.enableScrollWheelZoom();
+        var content = '<div style="margin:0;line-height:20px;padding:2px;">' +
+            '{$theme_vars.address}<br/>{$theme_vars.phone}<br/>{$theme_vars.email}' +
+            '</div>';
+        //创建检索信息窗口对象
+        var searchInfoWindow = null;
+        searchInfoWindow = new BMapLib.SearchInfoWindow(map, content, {
+            title: "{$theme_vars.company}",      //标题
+            width: 290,             //宽度
+            height: 70,              //高度
+            panel: "panel",         //检索结果面板
+            enableAutoPan: true,     //自动平移
+            searchTypes: [
+                BMAPLIB_TAB_SEARCH,   //周边检索
+                BMAPLIB_TAB_TO_HERE,  //到这里去
+                BMAPLIB_TAB_FROM_HERE //从这里出发
+            ]
+        });
+        var marker = new BMap.Marker(poi); //创建marker对象
+        marker.enableDragging(); //marker可拖拽
+        marker.addEventListener("click", function (e) {
+            searchInfoWindow.open(marker);
+        })
+        map.addOverlay(marker); //在地图中添加marker
+    </script>
+</div>
+<div class="section section-breadcrumb no-mar no-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-inline breadcrumb">
+                    <li class="breadcrumb-item"><a href="__ROOT__/"><i class="fa fa-home"></i>首页</a></li>
+                    <li class="breadcrumb-item"><a
+                            href="{:url('portal/page/index',['id'=>$page['id']])}">{$page.post_title|default=''}</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-article-v1">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="head">
+                    <h2>{$page.post_title|default=''}</h2>
+                    <div class="separator-2"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-md-6 mb-30">
+                <php>$guestbook=hook_one('guestbook');</php>
+                <if condition="empty($guestbook) && cmf_get_current_admin_id()">
+                    <div style="border: 1px dashed #ddd;min-height: 300px;padding-top: 100px;">
+                        <div class="alert alert-warning" role="alert">
+                            此区域这为留言区，请安装留言插件！<br>
+                            <em>注：普通用户不会看到此提示！</em>
+                        </div>
+                    </div>
+                </if>
+                {$guestbook}
+            </div>
+            <div class="col-12 col-md-6 mb-30">
+                <div class="body">
+                    {$page.post_content|default=''}
+                </div>
+
+                <div class="foot">
+                    <php>
+                        $comment_hook_param=[
+                        'post_id'=>$page['id'],
+                        'post_table'=>'portal_post',
+                        'post_title'=>$page['post_title']
+                        ];
+                    </php>
+
+                    <hook name="comment" param="comment_hook_param"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<hook name="before_body_end"/>
+</body>
+</html>

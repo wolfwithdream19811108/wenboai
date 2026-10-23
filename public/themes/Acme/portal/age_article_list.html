@@ -1,0 +1,116 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+    
+
+	<!--Test -->
+	  <div id="test">
+	    <div class="user">
+
+	    </div>
+	    <div class="list-group">
+			<portal:museums order="id ASC">
+				  <a href="{:cmf_url('portal/museum_list/index',['id'=>$vo['id']])}" class="list-group-item">{$vo.museum_name}</a>
+			  </portal:museums>
+			</div>
+
+	  </div>
+	  <!--/Test -->
+        <div class="cation-content">
+            <div class="cation-middle">
+                <dl class="cation-list">
+                    <dt>分类</dt>
+                    <dd>
+                        <a href="#" rel="" name="category" class="all on">全部</a>
+						<portal:categories order="id ASC">
+						<a href="#" rel="{$vo.id}" name="category" class="default">{$vo.name}</a>
+						</portal:categories>
+                    </dd>
+                </dl>
+                <dl class="cation-list">
+                    <dt>年代</dt>
+                    <dd>
+                        <a href="#" rel="" name="age" class="all on">全部</a>
+                        <a href="#" rel="新石器时代" name="age" class="default">新石器时代</a>
+                        <a href="#" rel="夏" name="age" class="default">夏</a>
+                        <a href="#" rel="商" name="age" class="default">商</a>
+                        <a href="#" rel="周" name="age" class="default">周</a>
+                        <a href="#" rel="春秋" name="age" class="default">春秋</a>
+                        <a href="#" rel="战国" name="age" class="default">战国</a>
+                        <a href="#" rel="秦" name="age" class="default">秦</a>
+                        <a href="#" rel="汉" name="age" class="default">汉</a>
+                        <a href="#" rel="新莽" name="age" class="default">新莽</a>
+                        <a href="#" rel="三国" name="age" class="default">三国</a>
+						<a href="#" rel="晋" name="age" class="default">晋</a>
+						<a href="#" rel="南北朝" name="age" class="default">南北朝</a>
+						<a href="#" rel="隋" name="age" class="default">隋</a>
+						<a href="#" rel="唐" name="age" class="default">唐</a>
+						<a href="#" rel="五代十国" name="age" class="default">五代十国</a>
+                        <a href="#" rel="辽" name="age" class="default">辽</a>
+                        <a href="#" rel="西夏" name="age" class="default">西夏</a>
+                        <a href="#" rel="宋" name="age" class="default">宋</a>
+                        <a href="#" rel="金" name="age" class="default">金</a>
+						<a href="#" rel="元" name="age" class="default">元</a>
+						<a href="#" rel="明" name="age" class="default">明</a>
+						<a href="#" rel="清" name="age" class="default">清</a>
+						<a href="#" rel="近现代" name="age" class="default">近现代</a>
+                    </dd>
+                </dl>
+                <dl class="cation-list">
+                    <dt>博物馆</dt>
+                    <dd>
+                        <a href="#" rel="" name="museum" class="all on">全部</a>
+						<portal:museums order="id ASC">
+						<a href="#" rel="{$vo.id}" name="museum" class="default">{$vo.museum_name}</a>
+						</portal:museums>
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+    <!--container start-->
+	<div class="container">
+		<div class="" id="my-gallery-container">
+			<portal:agearticles order="cmf_portal_post.create_time DESC" page="10"  age="$age">
+				<div class="item">
+					<notempty name="$vo.more.thumbnail">
+						<div  align="center" class="blog-img img">
+							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+								<img  src="{$vo.more.thumbnail|cmf_get_image_url}"/>
+							</a>
+						</div>
+					</notempty>
+						<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+							{$vo.post_title}
+						</a>
+				</div>
+				
+			</portal:agearticles>
+		</div>
+	</div>
+	
+    <!--container end-->
+
+	<!--分页-->
+	<div class="text-center">
+		<ul class="pagination">
+		<page/>
+		</ul>
+	</div>
+
+</block>
+

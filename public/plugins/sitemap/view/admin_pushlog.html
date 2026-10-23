@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>一键生成xml</title>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <form class="well form-inline margin-top-20" method="post" action="">
+        <div class="search_type cc mb10">
+            <div class="mb10">
+                选择日期：
+                <input type="text" class="form-control js-bootstrap-date" name="time" value="{$time}" autocomplete="off">
+                <input type="submit" class="btn btn-primary" value="搜索"/>
+                <if condition="$num neq 0">
+                    共有 {$num} 条相关记录
+                </if>
+                </span>
+            </div>
+        </div>
+    </form>
+    <form method="post" class="js-ajax-form" action="#">
+        <div class="table_list">
+                <foreach name="content" item="vo">
+                    <if condition="$vo['success']">
+                        <p style="color: green">成功推送：{$vo.msg}</p>
+                        <else />
+                        <p style="color: red">错误信息：{$vo.msg}</p>
+                    </if>
+                </foreach>
+        </div>
+    </form>
+</div>
+<include file="public/scripts"/>
+</body>
+</html>

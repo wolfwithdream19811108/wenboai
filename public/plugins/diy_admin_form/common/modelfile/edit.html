@@ -1,0 +1,29 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{ADMIN_INDEX}">{ITEM_ALL}</a></li>
+        <li><a href="{ADMIN_ADD}">{ITEM_ADD}</a></li>
+        <li class="active"><a href="#">{ITEM_EDIT}</a></li>
+    </ul>
+    <form action="{ADMIN_EDITPOST}"
+          method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    {LIST_EDITDATA}
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

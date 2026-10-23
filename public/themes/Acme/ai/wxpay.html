@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>微信扫码支付（带回调）DEMO</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+        <script type="text/javascript" src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+        <script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+        <style>
+            .container{width: 100%; max-width: 500px;}
+            .mtm{margin-top: 10px;}
+            #QRcode .pay-top{padding: 15px 0px;background: #FAFAFA;border: 2px #009900 dashed;margin: 20px 0px;font-family: 微软雅黑;}
+        </style>
+    </head>
+    <body>
+    <div id="QRcode" class="container mtm">
+        <div class="text-center pay-top"><p class="text-danger">使用微信“扫一扫”下方二维码，完成付款</p></div>
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <span class="pull-left">订单号：<?=$outTradeNo?></span>
+                <span class="pull-right">总金额：<?=$payAmount?> 元</span>
+            </div>
+            <div class="panel-body text-center"><img src="<?=$url?>" style="" /></div>
+            <div class="panel-footer text-success text-center">请使用微信扫描 二维码以完成支付</div>
+        </div>
+        <div class="progress" style="display: none;">
+            <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="10" aria-valuemin="10" aria-valuemax="100" style="width: 1%"></div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $(".progress").show();
+            var i = 0;
+            setInterval(function () {
+                i++;
+                $(".progress .progress-bar").attr("aria-valuenow", i * 10);
+                $(".progress .progress-bar").css("width", (i * 10) + "%");
+                if (i >= 10) {
+                    i = 1;
+                }
+            }, 2000);
+
+            setInterval(function () {
+                var url = "queryorder?tradeno=<?=$outTradeNo?>";
+                $.getJSON(url, function (result) {
+                    result = JSON.parse(result)
+                    console.log(result)
+                    if (result.code == 0) {
+                        console.log("支付成功，关闭当前弹出层")
+                        var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                        parent.layer.close(index); //再执行关闭   
+                        /*window.location.href = '<?=$returnUrl?>';*/
+                    }
+                });
+            }, 3000);
+
+        });
+    </script>
+    </body>
+    </html>

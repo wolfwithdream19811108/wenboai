@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$category.name} {$category.seo_title} {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$category.seo_keywords},{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$category.seo_description},{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+<body>
+<include file="public@header"/>
+<div class="section section-top-bg jarallax" data-jarallax='{"speed": 0.8}'
+     style="background-image: url('{:cmf_get_image_url($category.more.thumbnail)}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{$category.name}</h1>
+                <p>{$category.description}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-breadcrumb no-mar no-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-inline breadcrumb">
+                    <li class="breadcrumb-item"><a href="__ROOT__/"><i class="fa fa-home"></i>首页</a></li>
+                    <portal:breadcrumb cid="$category['id']" self="true">
+                        <li class="breadcrumb-item"><a
+                                href="{:url('portal/list/index',['id'=>$vo['id']])}">{$vo.name}</a></li>
+                    </portal:breadcrumb>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-list-v1">
+    <div class="container">
+        <div class="row">
+            <php>
+                //返回当前栏目及其一级子栏目所有内容
+                $allsubCats = ApiService::allsubCategories($category['id']);
+                $ids = "";
+                foreach ($allsubCats as $t) {
+                $ids = $ids . "," . $t['id'];
+                }
+                $cids = $category['id'] . $ids;
+            </php>
+            <div class="col-12">
+                <div class="text-list-wrap">
+                    <php>
+                        $where=[
+                        'post.create_time'=>['egt',0]
+                        ];
+                    </php>
+                    <ul class="list-unstyled text-list-v1">
+                        <portal:articles item="vo" where="$where" order="post.create_time DESC" page="20"
+                                         relation="categories"
+                                         categoryIds="$cids"
+                                         returnVarName="articles_data">
+                            <if condition="(($key+1) % 5) == 0 ">
+                                <li class="list-separator">
+                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"><i class="fa fa-caret-right"></i>{$vo.post_title}</a>
+                                    <small>{:date('n/j,Y',$vo.published_time)}</small>
+                                </li>
+                                <else/>
+                                <li >
+                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"><i class="fa fa-caret-right"></i>{$vo.post_title}</a>
+                                    <small>{:date('n/j,Y',$vo.published_time)}</small>
+                                </li>
+                            </if>
+                        </portal:articles>
+                    </ul>
+                </div>
+                <ul class="pagination">
+                    <page/>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<hook name="before_body_end"/>
+</body>
+</html>

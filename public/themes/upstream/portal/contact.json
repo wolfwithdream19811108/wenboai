@@ -1,0 +1,58 @@
+{
+  "name": "联系我们单页",
+  "action": "portal/Page/index",
+  "description": "联系我们单页（含百度地图）",
+  "order": 10.0,
+  "more": {
+    "vars": {
+      "baidu_apikey": {
+        "title": "百度API密钥",
+        "value": "",
+        "type": "text",
+        "tip": "申请网址http://lbsyun.baidu.com/apiconsole/key",
+        "rule": {
+          "require": true
+        }
+      },
+      "company_location": {
+        "title": "公司坐标",
+        "value": "",
+        "type": "location",
+        "tip": "",
+        "rule": {
+          "require": true
+        }
+      },
+      "company": {
+        "title": "公司名称",
+        "value": "无锡尚游软件科技有限公司",
+        "type": "text",
+        "tip": "",
+        "rule": {
+          "require": true
+        }
+      },
+      "address": {
+        "title": "公司地址",
+        "value": "无锡新区太湖国际科技园菱湖大道200号",
+        "type": "text",
+        "tip": "",
+        "rule": {
+          "require": true
+        }
+      },
+      "email": {
+        "title": "公司邮箱",
+        "value": "fangwei@syousoft.com",
+        "type": "text",
+        "tip": ""
+      },
+      "phone": {
+        "title": "公司电话",
+        "value": "0510-82822002",
+        "type": "text",
+        "tip": ""
+      }
+    }
+  }
+}

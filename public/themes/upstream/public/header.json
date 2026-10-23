@@ -1,0 +1,23 @@
+{
+  "name": "头部公共部分",
+  "action": "public/Header",
+  "description": "头部网站LOGO定制修改",
+  "is_public": "1",
+  "order": 1.0,
+  "more": {
+    "vars": {
+      "site_logo": {
+        "title": "上传网站LOGO",
+        "value": "",
+        "type": "image",
+        "tip": "上传网站logo，建议尺寸120px*60px",
+        "rule": {
+          "require": true
+        },
+        "message":{
+          "require":"不能为空"
+        }
+      }
+    }
+  }
+}

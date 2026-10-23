@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title></title>
+</head>
+<body>
+
+<div class="well form-inline" style="padding-bottom: 0;margin-top: 5px">
+    <table class="table table-bordered">
+        <tr>
+            <th width="150">数据表:</th>
+            <td class="text-danger">
+                {$tablename}
+            </td>
+        </tr>
+        <tr>
+            <th>选择生成目标:</th>
+            <td>
+                <i class="fa fa-check-square" aria-hidden="true"></i>&nbsp;&nbsp;控制器
+                &nbsp;&nbsp;
+                <i class="fa fa-check-square" aria-hidden="true"></i>&nbsp;&nbsp;数据模型
+                &nbsp;&nbsp;
+                <i class="fa fa-check-square" aria-hidden="true"></i>&nbsp;&nbsp;顶级菜单
+                <label class="checkbox-inline" style="margin-bottom: 3px">
+                    <input type="checkbox" value="2" {$targetIndex|default=""}>列表页
+                </label>
+                <label class="checkbox-inline" style="margin-bottom: 3px">
+                    <input type="checkbox" value="3" {$targetAdd|default=""}>添加页
+                </label>
+                <label class="checkbox-inline" style="margin-bottom: 3px">
+                    <input type="checkbox" value="4" {$targetEdit|default=""}>编辑页
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <th>生成结果:</th>
+            <td style="height: auto;word-wrap: break-word;word-break: break-all">
+                <p>{$message}</p>
+            </td>
+        </tr>
+    </table>
+</div>
+<include file="public/scripts"/>
+</body>
+</html>

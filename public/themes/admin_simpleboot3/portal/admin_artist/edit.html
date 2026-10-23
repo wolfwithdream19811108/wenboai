@@ -1,0 +1,101 @@
+<include file="public@header"/>
+<style type="text/css">
+    .pic-list li {
+        margin-bottom: 5px;
+    }
+</style>
+
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminArtist/index')}">人才管理</a></li>
+        <li>
+            <a href="{:url('AdminArtist/add')}">添加人才</a>
+        </li>
+        <li class="active"><a href="#">编辑人才</a></li>
+    </ul>
+    <form action="{:url('AdminArtist/editArtist')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-9">
+                <table class="table table-bordered">
+
+                  
+         
+
+                    <tr>
+                        <th>姓名<span class="form-required">*</span></th>
+                        <td>
+                            <input id="id" type="hidden" name="artist[id]" value="{$artist.id}">
+                            <input class="form-control" type="text" name="artist[name]"
+                                   required value="{$artist.name}" placeholder="请输入姓名"/>
+                        </td>
+                    </tr>
+                   
+					<tr>
+                        <th>分类</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[category]"
+                                   value="{$artist['category']}" placeholder="请输入人才分类">
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>省份</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[province]" value="{$artist['province']}" placeholder="请输入省份">
+                        </td>
+                    </tr>
+					
+                    <tr>
+
+                    </tr>
+					<tr>
+                        <th>抬头</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[title]"
+                                   value="{$artist['title']}" placeholder="请输入人才抬头">
+                        </td>
+                    </tr>
+                    <tr >
+                        <th>荣誉</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[honor]" value="{$artist['honor']}"
+                                      placeholder="请填写荣誉">
+                        </td>
+					
+                    </tr>
+
+
+                    <tr>
+                        <th>出生年月</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[birth_date]"
+                                   value="{$artist['birth_date']}" placeholder="请输入人才出生年月">
+                        </td>
+                    </tr>	
+
+                    <tr>
+                        <th>作品名称</th>
+                        <td>
+                            <input class="form-control" type="text" name="artist[works_name]"
+                                   value="{$artist['works_name']}" placeholder="请输入作品名称">
+                        </td>
+                    </tr>					
+                </table>
+
+                <hook name="portal_admin_article_edit_view_main"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+
+
+</body>
+</html>

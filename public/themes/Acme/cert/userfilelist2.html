@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>用户数字资产-图片电子存证</title>
+    <meta name="keywords" content="用户数字资产-图片电子存证"/>
+    <meta name="description" content="用户数字资产-图片电子存证">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+<style>
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .col-md-3 {
+        width: 25%; /* 每个图片盒子占据四分之一的宽度 */
+        padding: 5px; /* 根据需要调整间距 */
+    }
+    .img002 {
+        width: 100%; /* 使图片自适应容器宽度 */
+        height: auto; /* 保持图片的宽高比 */
+        display: block;
+    }
+    .list-boxes {
+        position: relative; /* 为了绝对定位遮罩 */
+        overflow: hidden;
+        margin-bottom: 10px;
+        background: #fff;
+        border: none;
+        cursor: pointer;
+    }
+    .list-boxes::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0); 
+        transition: background 0.5s ease; 
+        pointer-events: none; 
+    }
+
+    .list-boxes.selected::after {
+        background: rgba(0, 0, 0, 0.1); 
+    }
+
+    /* 动画效果 */
+    @keyframes clickEffect {
+        0% { transform: scale(1); }
+        50% { transform: scale(0.95); }
+        100% { transform: scale(1); }
+    }
+    .list-boxes:active {
+        animation: clickEffect 0.3s ease;
+    }
+    
+    .image-container {
+        position: relative; /* 定位父容器 */
+        
+    }
+    
+    .overlay-button {
+        position: absolute; /* 绝对定位 */
+        bottom: 0px; /* 距离底部的距离 */
+        right: 0px; /* 距离右侧的距离 */
+        cursor: pointer;
+    }
+    
+    .btn-group {
+        position: absolute; /* 绝对定位 */
+        bottom: 0px; /* 距离底部的距离 */
+        right: 0px; /* 距离右侧的距离 */
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; /* 使按钮靠右对齐 */
+    }
+    
+    .btn-group .btn {
+        margin-bottom: 1px; /* 为按钮添加一些间距 */
+    }
+    
+    .btn-group .btn:last-child {
+        margin-bottom: 0; /* 最后一个按钮不需要底部间距 */
+    }
+</style>
+    
+    
+</head>
+<body class="body-white">
+<include file="public@diting_header"/>
+<div class="container">
+    <h2>用户数字资产</h2>
+    <div class="row">
+        <div class="col-md-12 text-center">
+            
+
+            <ul class="nav nav-tabs">
+                <li><a href="{:url('cert/cert/userfilelist?type=0')}" data-type="0">待存证</a></li>
+                <li><a href="{:url('cert/cert/userfilelist?type=1')}" data-type="1">待检测</a></li>
+                <li><a href="{:url('cert/cert/userfilelist?type=2')}" data-type="2">已存证</a></li>
+                <li><a href="{:url('cert/cert/userfilelist?type=3')}" data-type="3">已检测</a></li>
+            </ul>           
+            <div class="list">
+             <foreach name="articles" item="vo">     
+                <div class="col-md-3">
+                    <div class="list-boxes" data-id="{$vo.id}">
+                        <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id']))}">{$vo.post_title}</a>
+                        <div class="image-container">
+                            <img class="img002" src="https://dianzicunzheng-1256990416.picsh.myqcloud.com/{$vo.picture}" />
+                            <if condition="$type eq 0">
+                                <div class="btn btn-warning btn-sm pull-right overlay-button" onclick="addBlindWater('{$vo.id}')">
+                                    加密存证
+                                </div>
+                            <elseif condition="$type eq 1"> 
+                                <div class="btn btn-warning btn-sm pull-right overlay-button" onclick="extractTextBlindwater('{$vo.id}')">
+                                    盗用检测
+                                </div>
+                            <elseif condition="$type eq 2">   
+                                <div class="btn-group pull-right"> 
+                                    <div class="btn btn-warning btn-sm overlay-button" onclick="downloadBlindWater('{$vo.added_water_picture}')">
+                                        下载存证图片
+                                    </div> 
+                                    <div class="btn btn-warning btn-sm overlay-button" onclick="downloadCertfile('{$vo.cert_file_url}')">
+                                        下载存证证明
+                                    </div> 
+                                </div> 
+                            <elseif condition="$type eq 3">  
+                                <div class="btn btn-warning btn-sm pull-right overlay-button" onclick="queryBlindWaterText('{$vo.extracted_water_text}', '{$vo.picture}');">
+                                    查看检测结果
+                                </div>   
+                            </if>                           
+                        </div>
+                    </div>       
+                </div> 
+            </foreach>
+
+            </div>
+
+            <ul class="pagination">
+                {$page|default=''}
+            </ul>
+            <div class="batch-process">
+                <if condition="$type eq 0">
+                    <button class="btn btn-primary submit">批量加密</button>
+                <elseif condition="$type eq 1"> 
+                    <button class="btn btn-primary submit">批量解密</button>
+                </if> 
+            </div> 
+        </div>
+
+    </div>
+
+    <include file="public@footer"/>
+</div>
+
+<include file="public@scripts"/>
+
+<script>
+$(document).ready(function() {
+    
+    setTabFromHash();
+    
+    // 存储被选中的ID
+    var selectedIds = [];
+    // 处理list-boxes的点击事件
+    $('.list-boxes').on('click', function() {
+        $(this).toggleClass('selected'); // 切换selected类
+        
+        var id = $(this).data('id'); // 获取data-id属性的值
+        var index = selectedIds.indexOf(id); // 检查ID是否已经在数组中
+
+        if (index === -1) {
+            // 如果ID不在数组中，添加它并添加selected类
+            selectedIds.push(id);
+            $(this).addClass('selected');
+        } else {
+            // 如果ID已经在数组中，移除它并移除selected类
+            selectedIds.splice(index, 1);
+            $(this).removeClass('selected');
+        }
+
+        // 打印当前选中的ID数组
+        console.log(selectedIds);        
+
+    });  
+    
+    $('.submit').on('click', function() {
+        if (selectedIds.length === 0) {
+            alert('没有选中的ID');
+            return;
+        }
+
+        var protocol = window.location.protocol; 
+        var currentDomain = window.location.hostname;
+        var url, actionMessage, errorMessage;
+
+        // 获取当前网址的参数值
+        var queryParams = new URLSearchParams(window.location.search);
+        var type = queryParams.get('type');
+        
+        
+        const regex = /type\/(\d+)\.html/;
+        const match = window.location.href.match(regex);
+        // 如果匹配成功，返回匹配的第一个捕获组（即数字部分）
+        type = match ? match[1] : 1;
+        
+        if (type === '') {
+            type = '1';
+        }        
+
+        // 根据 type 的值决定处理逻辑
+        if (type === '0') {
+            url = protocol + '//' + currentDomain + '/cert/Cert/submitMultiEncrypt';
+            actionMessage = "批量加密完成";
+            errorMessage = "批量加密失败";
+        } else if (type === '1') {
+            url = protocol + '//' + currentDomain + '/cert/Cert/submitMultiDecrypt';
+            actionMessage = "批量解密完成";
+            errorMessage = "批量解密失败";
+        } else {
+            alert('无效的类型参数');
+            return;
+        }
+
+        layer.load();
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            data: { selectedIds: selectedIds },
+            success: function(response) {
+                // 处理后台返回的数据
+                console.log('后台响应:', response);
+                layer.msg(actionMessage);
+                location.reload(true);
+            },
+            error: function(xhr, status, error) {
+                // 处理错误情况
+                console.log(xhr)
+                console.log(status)
+                console.log(error)
+                console.error(errorMessage, error);
+                layer.msg(errorMessage);
+                location.reload(true);
+            }
+        });
+    });
+    
+    
+});
+
+// 根据hash设置当前激活的tab
+
+function setTabFromHash() {
+
+// 获取当前URL的查询参数
+
+    const regex = /type\/(\d+)\.html/;
+    const match = window.location.href.match(regex);
+    // 如果匹配成功，返回匹配的第一个捕获组（即数字部分）
+    type = match ? match[1] : 1;
+    // 如果type为空，则默认为0
+    if (type === '') {
+        type = '1';
+    }
+
+      // 根据type值设置当前激活的tab
+    
+      $('.nav-tabs li a[data-type="' + type + '"]').closest('li').addClass('active');
+
+}
+function addBlindWater(id) {
+    // 获取当前页面使用的协议和域名
+    var protocol = window.location.protocol; // http 或 https
+    var currentDomain = window.location.hostname;
+
+    var url = protocol + '//' + currentDomain + '/cert/Cert/encrypt';
+    var params = 'text=YISHUYUNKU&id=' + id;
+    url += '?' + params; // 将参数附加到URL
+    
+    // 使用AJAX发送请求
+
+    layer.load();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // 设置请求头
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // 请求成功，处理返回的数据
+                console.log('Response from server:', xhr.responseText);
+            } else {
+                // 请求完成但状态不是200 OK，处理错误情况
+                console.error('Error occurred during the request:', xhr.status);
+            }
+            layer.msg("加密存证完成");
+            //location.reload(true)
+            
+        }
+    };
+    // 发送POST请求需要提供数据，这里假设发送的数据是上面构建的params
+    xhr.send(params);
+}
+function downloadBlindWater(url) {
+ // 创建一个临时的<a>元素
+    var tempLink = $('<a></a>', {
+        // 设置href属性为图片URL
+        href: "https://"+url,
+        // 设置download属性为默认的文件名，例如'image.jpg'
+        download: 'image.jpg',
+        // 将display属性设置为none，避免元素出现在页面上
+        style: 'display:none;'
+    });
+
+    // 将<a>元素添加到body中
+    $('body').append(tempLink);
+
+    // 模拟点击<a>元素以触发下载
+    tempLink[0].click();
+
+    // 下载完成后，从DOM中移除<a>元素
+    tempLink.remove();
+}
+function downloadCertfile(url) {
+    window.open("http://"+url, '_blank');
+
+
+}
+
+function queryBlindWaterText(text,url) {
+    const utf8Encoded = unescape(encodeURIComponent(text));
+    var base64EncodedStr = btoa(utf8Encoded);
+    var param = "?imageMogr2/quality/100/interlace/0/thumbnail/2000x|watermark/2/text/"+base64EncodedStr+"/font/dGFob21hLnR0Zg/fontsize/48/fill/IzAwMDAwMA/dissolve/80/shadow/0/batch/1/degree/45"
+    picUrl = "http://dianzicunzheng-1256990416.picsh.myqcloud.com/"+url+param
+    window.open(picUrl);
+}
+function extractTextBlindwater(id) {
+    var protocol = window.location.protocol; // http 或 https
+    var currentDomain = window.location.hostname;
+
+    // 构建正确的URL，确保不要重复拼接协议和域名
+    var url = protocol + '//' + currentDomain + '/cert/Cert/decrypt';
+    var params = 'id=' + id + '&cid=1';
+    url += '?' + params; // 将参数附加到URL
+    // 使用AJAX发送请求
+    layer.load();
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', url, true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); // 设置请求头
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                // 请求成功，处理返回的数据
+                console.log('Response from server:', xhr.responseText);
+            } else {
+                // 请求完成但状态不是200 OK，处理错误情况
+                console.error('Error occurred during the request:', xhr.status);
+            }
+            layer.msg("解密存证完成");
+            location.reload(true)
+        }
+    };
+    // 发送POST请求需要提供数据，这里假设发送的数据是上面构建的params
+    xhr.send(params);
+}
+</script>
+
+<hook name="before_body_end"/>
+</body>
+</html>

@@ -1,0 +1,136 @@
+<head>
+
+    
+</head>
+
+<extend name="public@base"/>
+
+<block name="head">
+
+</block>
+
+<block name="body">
+    
+
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-8">
+   				<ul id="imageGallery" >
+					<foreach name="$artist['avatar']['photos']" item="vo">
+						<li data-thumb="<?php echo cmf_get_image_url_with_token($vo['url'],'!w300'); ?>" data-src="">
+						  <if condition="cmf_is_mobile()">  
+                                    <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" />  
+						  <else />
+                                    <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" />  
+						  </if> 
+						</li>
+					</foreach>
+				</ul>  
+                <div class="mar-b-30">{$artist.life}</div>
+                <div class="mar-b-30">{$artist.character}</div>
+                <div class="mar-b-30">{$artist.achievement}</div>
+			</div>
+			
+			
+			
+			
+			
+
+            <!--右侧栏目-->
+            <div class="col-lg-3 mar-b-30">
+                <ul class="artwork">
+	
+				    <span style="font-weight:bold;font-size:25px">{$artist.name}</span>
+					<li>类别： {$artist.category}</span></li>
+					<li>职称： {$artist.title}</span></li>				    
+					<li>荣誉： {$artist.honor}</span></li>
+					<li>出生日期： {$artist.birth_date}</span></li>				    
+					<li>出生地点： {$artist.birth_place}</span></li>
+		    
+				    
+				    
+				
+
+                </ul>
+            </div>
+            <!--blog end-->
+
+
+
+        </div>
+    </div>
+    <!--container end-->
+	
+
+	
+		<!--其它相关作品-->
+	<div class="container">
+		<div class="row mar-b-50">
+			<div class="col-md-12">
+				<!--版块内容-->
+					<!--版块标题-->
+					<div class="text-center feature-head wow fadeInDown">
+						<h1 class="">大师作品</h1>
+					</div>
+					<div class="feature-box">
+						<foreach name="artworks" item="vo">
+							<div class="col-md-4 col-sm-4 text-center wow fadeInUp">
+								<div class="feature-box-heading">
+									<em>
+									    <figure class="effect-ruby">
+                                        
+										<img src="{:cmf_get_image_url_with_token($vo.picture.thumbnail,'!w300')}" width="400" height="400">
+                                        </a>
+                                        </figure>
+                                    </em>
+									<div style=" white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">
+									<h5><b>{$vo.work_name}</b></h5>
+									</div>
+								</div>
+							</div>
+						</foreach>
+					</div>
+			</div>
+		</div>
+	</div>
+
+
+</block>
+
+<block name="scripts">
+  
+<script>
+
+ 
+	var viewer = new Viewer(document.getElementById('imageGallery'), {
+		url: 'data-original',
+		maxZoomRatio:50,
+		title:true,
+		show: function() {
+		 //  fullScreen();
+		},
+		viewed: function() {
+		   viewer.fullImage($(document).width()-100);
+		},
+		hide: function() {
+	//	   fullScreen();
+		}
+	});
+
+
+	$(document).ready(function() {
+		$('#imageGallery').lightSlider({
+		gallery:true,
+		minSlide:1,
+		maxSlide:1,
+		currentPagerPosition:'centercenter'  
+		});  
+
+	});
+
+
+
+</script>
+</block>

@@ -1,0 +1,92 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminPortalIndustry/index')}">所有产业数据表</a></li>
+        <li class="active"><a href="#">添加产业数据表</a></li>
+    </ul>
+    <form action="{:url('AdminPortalIndustry/addPost')}"
+          method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr>
+						<th width="150">公司名<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="company"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入公司名"/>
+						</td>
+					</tr>
+					<tr>
+						<th>年份<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="year"
+                                   required value="" 
+                                   placeholder="请输入年份"/>
+						</td>
+					</tr>
+					<tr>
+						<th>收入<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="income"
+                                   required value="" 
+                                   placeholder="请输入收入"/>
+						</td>
+					</tr>
+					<tr>
+						<th>成本<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="cost"
+                                   required value="" 
+                                   placeholder="请输入成本"/>
+						</td>
+					</tr>
+					<tr>
+						<th>利润<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="net"
+                                   required value="" 
+                                   placeholder="请输入利润"/>
+						</td>
+					</tr>
+					<tr>
+						<th>税收<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="tax"
+                                   required value="" 
+                                   placeholder="请输入税收"/>
+						</td>
+					</tr>
+					<tr>
+						<th>负债<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="debt"
+                                   required value="" 
+                                   placeholder="请输入负债"/>
+						</td>
+					</tr>
+					<tr>
+						<th>城市<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="city"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入城市"/>
+						</td>
+					</tr>
+
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

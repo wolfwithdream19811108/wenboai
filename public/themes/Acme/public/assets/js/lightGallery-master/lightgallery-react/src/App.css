@@ -1,0 +1,33 @@
+.App {
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inline-gallery-container {
+    width: 100%;
+    height: 0;
+    padding-bottom: 65%;
+}
+
+.inline-gallery-container {
+    padding-bottom: 100%;
+    height: 0;
+}
+
+@media (min-width: 576px) {
+    .inline-gallery-container {
+        padding-bottom: 65%;
+    }
+}
+.lg-react-element {
+    display: flex;
+    align-items: end;
+}

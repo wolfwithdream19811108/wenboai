@@ -1,0 +1,127 @@
+.products-gallery .photo-item img {
+    min-height: 420px;
+}
+
+.photo-number {
+    bottom: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #ffffff;
+    background: rgba(0, 0, 0, .5);
+    padding: 10px;
+}
+
+.photo-number span.current {
+    color: #248d8e;
+}
+
+.gallery-thumb img:hover {
+    cursor: pointer;
+}
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+.content-slider-with-controls .owl-nav,
+.content-slider-with-controls-autoplay .owl-nav,
+.content-slider-with-thumbs .owl-nav {
+    width: 100%;
+    height: 0;
+    position: absolute;
+    top: 50%;
+    margin-top: -15px;
+    z-index: 10;
+}
+
+.content-slider-with-controls .owl-nav div,
+.content-slider-with-controls-autoplay .owl-nav div,
+.content-slider-with-thumbs .owl-nav div {
+    display: inline-block;
+    font-size: 14px;
+    position: absolute;
+    text-transform: capitalize;
+    font-weight: 300;
+    color: transparent;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 5px;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-slider-with-controls .owl-nav div:after,
+.content-slider-with-controls-autoplay .owl-nav div:after,
+.content-slider-with-thumbs .owl-nav div:after {
+    font-family: "FontAwesome";
+    position: absolute;
+    font-size: 16px;
+    line-height: 1;
+    top: 50%;
+    margin-top: -8px;
+}
+
+.content-slider-with-controls .owl-nav .owl-prev,
+.content-slider-with-controls-autoplay .owl-nav .owl-prev,
+.content-slider-with-thumbs .owl-nav .owl-prev {
+    left: 0;
+    padding-left: 0px;
+}
+
+.content-slider-with-controls .owl-nav .owl-prev:hover,
+.content-slider-with-controls-autoplay .owl-nav .owl-prev:hover,
+.content-slider-with-thumbs .owl-nav .owl-prev:hover {
+    padding-left: 25px;
+    padding-right: 10px;
+    color: #ffffff;
+}
+
+.content-slider-with-controls .owl-nav .owl-prev:after,
+.content-slider-with-controls-autoplay .owl-nav .owl-prev:after,
+.content-slider-with-thumbs .owl-nav .owl-prev:after {
+    content: "\f104";
+    left: 13px;
+    color: #ffffff;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-slider-with-controls .owl-nav .owl-prev:hover:after,
+.content-slider-with-controls-autoplay .owl-nav .owl-prev:hover:after,
+.content-slider-with-thumbs .owl-nav .owl-prev:hover:after {
+    left: 8px;
+}
+
+.content-slider-with-controls .owl-nav .owl-next,
+.content-slider-with-controls-autoplay .owl-nav .owl-next,
+.content-slider-with-thumbs .owl-nav .owl-next {
+    right: 0px;
+    left: auto;
+    padding-right: 0px;
+}
+
+.content-slider-with-controls .owl-nav .owl-next:hover,
+.content-slider-with-controls-autoplay .owl-nav .owl-next:hover,
+.content-slider-with-thumbs .owl-nav .owl-next:hover {
+    padding-right: 25px;
+    padding-left: 10px;
+    color: #ffffff;
+}
+
+.content-slider-with-controls .owl-nav .owl-next:after,
+.content-slider-with-controls-autoplay .owl-nav .owl-next:after,
+.content-slider-with-thumbs .owl-nav .owl-next:after {
+    content: "\f105";
+    right: 13px;
+    color: #ffffff;
+    -webkit-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+}
+
+.content-slider-with-controls .owl-nav .owl-next:hover:after,
+.content-slider-with-controls-autoplay .owl-nav .owl-next:hover:after,
+.content-slider-with-thumbs .owl-nav .owl-next:hover:after {
+    right: 8px;
+}

@@ -1,0 +1,49 @@
+{
+    "name": "联系我们页",
+    "action": "portal/Page/index",
+    "description": "联系我们页模板文件",
+    "order": 70.0,
+    "more": {
+        "vars": {
+            "baidu_map_info_window_text": {
+                "title": "百度地图标注文字",
+                "name": "baidu_map_info_window_text",
+                "value": "",
+                "type": "text",
+                "tip": "百度地图标注文字,支持简单html代码",
+                "rule": []
+            },
+            "company_location": {
+                "title": "公司坐标",
+                "value": "",
+                "type": "location",
+                "tip": "",
+                "rule": {
+                    "require": true
+                }
+            }
+        },
+        "widgets": {
+            "bottom": {
+                "title": "底部轮播信息",
+                "display": "1",
+                "vars": {
+                    "section_name": {
+                        "title": "模块标题",
+                        "value": "",
+                        "type": "text"
+                    },
+                    "category_id": {
+                        "title": "信息分类id",
+                        "value": "",
+                        "type": "text",
+                        "dataSource": {
+                            "api": "portal/Category/index",
+                            "multi": false
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

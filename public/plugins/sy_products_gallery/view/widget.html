@@ -1,0 +1,20 @@
+<if condition="!empty($photos)">
+<div class="products-gallery mb-4">
+    <div class="gallery-body owl-carousel owl-theme content-slider-with-thumbs mb-15">
+        <foreach name="photos" item="vo">
+            <div class="photo-item relative">
+                <a href="{:cmf_get_image_url($vo['url'])}" title="{$vo.name}" class="popup-img"><img src="{:cmf_get_image_url($vo['url'])}" alt=""></a>
+                <div class="photo-number absolute"><span class="current">{$key+1}</span> / <php>echo count($photos);</php> </div>
+            </div>
+        </foreach>
+    </div>
+    <div class="content-slider-thumbs-container">
+    <div class="gallery-thumb owl-carousel owl-theme content-slider-thumbs">
+        <foreach name="photos" item="vo">
+            <div class="owl-nav-thumb ">
+                <img src="{:cmf_get_image_url($vo['url'])}" alt="">
+            </div>
+        </foreach>
+    </div></div>
+</div>
+</if>

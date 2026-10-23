@@ -1,0 +1,8 @@
+{
+  "name": "文章列表页（列表左侧带缩略图）",
+  "action": "portal/list/index",
+  "description": "文章列表页（列表左侧带缩略图）",
+  "order": 1.0,
+  "more": {
+  }
+}

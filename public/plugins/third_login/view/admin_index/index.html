@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>群发插件</title>
+	<include file="public/head"/>
+</head>
+<body>
+	<div class="layui-fluid" style="padding: 15px">
+		<div class="layui-tab layui-tab-card">
+		    <ul class="layui-tab-title">
+		        <li class="layui-this">qq登录配置</li>
+		        <li>新浪微博登录配置</li>
+		        <li>微信登录配置</li>
+		    </ul>
+		    <div class="layui-tab-content">
+		        <div class="layui-tab-item layui-show">
+					<form class="layui-form" action="">
+						<input type="hidden" name="id" value="{$configs['qq']['id']}">
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">APP ID: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_id" class="layui-input" value="{$configs['qq']['app_id']}" lay-verify="required" lay-reqText="APP ID不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip color-green">马上获取 <a href="https://connect.qq.com/" target="_blank">https://connect.qq.com/</a></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">APP Key: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_secret" class="layui-input" value="{$configs['qq']['app_secret']}" lay-verify="required" lay-reqText="APP Key不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip ">回调地址：<span>域名/plugin/third_login/login/qq.html</span></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item">
+					        <div class="layui-input-block">
+					            <button class="layui-btn" lay-submit lay-filter="saveConfig">保存</button>
+					        </div>
+					    </div>
+					</form>
+		        </div>
+		        <div class="layui-tab-item">
+					<form class="layui-form" action="">
+						<input type="hidden" name="id" value="{$configs['sina']['id']}">
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">App Key: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_id" class="layui-input" value="{$configs['sina']['app_id']}" lay-verify="required" lay-reqText="App Key不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip color-green">马上获取 <a href="https://open.weibo.com/" target="_blank">https://open.weibo.com</a></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">App Secret: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_secret" class="layui-input" value="{$configs['sina']['app_secret']}" lay-verify="required" lay-reqText="App Secret不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip ">回调地址：<span>域名/plugin/third_login/login/sina.html</span></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item">
+					        <div class="layui-input-block">
+					            <button class="layui-btn" lay-submit lay-filter="saveConfig">保存</button>
+					        </div>
+					    </div>
+					</form>
+		        </div>
+		        <div class="layui-tab-item">
+					<form class="layui-form" action="">
+						<input type="hidden" name="id" value="{$configs['wechat']['id']}">
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">App Key: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_id" class="layui-input" value="{$configs['wechat']['app_id']}" lay-verify="required" lay-reqText="App Key不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip color-green">马上获取 <a href="https://open.weixin.qq.com/" target="_blank">https://open.weixin.qq.com</a></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item layui-col-md5">
+					        <label class="layui-form-label">App Secret: </label>
+					        <div class="layui-input-block">
+					            <input type="text" name="app_secret" class="layui-input" value="{$configs['wechat']['app_secret']}" lay-verify="required" lay-reqText="App Secret不能为空">
+					            <div class="layui-form-mid layui-word-aux layui-tip ">回调地址：<span>域名/plugin/third_login/login/wechat.html</span></div>
+					        </div>
+					    </div>
+					    <div class="layui-form-item">
+					        <div class="layui-input-block">
+					            <button class="layui-btn" lay-submit lay-filter="saveConfig">保存</button>
+					        </div>
+					    </div>
+					</form>
+		        </div>
+		    </div>
+		</div>
+	</div>
+	<include file="public/scripts"/>
+	<script type="text/javascript" src="__PLUGIN_TMPL__/public/assets/js/index.js?v={$static_file_version}"></script>
+</body>
+</html>

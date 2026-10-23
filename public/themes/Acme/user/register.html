@@ -1,0 +1,298 @@
+<extend name="public@base"/>
+<block name="body">
+    <!--breadcrumbs start-->
+    <div class="breadcrumbs">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 col-sm-4">
+                    <h1>新用户注册</h1>
+                </div>
+                <div class="col-lg-8 col-sm-8">
+                    <ol class="breadcrumb pull-right">
+                        <li><a href="__ROOT__/">首页</a></li>
+                        <li class="active">用户注册</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--breadcrumbs end-->
+
+    <!--container start-->
+    <div class="registration-bg">
+        <div class="container">
+            <div class="form-signin wow fadeInUp">
+                <php>
+                    $mobile_tab_active=empty($theme_vars['enable_mobile'])?'':'active';
+                    $email_tab_active=empty($theme_vars['enable_mobile'])?'active':'';
+                </php>
+<!--                <notempty name="theme_vars.enable_mobile">
+                    <ul class="nav nav-tabs nav-justified" id="myTab" style="margin-bottom: 15px;">
+                        <li class="active"><a href="#mobile" data-toggle="tab">手机注册</a></li>
+                        <li><a href="#email" data-toggle="tab">邮箱注册</a></li>
+                    </ul>
+                </notempty>-->
+
+                <php>
+                    $is_open_registration = cmf_is_open_registration();
+                </php>
+                <div class="tab-content" style="width:300px">
+                    <notempty name="theme_vars.enable_mobile">
+                        <div class="tab-pane login-wrap {$mobile_tab_active}" id="mobile">
+                            <form class="js-ajax-form" action="{:url('user/Register/doRegisternocaptcha')}" method="post">
+                                <input type="text" name="username" placeholder="手机号" class="form-control" id="js-mobile-input">
+                                <empty name="is_open_registration">
+                                    <div class="form-group">
+                                        <div style="position: relative;">
+                                            <input type="text" name="code" placeholder="手机验证码" style="width:100px;z-index:99;"
+                                                   class="form-control">
+                                            <div id="verifybutton" class="btn btn-success js-get-mobile-code-nocaptcha"
+                                               style="width: 160px;position: absolute;top:0;right: 0;height:38px;text-align:center;line-height:25px;color:#fff; "
+                                               data-wait-msg="[second]秒后才能再次获取" data-mobile-input="#js-mobile-input"
+                                               data-url="{:url('user/VerificationCode/send')}"
+                                               daty-type="register"
+                                               
+                                               
+                                               >获取验证码</div>                                                   
+                                                   
+                                                   
+<!--                                            <a id="verifybutton" class="btn btn-success js-get-mobile-code-nocaptcha"
+                                               style="width: 160px;position: absolute;top:0;right: 0;height:38px;text-align:center;line-height:25px;color:#fff; "
+                                               data-wait-msg="[second]秒后才能再次获取" data-mobile-input="#js-mobile-input"
+                                               data-url="{:url('user/VerificationCode/send')}"
+                                               daty-type="register"
+                                               data-init-second-left="60">获取手机验证码</a>-->
+                                        </div>
+                                    </div>
+                                </empty>
+<!--                                <div style="position: relative;">
+                                    <input type="text" name="captcha" placeholder="图形验证码" class="form-control"
+                                           style="width: 100px;float: left;margin-right: 30px">
+                                    <captcha height="38" width="160" font-size="20"  />
+                                </div>-->
+                                <input type="password" name="password" placeholder="密码" class="form-control">
+                                <input type="password" name="re_password" placeholder="确认密码" class="form-control">
+                                <button class="btn btn-lg btn-login btn-block js-ajax-submit" type="submit">确定注册</button>
+                            </form>
+                        </div>
+                    </notempty>
+<!--                    <div class="tab-pane login-wrap {$email_tab_active}" id="email">
+                        <form class="js-ajax-form" action="{:url('user/register/doRegister')}" method="post">
+                            <input type="text" name="username" placeholder="邮箱" class="form-control" id="js-email-input">
+                            <empty name="is_open_registration">
+                                <div style="position: relative;">
+                                    <input type="text" name="code" placeholder="邮件验证码" style="width:100px;"
+                                           class="form-control">
+                                    <a class="btn btn-success js-get-email-code"
+                                       style="width: 160px;position: absolute;top:0;right: 0;height:38px;color:white;text-align:center;line-height:25px;"
+                                       data-wait-msg="[second]秒后才能再次获取" data-email-input="#js-email-input"
+                                       data-url="{:url('user/VerificationCode/send')}"
+                                       daty-type="register"
+                                       data-init-second-left="60">获取邮箱验证码</a>
+                                </div>
+                            </empty>
+							<div style="position: relative;">
+                                <input type="text" name="captcha" placeholder="图形验证码" class="form-control"
+                                       style="width: 100px;float: left;margin-right: 30px">
+                                <captcha height="38" width="160" font-size="20"/>
+                            </div>
+                            <input type="password" name="password" placeholder="密码" class="form-control">
+                            <input type="password" name="re_password" placeholder="确认密码" class="form-control">
+                            <button class="btn btn-lg btn-login btn-block js-ajax-submit" type="submit">确定注册</button>
+                        </form>
+                    </div>-->
+                    <div class="registration login-wrap">
+                        已有账号? <a href="{:cmf_url('user/Login/index')}">点击此处登录</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--container end-->
+    
+
+<script type="text/javascript" src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script>
+<script>
+  let captcha;
+  var verifyCodeSecond;
+  // 弹出式
+  initAliyunCaptcha({
+    SceneId: '1doig5bf', // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
+    prefix: '9pvdp9', // 身份标。开通阿里云验证码2.0后，您可以在控制台概览页面的实例基本信息卡片区域，获取身份标
+    mode: 'popup', // 验证码模式。popup表示要集成的验证码模式为弹出式。无需修改
+    element: '#captcha-element', //页面上预留的渲染验证码的元素，与原代码中预留的页面元素保持一致。
+    button: '#verifybutton', // 触发验证码弹窗的元素。button表示单击登录按钮后，触发captchaVerifyCallback函数。您可以根据实际使用的元素修改element的值
+    captchaVerifyCallback: captchaVerifyCallback, // 业务请求(带验证码校验)回调函数，无需修改
+    onBizResultCallback: onBizResultCallback, // 业务请求结果回调函数，无需修改
+    getInstance: getInstance, // 绑定验证码实例函数，无需修改
+    slideStyle: {
+      width: 360,
+      height: 40,
+    }, // 滑块验证码样式，支持自定义宽度和高度，单位为px。其中，width最小值为320 px
+    language: 'cn', // 验证码语言类型，支持简体中文（cn）、繁体中文（tw）、英文（en）
+    region: 'cn' //验证码示例所属地区，支持中国内地（cn）、新加坡（sgp）
+  });
+
+  // 绑定验证码实例函数。该函数为固定写法，无需修改
+  function getInstance(instance) {
+    captcha = instance;
+  }
+
+  // 业务请求(带验证码校验)回调函数
+  /**
+   * @name captchaVerifyCallback
+   * @function
+   * 请求参数：由验证码脚本回调的验证参数，不需要做任何处理，直接传给服务端即可
+   * @params {string} captchaVerifyParam
+   * 返回参数：字段名固定，captchaResult为必选；如无业务验证场景时，bizResult为可选
+   * @returns {{captchaResult: boolean, bizResult?: boolean|undefined}} 
+   */
+    function captchaVerifyCallback(captchaVerifyParam, callback) {
+      // formData.append('yourBizParam', yourBizValue); // 添加其他业务参数
+      // 1.向后端发起业务请求，获取验证码验证结果和业务结果
+      fetch('/api/portal/user/captcha', {
+        method: 'POST', // 指定请求方法为POST
+        headers: {
+          'Content-Type': 'application/json', // 设置请求头，告诉服务器发送的是JSON数据
+        },
+        body: JSON.stringify({ captchaVerifyParam: captchaVerifyParam }) // 将参数转换为JSON字符串
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json(); // 解析JSON响应体
+      })
+      .then(result => {
+        // 2.构造标准返回参数
+        var verifyResult = {
+          captchaResult: result.data.verifyResult
+        };
+        // 调用回调函数，传入验证结果
+        callback(verifyResult);
+      })
+      .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+      });
+    }
+
+  // 业务请求验证结果回调函数
+  function onBizResultCallback(bizResult) {
+    if (bizResult === true) {
+      // 如果业务验证通过，跳转到对应页面。此处以跳转到https://www.aliyun.com/页面为例
+        console.log("发送验证码")
+      
+      
+        
+        var $js_get_mobile_code_nocaptcha = $('.js-get-mobile-code-nocaptcha');
+        if ($js_get_mobile_code_nocaptcha.data('loading')||$js_get_mobile_code_nocaptcha.data('sending')){
+          layer.msg('正在发送验证码，请稍后再试', {
+            	  icon: 1,
+            	  time: 2000 //2秒关闭
+            	});           
+            return;
+        } 
+        var $mobile_input = $($js_get_mobile_code_nocaptcha.data('mobile-input'));
+        var mobile        = $mobile_input.val();
+        if (mobile == '') {
+            $mobile_input.focus();
+            return;
+        }
+        
+        var $form           = $js_get_mobile_code_nocaptcha.parents('form');
+        
+        
+        
+        $js_get_mobile_code_nocaptcha.data('loading', true);
+        $js_get_mobile_code_nocaptcha.data('sending', true);
+        
+        var url = $js_get_mobile_code_nocaptcha.data('url');
+        
+        var init_secode_left = parseInt($js_get_mobile_code_nocaptcha.data('init-second-left'));
+        init_secode_left     = init_secode_left > 0 ? init_secode_left : 60;
+        
+        if(verifyCodeSecond>0){
+            console.log(verifyCodeSecond)
+        }
+        
+        
+        
+        var init_text        = $js_get_mobile_code_nocaptcha.text();
+        $js_get_mobile_code_nocaptcha.data('second-left', init_secode_left);
+        var wait_msg = $js_get_mobile_code_nocaptcha.data('wait-msg');
+        var codeType = $js_get_mobile_code_nocaptcha.data('type');
+        $.ajax({
+            url: url,
+            type: 'POST',
+            dataType: 'json',
+            data: {username: mobile, type: codeType},
+            success: function (data) {
+                if (data.code == 1) {
+                    noty({
+                        text: data.msg,
+                        type: 'success',
+                        layout: 'center'
+                    });
+        
+                    $js_get_mobile_code_nocaptcha.text(wait_msg.replace('[second]', init_secode_left));
+                    verifyCodeSecond = 60
+                    var mtimer = setInterval(function () {
+                        if (init_secode_left > 0) {
+                            init_secode_left--;
+                            verifyCodeSecond=verifyCodeSecond-1;
+                            $js_get_mobile_code_nocaptcha.text(wait_msg.replace('[second]', init_secode_left));
+                        } else {
+                            clearInterval(mtimer);
+                            $js_get_mobile_code_nocaptcha.text(init_text);
+                            $js_get_mobile_code_nocaptcha.data('sending', false);
+                        }
+        
+                    }, 1000);
+                } else {
+                    var $verify_img = $form.find(".verify_img");
+                    if ($verify_img.length) {
+                        $verify_img.attr("src", $verify_img.attr("src") + "&refresh=" + Math.random());
+                    }
+                    noty({
+                        text: data.msg,
+                        type: 'error',
+                        layout: 'center'
+                    });
+                    $js_get_mobile_code_nocaptcha.data('sending', false);
+                }
+            },
+            error: function () {
+                $js_get_mobile_code_nocaptcha.data('sending', false);
+            },
+            complete: function () {
+                $js_get_mobile_code_nocaptcha.data('loading', false);
+            }
+        });     
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+
+    } else {
+      // 如果业务验证不通过，给出不通过提示。此处不通过提示为业务验证不通过！
+      alert('业务验证不通过！');
+    }
+  }    
+    
+    
+</script>    
+    
+    
+</block>
+

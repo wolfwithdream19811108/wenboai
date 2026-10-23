@@ -1,0 +1,162 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有作品</a></li>
+        <li><a href="{:url('AdminModel/add')}">添加作品</a></li>
+    </ul>
+   
+    <form class="js-ajax-form" action="" method="post">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="50">ID</th>
+                <th width="150">名称</th>
+                <th width="50">标记文本</th>
+                <th width="100">描述</th>
+                <th width="65">分类文本</th>
+                <th width="65">基底模型</th>
+                <th width="160">缩略图</th>
+                <th width="160">状态文本</th>
+                <th width="160">创建时间</th>
+                <th width="70">过期时间</th>
+                <th width="90">操作</th>
+            </tr>
+            </thead>
+            <foreach name="models" item="vo">
+                <tr>
+
+                    <td>{$vo.id}</td>
+                    <td>{$vo.name}</td>
+                    <td>{$vo.artist_style}</td>
+                    <td>{$vo.description}</td>
+                    <td>{$vo.category_text}</td>
+                    <td>{$vo.base_model}</td>
+					
+                    <td>
+                            <img src="{:cmf_get_image_preview_url($vo.thumb)}"
+                             id="thumbnail-preview"
+                             width="135" style="cursor: pointer"/>
+
+                    </td>
+                    <td>{$vo.state_text}</td>
+                    <td>{$vo.create_at}</td>
+                    <td>{$vo.expire_at}</td>
+                    
+
+
+                    <td>
+                        <a class="btn btn-xs btn-primary" target="_blank" href="{:url('AdminArticle/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                        <a class="btn btn-xs btn-danger js-ajax-delete" href="{:url('AdminArticle/delete',array('id'=>$vo['id']))}">{:lang('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+
+        </table>
+        <div class="table-actions">
+            <notempty name="category">
+                <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                        data-action="{:url('AdminArticle/listOrder')}">{:lang('SORT')}
+                </button>
+            </notempty>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/publish',array('yes'=>1))}" data-subcheck="true">发布
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/publish',array('no'=>1))}" data-subcheck="true">取消发布
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/top',array('yes'=>1))}" data-subcheck="true">置顶
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/top',array('no'=>1))}" data-subcheck="true">取消置顶
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/recommend',array('yes'=>1))}" data-subcheck="true">推荐
+            </button>
+            <button class="btn btn-primary btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/recommend',array('no'=>1))}" data-subcheck="true">取消推荐
+            </button>
+            <!--
+            <notempty name="category">
+                <button class="btn btn-primary btn-sm js-articles-move" type="button">批量移动</button>
+            </notempty>
+            <button class="btn btn-primary btn-sm js-articles-copy" type="button">批量复制</button>
+            -->
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArticle/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <ul class="pagination">{$page|default=''}</ul>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+    $(function () {
+        setCookie("refersh_time", 0);
+        Wind.use('ajaxForm', 'artDialog', 'iframeTools', function () {
+            //批量复制
+            $('.js-articles-copy').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=copy&ids=" + ids, {
+                    title: "批量复制",
+                    width: "300px"
+                });
+            });
+            //批量移动
+            $('.js-articles-move').click(function (e) {
+                var ids = [];
+                $("input[name='ids[]']").each(function () {
+                    if ($(this).is(':checked')) {
+                        ids.push($(this).val());
+                    }
+                });
+
+                if (ids.length == 0) {
+                    art.dialog.through({
+                        id: 'error',
+                        icon: 'error',
+                        content: '您没有勾选信息，无法进行操作！',
+                        cancelVal: '关闭',
+                        cancel: true
+                    });
+                    return false;
+                }
+
+                ids = ids.join(',');
+                art.dialog.open("__ROOT__/index.php?g=portal&m=AdminArticle&a=move&old_term_id={$term.term_id|default=0}&ids=" + ids, {
+                    title: "批量移动",
+                    width: "300px"
+                });
+            });
+        });
+    });
+</script>
+</body>
+</html>
+

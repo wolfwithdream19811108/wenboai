@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="__PLUGIN_TMPL__/css/bootstrap.min.css">
+
+<style>
+    .wrap{
+        padding: 20px 20px 70px
+    }
+    .site_analysis_main{
+        margin-top: 20px;
+    }
+    a{
+        text-decoration:none !important;
+        display: block;
+    }
+    .map-container{
+        height: 400px;
+    }
+</style>
+<script src="__PLUGIN_TMPL__/js/echarts/echarts.min.js"></script>
+<script src="__PLUGIN_TMPL__/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/",
+        APP: '{$Request.module}'/*当前应用名*/
+    };
+</script>
+<script src="__STATIC__/js/wind.js"></script>

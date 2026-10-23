@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型选择</title>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/jquery-2.0.0.min.js"></script>
+    
+    
+      <link href="__TMPL__/public/assets/interest/bbw.css" rel="stylesheet" />
+    <link href="__TMPL__/public/assets/interest/element.css" rel="stylesheet" />
+    <link href="__TMPL__/public/assets/interest/index.css" rel="stylesheet" />
+</head>
+
+
+
+
+ <style>
+ 
+
+.FocusAreas .CenterPromptbox
+{
+  width: 1200px;
+  padding: 0;
+  overflow: visible !important;
+  background: black;
+} 
+.FocusAreas .CenterPromptbox .title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70px;
+  border-bottom: none;
+  margin-bottom: 4px;
+  font-size: 20px;
+  font-weight: bold;
+}
+.FocusAreas .CenterPromptbox .content .select-main .select
+{
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-wrap: wrap;
+  height: 1000px;
+  margin-bottom: 28px;
+  margin-top: 1px;
+  height: 360px;
+  overflow-y: auto;
+  height: 800px;
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* 添加间距 */
+}
+.submit-btn
+{
+  height: 40px;
+  flex: 0 0 40%; /* 修改为占据40%宽度 */
+  line-height: 30px;
+  text-align: center;
+  font-size: 20px;
+  color: black;
+  align-items: center;
+  border-radius: 10px;
+  justify-content: center;
+  background-color: rgb(72, 179, 171);
+  font-weight: border;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  color:white;
+  display: flex;
+}
+
+.cancel-btn
+{
+  height: 40px;
+  flex: 0 0 40%; /* 修改为占据40%宽度 */
+  line-height: 30px;
+  text-align: center;
+  font-size: 20px;
+  color: black;
+  align-items: center;
+  border-radius: 10px;
+  justify-content: center;
+  background-color: #3e3e3e;
+  color:white;
+  font-weight: border;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  display: flex;
+}
+
+ </style>
+
+<body>
+
+
+
+<div id="dialogBox" class="dialogBox FocusAreas" style="display: none;"> 
+		<span class="CenterPromptbox radius">
+			<span class="content"> 
+				<div id="newuser-choose-area"> 	  
+					<div class="wrap"> 
+						<div class="title font-bold">
+						<p style="color: white;">选择工艺美术模型</p>
+						</div> 
+						<div class="select-main">
+							<div class="select">
+								<foreach name="categories" item="vo">
+								<div class="slect-box">
+								   <img src="{:cmf_get_image_preview_url($vo.more.thumbnail)}" /> 
+								   <div class="img-mask"></div> 
+								   <span>{$vo.name}</span> 
+								   <div class="hover-icon"></div> 
+								   <div class="hover-mask"></div>
+								</div>
+								</foreach>
+							</div>
+						</div>
+                        <div class="footer">
+                            <div id="cancel-btn" class="cancel-btn">取消</div>
+                            <div id="submit_btn" class="submit-btn">确定</div>
+                        </div>
+					</div>
+				</div>
+			</span> 
+		</span>
+</div>
+
+
+
+
+</body>
+
+
+<script type="text/javascript">
+
+
+var categories_json = '<?php echo $categories_json; ?>';
+var categories = JSON.parse(categories_json);
+//看这个例子
+//https://www.cnblogs.com/52fhy/p/5405541.html
+
+
+function getData(size){
+    var index = layer.load();
+    $.ajax({
+    	type: 'GET',
+    	url: "/portal/recommend/getRecommendArticle?page="+page,
+    	dataType: 'json',
+    	success: function(reponse){		
+    		var data = reponse;
+    		var sum = reponse.length;
+          	layer.close(index);  
+			page++;
+			isGettingData = true;
+			if(sum < pageSize){
+				alert("没有更多数据")
+			}
+    	
+    		for(var i=0; i< (0,size); i++){				
+					articleUrl = '/portal/article/index/id/'+data[i]["id"]+'.html'
+					result += '<div class="item">'+
+								   '<div  align="left" class="blog-img img">'+
+									   '<figure class="effect-ruby"> <a href="'+articleUrl+'">'+
+									   '<img class="img002" src="'+data[i].more.thumbnail+'!300X" />'+
+									   '</a> </figure>'+
+                      							'<a href="www.baidu.com">'+
+                      							data[i].post_title+
+                      							
+                       '</a>'+
+								   '</div>'+
+							  '</div>'
+
+    		}
+			removeAllChild();
+    		$('.recommend-gallery-container').append(result);
+
+
+
+			$("#recommend-gallery-container").mpmansory(
+				{
+					childrenClass: 'item', // default is a div
+					columnClasses: 'padding', //add classes to items
+					breakpoints:{
+						lg: 3, 
+						md: 4, 
+						sm: 6,
+						xs: 12
+					},
+					distributeBy: { order: false, height: false, attr: 'data-order', attrOrder: 'asc' }, //default distribute by order, options => order: true/false, height: true/false, attr => 'data-order', attrOrder=> 'asc'/'desc'
+					onload: function (items) {
+						//make somthing with items
+					} 
+				}
+			);
+    	},
+    	error: function(xhr, type){
+    		alert('Ajax error!');
+    	}
+    });
+}
+
+
+function removeAllChild()
+{
+    var div = document.getElementById("recommend-gallery-container");
+    while(div.hasChildNodes()) //当div下还存在子节点时 循环继续
+    {
+        div.removeChild(div.firstChild);
+    }
+}
+
+
+
+$(document).ready(function() {
+	/*首次加载*/
+  var div = document.getElementById("dialogBox");
+
+        div.style.display="";
+
+
+
+});
+
+
+
+var lastSelectIndex = 0;
+var lastSelectDiv = null;
+
+$("div.slect-box").click(function(){
+
+    
+	if ($(this).children("div.selected-icon")["length"]==0)
+	{
+
+
+			var newNode = document.createElement("div");
+			newNode.className  ="selected-icon";
+			$(this).append(newNode);
+			var newNode = document.createElement("p");
+			newNode.className  ="selected-mask";
+			$(this).append(newNode);
+
+
+	}
+	var index=$("div.slect-box").index($(this));
+	if(lastSelectDiv != null && lastSelectIndex != index ){
+
+		$(lastSelectDiv).children("div.selected-icon").remove();
+		$(lastSelectDiv).children("p.selected-mask").remove();
+    }
+    lastSelectIndex = index;
+    lastSelectDiv = this;
+    console.log(lastSelectDiv)
+
+
+}); 
+
+
+
+</script>
+
+</html>

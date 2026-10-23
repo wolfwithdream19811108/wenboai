@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+	<head>
+		<include file="public/head" />
+		<title>留言板后台管理</title>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+	</head>
+	<body>
+		<div class="wrap">
+			<div class="guestbook-detail">
+				<h3>{$detail.name}的详细留言
+					<small>{:date('Y-m-d H:i',$detail['create_time'])}</small>
+				</h3>
+				<table class="table table-bordered table-hover">
+					<tr>
+						<td width="15%">来源</td>
+						<td>{$detail.referrer}</td>
+					</tr>
+					<tr>
+						<td width="15%">地区</td>
+						<td>{$detail.area}</td>
+					</tr>
+					<tr>
+						<td>姓名</td>
+						<td>{$detail.name}</td>
+					</tr>
+					<tr>
+						<td>电话</td>
+						<td>{$detail.mobile}</td>
+					</tr>
+					<!--            <tr>
+                <td>邮箱</td>
+                <td>{$detail.email}</td>
+            </tr> -->
+					<tr>
+						<td>详细留言</td>
+						<td>{$detail.message}</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<include file="public/scripts" />
+	</body>
+</html>

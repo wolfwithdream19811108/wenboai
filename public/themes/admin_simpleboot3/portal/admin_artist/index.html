@@ -1,0 +1,127 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有人才</a></li>
+        <li><a href="{:url('AdminArtist/add')}">添加人才</a></li>
+    </ul>
+    <form class="well form-inline margin-top-20" method="post" action="{:url('AdminArtist/index')}">
+        分类:
+        <select class="form-control" name="category" style="width: 140px;">
+            <option value='全部'>全部</option>
+            <option value='雕塑'>雕塑</option>
+            <option value='金属'>金属</option>
+            <option value='花画'>花画</option>
+            <option value='编织'>编织</option>
+            <option value='刺绣'>刺绣</option>
+            <option value='挂毯'>挂毯</option>
+            <option value='首饰'>首饰</option>
+            <option value='民族'>民族</option>
+            <option value='陶瓷'>陶瓷</option>
+        </select> &nbsp;&nbsp;
+
+<!--        关键字:
+        <input type="text" class="form-control" name="keyword" style="width: 200px;"
+               value="{$keyword|default=''}" placeholder="请输入关键字...">-->
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:url('AdminArtist/index')}">清空</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+
+
+  
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArtist/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all" data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="50">ID</th>
+                <th width="50">姓名</th>
+                <th width="50">分类</th>
+                <th width="65">省份</th>
+                <th width="65">抬头</th>
+                <th width="65">荣誉</th>
+                <th width="65">出生年月</th>
+                <th width="65">作品</th>
+                <th width="50">操作</th>
+            </tr>
+            </thead>
+            <foreach name="artists" item="vo">
+                <tr>
+                    <td>
+                        <input type="checkbox" class="js-check" data-yid="js-check-y" data-xid="js-check-x" name="ids[]"
+                               value="{$vo.id}" title="ID:{$vo.id}">
+                    </td>
+
+                    <td><b>{$vo.id}</b></td>
+					
+                    <td>
+						<a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id']))}"
+						   target="_blank">{$vo.name}</a>
+                    </td>
+                    <td>{$vo.category}</td>
+                    <td>{$vo.province}</td>
+                    <td>{$vo.title}</td>
+                    <td>{$vo.honor}</td>
+                    <td>{$vo.birth_date}</td>
+                    <td>{$vo.works_name}</td>
+
+        
+
+                    <td>
+                        <a class="btn btn-xs btn-primary" target="_blank" href="{:url('AdminArtist/edit',array('id'=>$vo['id']))}">{:lang('EDIT')}</a>
+                        <a class="btn btn-xs btn-danger js-ajax-delete" href="{:url('AdminArtist/delete',array('id'=>$vo['id']))}">{:lang('DELETE')}</a>
+                    </td>
+                </tr>
+            </foreach>
+            <tfoot>
+            <tr>
+                <th width="15"><label><input type="checkbox" class="js-check-all" data-direction="x"
+                                             data-checklist="js-check-x"></label></th>
+
+                <th width="50">ID</th>
+                <th width="50">姓名</th>
+                <th width="50">分类</th>
+                <th width="65">省份</th>
+                <th width="65">抬头</th>
+                <th width="65">荣誉</th>
+                <th width="65">出生年月</th>
+                <th width="65">作品</th>
+                <th width="50">操作</th>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="table-actions">
+
+
+
+            <button class="btn btn-danger btn-sm js-ajax-submit" type="submit"
+                    data-action="{:url('AdminArtist/delete')}" data-subcheck="true" data-msg="您确定删除吗？">
+                {:lang('DELETE')}
+            </button>
+        </div>
+        <ul class="pagination">{$page|default=''}</ul>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+
+    function reloadPage(win) {
+        win.location.reload();
+    }
+
+ 
+</script>
+</body>
+</html>
+

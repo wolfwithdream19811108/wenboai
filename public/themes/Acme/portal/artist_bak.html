@@ -1,0 +1,151 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+    <div class="container">
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-9">
+                <div class="blog-item row">
+                    <div class="col-lg-2 col-sm-2">
+
+                    </div>
+
+                    <div class="col-lg-10 col-sm-10">
+                        <notempty name="$artist.avatar">
+                            <div class="blog-img gs">
+                                <img src="{$artist.avatar}" class="img-responsive"/>
+                            </div>
+                        </notempty>
+                        <h1>{$artist.name}</h1>
+                        <div class="mar-b-30">{$artist.info}</div>
+
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <!--右侧栏目-->
+            <div class="col-lg-3 mar-b-30">
+                <div class="title">
+                    <h3>{$artist.name}</h3>
+
+                    <hr>
+                </div>
+                <ul class="list-unstyled pf-list">
+
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>出生日期: </b> <span>{$artist.birth_date}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>出生地: </b> <span>{$artist.birth_place}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>去世日期: </b> <span>{$artist.death_date}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>去世地: </b> <span>{$artist.died_place}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>国籍: </b> <span><a href="#">{$artist.nationality}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>艺术运动: </b> <span><a href="#">{$artist.movement}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>院校: </b> <span>{$artist.school}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>类型: </b> <span><a href="#">{$artist.genre_id}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>领域: </b> <span><a href="#">{$artist.field}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>影响人: </b> <span>{$artist.influenced_name}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>艺术机构: </b> <span>{$artist.institution}</span></li>
+
+
+
+<!--
+
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>出生日期: </b> <span>{$artist.birth_date}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>出生地: </b> <span>{$artist.birth_place}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>去世日期: </b> <span>{$artist.death_date}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>去世地: </b> <span>{$artist.died_place}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>国籍: </b> <span><a href="#">{$artist.nationality}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>艺术运动: </b> <span><a href="#">{$artist.movement}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>院校: </b> <span>{$artist.school}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>类型: </b> <span><a href="#">{$artist.genre_id}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>领域: </b> <span><a href="#">{$artist.field}</a></span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>影响人: </b> <span>{$artist.influenced_name}</span></li>
+                    <li><i class="fa fa-arrow-circle-right pr-10"></i><b>艺术机构: </b> <span>{$artist.institution}</span></li>
+-->
+                </ul>
+            </div>
+            <!--blog end-->
+        </div>
+    </div>
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--文章列表-->
+            <div class="col-lg-9 ">
+                <foreach name="articles" item="vo">
+
+                    <div class="blog-item">
+                        <div class="row">
+                            <div class="col-lg-2 col-sm-2 text-right">
+                                <div class="date-wrap">
+                                    <span class="date">{$vo.published_time|cmf_get_date='j'}</span>
+                                    <span class="month">{$vo.published_time|cmf_get_date='n月 Y'}</span>
+                                </div>
+                                <notempty name="$vo.post_source">
+                                    <div class="author"> 来源：<a>{$vo.post_source}</a></div>
+                                </notempty>
+                                <notempty name="$vo.post_keywords">
+                                    <php>$post_keywords=explode(',',$vo['post_keywords']);</php>
+                                    <ul class="list-unstyled">
+                                        <foreach name="post_keywords" item="v">
+                                            <li><em>{$v}</em></a></li>
+                                        </foreach>
+                                    </ul>
+                                </notempty>
+                                <div class="st-view">
+                                    <ul class="list-unstyled">
+                                        <li><a href="javascript:;">{$vo.post_hits} 查看</a></li>
+                                        <li><a href="javascript:;">{$vo.post_like} 收藏</a></li>
+                                        <li><a href="javascript:;">{$vo.comment_count} 回复</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-10 col-sm-10">
+                                <notempty name="$vo.thumbnail">
+                                    <a href="{:cmf_url('portal/Article/index',['id'=>$vo['id'],'cid'=>1])}">
+                                        <img src="{$vo.thumbnail|cmf_get_image_url}"/>
+                                    </a>
+                                </notempty>
+                                <h1>
+                                    <a href="{:cmf_url('portal/Article/index',['id'=>$vo['id'],'cid'=>1])}">
+                                        {$vo.post_title}
+                                    </a>
+                                </h1>
+                                <p>{$vo.post_excerpt}</p>
+                                <a href="{:cmf_url('portal/Article/index',['id'=>$vo['id'],'cid'=>1])}" class="btn btn-primary">
+                                    了解详情
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </foreach>
+                <div class="text-center">
+                    <ul class="pagination">
+                        <page/>
+                    </ul>
+                </div>
+            </div>
+            <!--右侧栏目-->
+<!--            <div class="col-lg-3 mar-b-30">
+                <include file="public@right_side"/>
+            </div>-->
+            <!--blog end-->
+        </div>
+    </div>
+    <!--container end-->
+</block>

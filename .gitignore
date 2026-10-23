@@ -1,0 +1,32 @@
+.buildpath
+.DS_Store
+*.bak
+*.tar.gz
+.project
+.settings
+.idea
+/public/assets/dist
+/node_modules
+/simplewind/vendor/
+/simplewind/新建文件夹/
+Vagrantfile
+.vagrant
+
+# Local development
+.env
+data/runtime/
+data/conf/database.php
+data/conf/database.php.bak
+public/notify*.log
+
+# Generated/user content and server-side backups
+/upload/
+/public/uploads/
+/public/certpdf/
+/public/sitemap*.xml
+/public/sitemap/
+/public/themes/*.tar.gz
+
+# Local database exports can contain production/customer data
+docker/mysql/import/*.sql
+!docker/mysql/import/.gitkeep

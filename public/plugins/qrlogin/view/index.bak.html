@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>微信扫码登录</title>
+		<script src="__STATIC__/js/jquery.js"></script>
+		<script type="text/javascript" src="__PLUGIN_TMPL__/assets/js/jquery.qrcode.min.js"></script>
+		<style type="text/css">
+			.login-box {
+				position: fixed;
+				background: #FFFFFF;
+				width: 300px;
+				height: 360px;
+				left: 50%;
+				top: 50%;
+				margin: -180px 0px 0px -150px;
+				text-align: center;
+				box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
+			}
+			.login-title {
+				margin-top: 0px;
+				font-size: 22px;
+				letter-spacing: 1px;
+			}
+
+			.qrcode {
+				padding: 20px;
+			}
+
+			.qrcode-msg {
+				position: absolute;
+				display: none;
+				top: 0px;
+				left: 0px;
+				margin: 20px;
+				width: 260px;
+				height: 260px;
+				background: rgba(255, 255, 255, 0.95);
+				text-align: center;
+			}
+
+			.msg-title {
+				margin-top: 90px;
+				font-size: 20px;
+			}
+
+			.msg-sub {
+				font-size: 20px;
+			}
+
+			.qrcode img {
+				width: 260px;
+			}
+
+			.qrcode-msg button {
+				font-family: "Microsoft YaHei", "Roboto", sans-serif;
+				text-transform: uppercase;
+				outline: 0;
+				display: none;
+				background: #1aad19;
+				width: 80%;
+				border: 0;
+				padding: 10px;
+				color: #FFFFFF;
+				font-size: 16px;
+				-webkit-transition: all 0.3 ease;
+				transition: all 0.3 ease;
+				cursor: pointer;
+			}
+
+			.qrcode-msg button:hover,
+			.qrcode-msg button:active,
+			.qrcode-msg button:focus {
+				background: #129611;
+			}
+
+			body {
+				background: #f2f2f2;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="login-box">
+			<div class="qrcode">
+				<!-- <img id="qrcode_img" /> -->
+				<div id="qrcode_img"></div>
+				<div class="qrcode-msg">
+					<p class="msg-title">扫码成功！</p>
+					<p class="msg-sub">请在微信上确认登录</p><button id="refresh">刷新二维码</button>
+				</div>
+			</div>
+			<p class="login-title">使用微信扫码登录{:token('__token__', 'sha1')}</p>
+		</div>
+
+	</body>
+	<script type="text/javascript">
+		function getQrcode() {
+			$.ajax({
+				type: "GET",
+				url: "{:cmf_plugin_url('Qrlogin://Index/QrUuid')}",
+				data: {},
+				success: function(data) {
+					if (data.code == 1) {
+						//显示二维码
+						/* $("#qrcode_img").attr('src',
+							'http://qr.topscan.com/api.php?text={:cmf_plugin_url("Qrlogin://Index/QrLogin")}?qruuid=' + data.msg); */
+							var str = '{:cmf_plugin_url("Qrlogin://Index/QrLogin")}?t=web&q=' + data.msg;
+						$("#qrcode_img").empty();
+						$('#qrcode_img').qrcode({
+							render: "canvas",
+							width: 260,
+							height: 260,
+							text: str,
+						});
+
+						//轮询QrUuid的状态，直到登录成功或过期
+						var interval = setInterval(function() {
+							$.ajax({
+								type: "GET",
+								url: "{:cmf_plugin_url('Qrlogin://Index/checkQrUuid')}",
+								data: {
+										'q': data.msg,
+										't': 'web'
+								},
+								success: function(data) {
+									if (data.code == 0) {
+										clearInterval(interval);
+										$('.qrcode-msg').show();
+										$('#refresh').show();
+										$('.msg-title').text('二维码已失效');
+										$('.msg-sub').hide();
+									} else {
+										if (data.msg == 2) {
+											$('.qrcode-msg').show();
+											$('.msg-title').text('扫码成功！');
+											$('.msg-sub').show();
+										}
+										if (data.msg == 3) {
+											$('.msg-title').text('登录成功...');
+											$('.msg-sub').hide();
+											//停止轮询
+											clearInterval(interval);
+											window.location.href = data.url;
+											//跳转到上一页
+											//window.history.go(-1);
+											
+										}
+									}
+								}
+							});
+						}, 1000); //频率1秒
+					}
+				}
+			});
+		}
+		getQrcode();
+		$("#refresh").click(function() {
+			getQrcode();
+			$('.qrcode-msg').hide();
+			$('#refresh').hide();
+		});
+	</script>
+</html>

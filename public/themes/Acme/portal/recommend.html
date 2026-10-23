@@ -1,0 +1,272 @@
+<extend name="public@base"/>
+
+
+<block name="head">
+
+  <link href="__TMPL__/public/assets/interest/bbw.css" rel="stylesheet" />
+  <link href="__TMPL__/public/assets/interest/element.css" rel="stylesheet" />
+  <link href="__TMPL__/public/assets/interest/index.css" rel="stylesheet" />
+ <style>
+
+
+ </style>
+
+</block>
+<block name="body">
+<div class="container" style="">
+
+
+
+<div id="dialogBox" class="dialogBox FocusAreas" style="display: none;"> 
+	 <div class="mask" style="">
+		<span class="CenterPromptbox radius">
+			<span class="content"> 
+				<div id="newuser-choose-area"> 	  
+					<div class="wrap"> 
+						<div class="main-title font-bold">
+						<p>仅需一步，为您推送感兴趣的艺术巨作</p>
+						</div> 
+						<div class="select-title font-regular">
+						 <p>最少选择5个领域，最多选择8个领域</p> 
+						 <!---->
+						</div>
+
+						<div class="select-main">
+							<div class="select">
+								<foreach name="categories" item="vo">
+								<div class="slect-box">
+								   <img src="{:cmf_get_image_preview_url($vo.more.thumbnail)}" /> 
+								   <div class="img-mask"></div> 
+								   <span>{$vo.name}</span> 
+								   <div class="hover-icon"></div> 
+								   <div class="hover-mask"></div>
+								</div>
+								</foreach>
+							</div>
+						</div>
+
+						<div id ="select-bottomone" class="select-bottomone font-bold" onclick="bottomclick()">
+						 <p>已选择 0/8 个</p>
+						</div>
+					</div>
+				</div>
+			</span> 
+		</span>
+	 </div> 
+</div>
+
+
+<div class="col-lg-12">
+	<div class="row">
+
+		<div class="recommend-gallery-container" id="recommend-gallery-container" >
+		</div>
+	</div>
+</div>
+
+
+
+</block>
+
+
+<block name="scripts">
+
+
+<script type="text/javascript">
+
+/*初始化*/
+var pageSize = 60; /*size*/
+var page = 1;
+var result = '';
+var isGettingData = false;//正在取数据，不能再次发送请求
+var count = 0;
+var selectedCategories = new Array();
+var categories_json = '<?php echo $categories_json; ?>';
+var categories = JSON.parse(categories_json);
+var isLogin = '<?php echo $isLogin; ?>';;
+//看这个例子
+//https://www.cnblogs.com/52fhy/p/5405541.html
+
+
+function getData(size){
+    var index = layer.load();
+    $.ajax({
+    	type: 'GET',
+    	url: "/portal/recommend/getRecommendArticle?page="+page,
+    	dataType: 'json',
+    	success: function(reponse){		
+    		var data = reponse;
+    		var sum = reponse.length;
+          	layer.close(index);  
+			page++;
+			isGettingData = true;
+			if(sum < pageSize){
+				alert("没有更多数据")
+			}
+    	
+    		for(var i=0; i< (0,size); i++){				
+					articleUrl = '/portal/article/index/id/'+data[i]["id"]+'.html'
+					result += '<div class="item">'+
+								   '<div  align="left" class="blog-img img">'+
+									   '<figure class="effect-ruby"> <a href="'+articleUrl+'">'+
+									   '<img class="img002" src="'+data[i].more.thumbnail+'!300X" />'+
+									   '</a> </figure>'+
+                      							'<a href="www.baidu.com">'+
+                      							data[i].post_title+
+                      							
+                       '</a>'+
+								   '</div>'+
+							  '</div>'
+
+    		}
+			removeAllChild();
+    		$('.recommend-gallery-container').append(result);
+
+
+
+			$("#recommend-gallery-container").mpmansory(
+				{
+					childrenClass: 'item', // default is a div
+					columnClasses: 'padding', //add classes to items
+					breakpoints:{
+						lg: 3, 
+						md: 4, 
+						sm: 6,
+						xs: 12
+					},
+					distributeBy: { order: false, height: false, attr: 'data-order', attrOrder: 'asc' }, //default distribute by order, options => order: true/false, height: true/false, attr => 'data-order', attrOrder=> 'asc'/'desc'
+					onload: function (items) {
+						//make somthing with items
+					} 
+				}
+			);
+    	},
+    	error: function(xhr, type){
+    		alert('Ajax error!');
+    	}
+    });
+}
+
+
+function removeAllChild()
+{
+    var div = document.getElementById("recommend-gallery-container");
+    while(div.hasChildNodes()) //当div下还存在子节点时 循环继续
+    {
+        div.removeChild(div.firstChild);
+    }
+}
+
+
+
+$(document).ready(function() {
+	/*首次加载*/
+  var div = document.getElementById("dialogBox");
+  if(isLogin){
+      var hasInterest =  '<?php echo $hasInterest; ?>';
+      if (hasInterest){
+
+          getData(pageSize);
+      }else{
+        div.style.display="";
+      }
+  }else{
+      div.style.display="none";
+      layer.msg('请先注册并登陆，立即为您推送百万艺术巨作', {
+        icon: 1,
+        time: 5000 //2秒关闭（如果不配置，默认是3秒）
+      }, function(){
+        window.location.href="/user/login/index";
+      });   
+
+  }
+
+
+});
+
+
+$(window).scroll(function(){
+
+	// 当滚动到最底部以上100像素时， 加载新内容
+	// 核心代码
+	if ($(document).height() - $(this).scrollTop() - $(this).height()<100){
+                if (isGettingData) {
+                    setTimeout(function() {
+						getData(pageSize);
+						 }, 500);
+                    isGettingData = false;
+				}
+	}
+});
+
+
+
+$("div.slect-box").click(function(){
+	var index=$("div.slect-box").index($(this));
+
+	if ($(this).children("div.selected-icon")["length"]==0)
+	{
+		if(count >=8 ){
+			layer.msg("最多选择8个兴趣");
+		}else{
+			count++;
+			var newNode = document.createElement("div");
+			newNode.className  ="selected-icon";
+			$(this).append(newNode);
+			var newNode = document.createElement("p");
+			newNode.className  ="selected-mask";
+			$(this).append(newNode);
+			selectedCategories.push(categories[index]["id"]);
+			var string = "已选择 "+count+ "/8 个";
+			var div = document.getElementById("select-bottomone");
+			div.innerHTML = string;
+			if (count >=5)
+			{
+				div.classList.add("select-bottom");
+			}
+		}
+
+
+	}
+	else if (count>0)
+	{
+		count--;
+		$(this).children("div.selected-icon").remove();
+		$(this).children("p.selected-mask").remove();
+		categoryId = categories[index]["id"];
+		selectedCategories.splice($.inArray(categoryId,selectedCategories),1);
+		var string = "已选择 "+count+ "/8 个";
+		var div = document.getElementById("select-bottomone");
+		div.innerHTML = string;
+		if (count <5)
+		{
+			div.classList.remove("select-bottom");
+		};
+		
+	}
+
+}); 
+
+function bottomclick(){
+	if(count>=5){
+		  $.ajax({
+				type: 'POST',
+				url: "/portal/recommend/selectcategory",
+				data: {'selectedCategories':selectedCategories},
+				success: function(reponse){
+					if(reponse){
+						var div = document.getElementById("dialogBox");
+						div.remove();
+                        getData(pageSize);
+					}
+				},
+				error: function(xhr, type){
+				}
+			});
+	}
+}
+
+
+</script>
+
+</block>

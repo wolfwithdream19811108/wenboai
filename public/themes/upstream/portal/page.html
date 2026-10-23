@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>{$page.post_title}</title>
+    <meta name="keywords" content="{$page.post_keywords}"/>
+    <meta name="description" content="{$page.post_excerpt}">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+
+<body>
+<include file="public@header"/>
+<div class="section section-top-bg jarallax" data-jarallax='{"speed": 0.8}'
+     style="background-image: url('{:cmf_get_image_url($page.more.thumbnail)}')">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <if condition="empty($page.more.thumbnail)">
+                    <h4>###背景图设置在对应页面的缩略图中上传，设置后此文字消失！###</h4>
+                </if>
+                <h1>{$page.post_title|default=''}</h1>
+                <p>{$page.post_excerpt|default=''}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-breadcrumb no-mar no-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-inline breadcrumb">
+                    <li class="breadcrumb-item"><a href="__ROOT__/"><i class="fa fa-home"></i>首页</a></li>
+                        <li class="breadcrumb-item"><a
+                                href="{:url('portal/page/index',['id'=>$page['id']])}">{$page.post_title|default=''}</a></li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-article-v1">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="head">
+                    <h2>{$page.post_title|default=''}</h2>
+                    <div class="separator-2"></div>
+                </div>
+                <div class="body">
+                    {$page.post_content|default=''}
+                </div>
+
+                <div class="foot">
+                    <php>
+                        $comment_hook_param=[
+                        'post_id'=>$page['id'],
+                        'post_table'=>'portal_post',
+                        'post_title'=>$page['post_title']
+                        ];
+                    </php>
+
+                    <hook name="comment" param="comment_hook_param"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<hook name="before_body_end"/>
+</body>
+</html>

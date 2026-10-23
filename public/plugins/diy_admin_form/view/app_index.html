@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<style>
+    .required {
+        color: #ff2222;
+    }
+
+</style>
+<head>
+    <include file="public/head"/>
+    <title>配置应用</title>
+</head>
+<body>
+<div class="wrap js-check-wrap margin-top-10">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>配置应用</a></li>
+        <li><a href="{:cmf_plugin_url('DiyAdminForm://AdminApp/add')}">添加应用</a></li>
+    </ul>
+    <form class="well form-inline js-ajax-form" method="post" style="padding-top: 5px"
+          action="">
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="70"  class="text-center">ID</th>
+                <th width="100" >应用名称</th>
+                <th           >系统菜单名称</th>
+                <th width="100" class="text-center">菜单序号</th>
+                <th width="200" class="text-center">菜单图标</th>
+                <th width="50" class="text-center">编辑</th>
+                <th width="50" class="text-center">删除</th>
+            </thead>
+            <notempty name="list">
+                <foreach name="list" item="vo">
+                    <tr>
+                        <td class="text-center text-muted">
+                            <b>{$vo.id}</b>
+                            <input type="hidden" name="myids[]" value="{$vo.id}">
+                        </td>
+                        <td>
+                            {$vo.app_name}
+                        </td>
+                        <td>
+                            {$vo.menu_name}
+                        </td>
+                        <td class="text-center">
+                            {$vo.menu_order}
+                        </td>
+                        <td>
+                            <i class="fa fa-{$vo.menu_icon}" aria-hidden="true"></i>
+                            &nbsp;
+                            <span class="text-muted">{$vo.menu_icon}</span>
+                        </td>
+                        <td>
+                            <a href="{:cmf_plugin_url('DiyAdminForm://AdminApp/edit',['id'=>$vo.id])}">编辑</a>
+                        </td>
+                        <td>
+                            <button type="submit" data-msg="确定删除吗?"
+                                    class="btn btn-sm btn-danger js-ajax-submit"
+                                    data-action="{:cmf_plugin_url('DiyAdminForm://AdminApp/delete',['id'=>$vo.id])}">删除
+                            </button>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+        </table>
+    </form>
+</div>
+<include file="public/scripts"/>
+<script>
+    //显示列表页顶部查询字段设置
+    function showFieldOptionEdit(Id) {
+        var editurl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlEdit')}";
+        var posturl = "{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlEditPost')}";
+        var edittxt = "编辑搜索字段控件选项";
+        openIframeLayer(editurl + "?id=" + Id, edittxt, {
+            area: ['700px', '650px'],
+            btn: ['确定'],//, '取消'
+            yes: function (index, layero) {
+                var iframeWin = window[layero.find('iframe')[0]['name']];
+                var rs = iframeWin.confirm();
+                //异步执行
+                $.ajax({
+                    url: posturl, type: "post", cache: false, dataType: "json",async:false,
+                    data: {id:rs.id,tt: rs.tt,mt:rs.mt,si:rs.si,ci:rs.ci
+                        ,cd:rs.cd,cm:rs.cm,c1:rs.c1,c0:rs.c0},
+                    success: function (data) {
+                        if(data.code === 1){
+                            //alert(data.msg);
+                            reloadPage(window);
+                        }else{
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出现错误,保存失败!");
+                        //reloadPage(window);
+                    }
+                });
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            },
+            cancel:function (index, layero) {
+                //右上角关闭事件
+                //reloadPage(window);
+                //console.log('cancel:',index);
+            }
+        });
+    }
+
+    function showmake(tableName) {
+        var target = [];
+        target.push(-1);//顶级菜单任务
+        target.push(0);//控制器任务
+        target.push(1);//数据模型任务
+        $targetIndex = $('#target_index');//2
+        $targetAdd   = $('#target_add');//3
+        $targetEdit  = $('#target_edit');//4
+
+        if($targetIndex.is(":checked")){
+            target.push(2);
+        }
+        if($targetAdd.is(":checked")){
+            target.push(3);
+        }
+        if($targetEdit.is(":checked")){
+            target.push(4);
+        }
+        var targetStr = target.join('_');//把数组转为字符串 [1,2,3] -> "1_2_3"
+        //console.log(targetStr);
+        showMakeCode(tableName,targetStr);
+    }
+
+
+    //生成代码任务
+    function showMakeCode(tableName,targetstr) {
+        var url = "{:cmf_plugin_url('DiyAdminForm://AdminIndex/startMakeCode')}";
+        var txt = "生成代码已完成！";
+        openIframeLayer(url + "?tablename=" + tableName + "&target=" + targetstr, txt, {
+            area: ['800px', '450px'],
+            btn: ['关闭'],//, '取消'
+            yes: function (index, layero) {
+                //var iframeWin = window[layero.find('iframe')[0]['name']];
+                //var rs = iframeWin.confirm();
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            },
+            cancel:function (index, layero) {
+                //右上角关闭事件
+                //reloadPage(window);
+                //console.log('cancel:',index);
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

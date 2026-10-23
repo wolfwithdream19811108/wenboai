@@ -1,0 +1,305 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title>爱途百度统计数据</title>
+    <style>
+    	.col-md-2,.col-sm-2,.col-xs-2{
+    		width: 20%;
+    	}
+    </style>
+</head>
+<body>
+	<!--<script src="https://www.echartsjs.com/zh/dist/echarts-gl.js"></script>-->
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+	<script type="text/javascript" src="https://www.echartsjs.com/zh/asset/theme/macarons.js"></script>
+<div class="wrap js-check-wrap">
+
+<div class="row">
+  <div class="col-md-1" style="width:auto;">
+  	<div class="panel panel-default">
+  <div class="panel-body">
+    爱途百度统计数据
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="row">
+  <div class="col-md-2 col-sm-2 col-xs-2">
+    	<div class="panel panel-default">
+  <div class="panel-body">
+    浏览量（pv）
+    <br>
+    <h4 style="color:#5bc0de;">{$fangwen.0}</h4>
+  </div>
+</div>
+  </div>
+  <div class="col-md-2 col-sm-2 col-xs-2">
+    	<div class="panel panel-default">
+  <div class="panel-body">
+    访客数（uv）
+     <br>
+    <h4 style="color:#f0ad4e;">{$fangwen.1}</h4>
+  </div>
+</div>
+  </div>
+  <div class="col-md-2 col-sm-2 col-xs-2">
+    	<div class="panel panel-default">
+  <div class="panel-body">
+    ip数
+     <br>
+    <h4 style="color:#d9534f;">{$fangwen.2}</h4>
+  </div>
+</div>
+  </div>
+  <div class="col-md-2 col-sm-2 col-xs-2">
+  	  	<div class="panel panel-default">
+  <div class="panel-body">
+    跳出率
+     <br>
+    <h4 style="color:#337ab7;">{$fangwen.3}</h4>
+  </div>
+</div>
+  	</div>
+  <div class="col-md-2 col-sm-2 col-xs-2">
+  	  	<div class="panel panel-default">
+  <div class="panel-body">
+    平均访问时长
+     <br>
+    <h4>{$fangwen.4}</h4>
+  </div>
+</div>
+  	</div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+  	<div class="panel panel-default" style="height: 100%; margin: 0">
+  <!--<div class="panel-body">-->
+   <div id="main" style="height: 400px;margin-top:27px;"></div>
+   <!--<div id="main" style="width: 800px;height:400px;"></div>-->
+  <!--</div>-->
+</div>  
+  </div>
+</div>
+
+<div class="row" style="margin-top: 30px;">
+	<div class="col-md-6 col-sm-6 col-xs-6">
+		<div class="panel panel-default">
+<table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TOP10受访页面</th>
+          <th>浏览量</th>
+          <th>占比(%)</th>
+        </tr>
+      </thead>
+		<empty name="visit">
+					<!--为空-->
+		<else />
+		      <tbody>
+		<foreach name="visit" item="vo">
+		<tr>
+			<foreach name="vo" item="f">
+				<td>{$f}</td>
+			</foreach>
+		</tr>
+		</foreach>
+      </tbody>
+		<!--不为空-->
+		</empty>
+
+    </table>
+    <empty name="visit">
+		 <div style="text-align:center;padding: 15px 10px;">
+          	暂无数据
+          	</div>	<!--为空-->
+		<else />
+					<!--不为空-->
+		</empty>
+
+	</div>
+</div>
+
+	<div class="col-md-6 col-sm-6 col-xs-6">
+		<div class="panel panel-default">
+<table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TOP10来源网站</th>
+          <th>浏览量</th>
+          <th>占比(%)</th>
+        </tr>
+      </thead>
+      
+      		<empty name="source">
+					<!--为空-->
+		<else />
+				<foreach name="source" item="vo">
+		<tr>
+			<foreach name="vo" item="f">
+				<td>{$f}</td>
+			</foreach>
+		</tr>
+		</foreach>
+		<!--不为空-->
+		</empty>
+		
+      <tbody>
+
+      </tbody>
+    </table>
+    <empty name="source">
+		 <div style="text-align:center;padding: 15px 10px;">
+          	暂无数据
+          	</div>	<!--为空-->
+		<else />
+					<!--不为空-->
+		</empty>  
+	</div>
+</div>
+</div>
+
+<div class="row">
+		<div class="col-md-6 col-sm-6 col-xs-6">
+		<div class="panel panel-default">
+<table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TOP10入口页面</th>
+          <th>浏览量</th>
+          <th>占比(%)</th>
+        </tr>
+      </thead>
+		<empty name="landing">
+					<!--为空-->
+		<else />
+		      <tbody>
+		<foreach name="landing" item="vo">
+		<tr>
+			<foreach name="vo" item="f">
+				<td>{$f}</td>
+			</foreach>
+		</tr>
+		</foreach>
+      </tbody>			<!--不为空-->
+		</empty>      
+      
+    </table>
+        <empty name="landing">
+		 <div style="text-align:center;padding: 15px 10px;">
+          	暂无数据
+          	</div>	<!--为空-->
+		<else />
+					<!--不为空-->
+		</empty>
+	</div>
+</div>
+	
+	
+	<div class="col-md-6 col-sm-6 col-xs-6">
+		<div class="panel panel-default">
+<table class="table table-hover">
+      <thead>
+        <tr>
+          <th>TOP10搜索词</th>
+          <th>浏览量</th>
+          <th>占比(%)</th>
+        </tr>
+      </thead>
+		<empty name="word">
+					<!--为空-->
+		<else />
+			      <tbody>
+		<foreach name="word" item="vo">
+		<tr>
+			<foreach name="vo" item="f">
+				<td>{$f}</td>
+			</foreach>
+		</tr>
+		</foreach>
+      </tbody>		<!--不为空-->
+		</empty>
+		
+
+    </table>
+    <empty name="word">
+		 <div style="text-align:center;padding: 15px 10px;">
+          	暂无数据
+          	</div>	<!--为空-->
+		<else />
+					<!--不为空-->
+		</empty>
+	</div>
+</div>
+
+</div>
+
+</div>
+        <script type="text/javascript">
+            // 基于准备好的dom，初始化echarts实例
+            var dom = document.getElementById("main");
+		var myChart = echarts.init(dom, 'light');
+            // var myChart = echarts.init(document.getElementById('main'));
+            // 指定图表的配置项和数据
+        option = {
+    title: {
+        text: '当天趋势图'
+    },
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross',
+            label: {
+                backgroundColor: '#6a7985'
+            }
+        }
+    },
+    legend: {
+        data: ['浏览量']
+    },
+    // toolbox: {
+    //     feature: {
+    //         saveAsImage: {}
+    //     }
+    // },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    xAxis: [
+        {
+            type: 'category',
+            boundaryGap: false,
+            data: {$qushitime}
+            // data:['00:00-00:59','01:00-01:59','02:00-02:59','03:00-03:59','04:00-04:59','05:00-05:59','06:00-06:59','07:00-07:59','08:00-08:59','09:00-09:59','10:00-10:59','11:00-11:59','12:00-12:59','13:00-13:59','14:00-14:59','15:00-15:59','16:00-16:59','17:00-17:59','18:00-18:59','19:00-19:59','20:00-20:59','21:00-21:59','22:00-22:59','23:00-23:59']
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value'
+        }
+    ],
+    series: [
+        {
+            name: '浏览量',
+            type: 'line',
+            stack: '总量',
+            areaStyle: {},
+            data: {$qushi}
+        }
+    ]
+};
+
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
+            window.onresize = myChart.resize;
+        </script>
+<include file="public/scripts"/>
+</body>
+</html>

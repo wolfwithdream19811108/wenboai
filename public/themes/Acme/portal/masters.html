@@ -1,0 +1,300 @@
+<extend name="public@base"/>
+
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+
+
+
+@charset "utf-8";
+
+/*总体设置(不可更改)*/
+html,body,ul,ol,li,p,h1,h2,h3,h4,h5,h6,form,fieldset,img,div{margin:0;padding:0;border:0;}
+select,input{vertical-align:middle;font-size:12px;}
+table,tr,td,th{margin:0;padding:0;font-family:HYXinRenWenSongW;}
+textarea,td,div,input{font-size:12px;}
+body{color:#333;font-size:12px;background:#fff; behavior:url(css/iehoverfix.htc);min-width: 1260px;}
+ul,ol{list-style:none; }
+
+input,textarea,select,a:focus { outline: none;}
+/**清除浮动**/
+.clear{clear:both;font-size:0;line-height:0;height:0; vertical-align:middle;}
+/**链接**/
+a{outline: none;text-decoration: none; text-decoration:none; -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s;}
+a:hover{text-decoration:none; color:#715125;}
+
+
+/**尾部**/
+.foot {width:100%; /* height:250px; */ background-image:url(../images/bg_01.jpg); background-repeat:no-repeat; background-position:bottom center;background-size: 100%;}
+.foot dl { overflow:hidden;}
+.foot dl dt img { width:200px; display:block; margin:0 auto; margin-top:50px;}
+.foot dl dd { margin-top:30px;}
+.foot dl dd p { font-size:14px; font-weight:normal; display:block; text-align:center; color:#ffffff; line-height:24px; }
+.foot dl dd p strong { font-weight:normal; font-family:Georgia, "Times New Roman", Times, serif;}
+.foot dl dd p a { color:#fff; margin:0 5px;}
+.foot dl dd p a:hover { color:#fff;}
+
+
+
+/**------------画家列表------------**/
+.partj { width:1200px; margin:0 auto; text-align:left; padding:0 0 60px 0;}
+.partj ul li { width:192px; height:192px;  border-radius:1000px; float:left; display:inline; margin-top:60px; margin-right:60px; -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s; position:relative; overflow:hidden;}
+.partj ul li:nth-child(5n+5) { margin-right:0;}
+.partj ul li .img_box {border-radius:1000px; display:block; position:absolute; top:0; left:0; z-index:4; -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s;}
+.partj ul li .img_box img { /* width:192px; */ height:192px; border-radius:1000px;}
+.partj ul li .img_box h3 { width:192px; height:192px; position:absolute; top:0; left:0;  background-color:rgba(0,0,0,0.2); font-size:20px; font-weight:300; color:#fff; text-align:center;  padding:66px 0 0 0; z-index:5; -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s; border-radius:1000px;font-weight:bold}
+.partj ul li .img_box h3 font { display:block; width:70px; font-size:14px; font-weight:300; color:#fff; text-align:center; margin:0 auto; border-top:1px solid #fff; line-height:30px; margin-top:4px; -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s; }
+.partj ul li p { width:192px; height:192px; position:absolute; top:0; left:0;  z-index:2; font-size:14px; font-weight:300; color:#fff; line-height:20px; padding:36px 24px 0 24px; text-align:center;  -webkit-transition: all 0.5s;-moz-transition: all 0.5s;transition: all 0.5s; border-radius:1000px; box-sizing:border-box; background:linear-gradient(to bottom,#6b4425,#996d44); z-index:6; opacity:0;}
+.partj ul li p a { display:block; height:140px; overflow:hidden; color:#fff;}
+/**
+.partj ul li:hover {overflow:hidden; filter: drop-shadow(0 0 14px #333);}
+.partj ul li:hover .img_box { opacity:0;}
+.partj ul li:hover .img_box h3 { top:0; background-color:rgba(0,0,0,0.5);  opacity:0;}
+.partj ul li:hover .img_box h3 font {  opacity:0;} 
+.partj ul li:hover p { top:0; opacity:1;}
+ **/
+
+
+
+
+
+/******自定义******/
+.text_title {overflow: hidden !important;white-space: nowrap !important;text-overflow: ellipsis !important;word-break: normal !important;}
+.collect_on{background-color:#715125;color: #fff !important;}
+
+
+
+/**.sc li .li_box:hover .sc_box { display:block;}**/
+.a_width_100{width:100% !important}
+.scbox_width_100{width:180px !important;max-height: 380px;overflow-y: auto;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.building1{padding-top:0;margin-top: 10px;}
+.building1 .wrap{position:relative}
+.building1 .left{z-index:5;position:absolute;top:0;left:0;width:50%;height:450px;font-size:0}
+.building1 .left .inner{padding:0 70px 0;display:inline-block;vertical-align:middle}
+.building1 .left .middle{display:inline-block;height:100%;vertical-align:middle}
+.building1 .left h2{font-size:26px;color:#fff;text-indent:-13px}
+.building1 .left h2 i{background:url(../image/lyc/building-icon1.png) no-repeat;display:inline-block;vertical-align:middle;width:22px;height:28px;margin:0 5px}
+.building1 .left h2 i.i1{background-position:left top}
+.building1 .left h2 i.i2{background-position:right top}
+.building1 .left .text{margin-top:15px;color:#fff;line-height:1.5;text-indent:2em}
+.building1 .left .text p{font-size:15px;line-height:24px;text-indent:2em}
+.building1 .right{height:450px;overflow:hidden;position:relative;z-index:1}
+.building1 .right .deat{opacity:0;filter:alpha(opacity=0)}
+.building1.now .right .deat{opacity:1;filter:alpha(opacity=100)}
+.building1.now .right{z-index:9}
+.building1.now .left{z-index:1}
+.building1 .right img{width:100%;height:auto;transition:all 1s ease-out 0s;-webkit-transition:all 1s ease-out 0s;transform-origin:center top;-webkit-transform-origin:center top}
+.building1 .right .frame{overflow:hidden}
+.building1 .right .child{float:left;overflow:hidden;height:100%}
+.building1 .left{opacity:1;filter:"alpha(opacity=100)";transition:all .5s ease-in;-webkit-transition:all .5s ease-in}
+.building1 .deat{position:absolute;top:0;left:0;right:0;bottom:0;height:100%;z-index:3}
+.building1 .deat .text{transition:all .6s ease-in;opacity:0;transform:scale(0);transform-origin:10% 50%;-webkit-transition:all .6s ease-out;-webkit-transform:scale(0);-webkit-transform-origin:10% 50%}
+.building1 .deat{display:table}
+.building1 .deat .text{padding:0 60px;display:table-cell;vertical-align:middle}
+.building1 .deat .text p{font-size:15px;color:#fff;text-indent:2em;line-height:24px}
+.building1 .button{background:url(../image/lyc/collection1-icon1.png) no-repeat;width:53px;height:53px;position:absolute;bottom:0;right:0;cursor:pointer;z-index:9}
+.building1 .button i{background:url(../image/lyc/collection1-icon2.png) no-repeat;display:block;width:16px;height:16px;position:absolute;bottom:15px;right:15px;animation:move .5s ease-in infinite alternate}
+
+
+
+
+
+
+
+    </style>
+
+
+
+
+
+</block>
+<block name="body">
+
+    <div class="container">
+    
+    
+        <div class="building1">
+      <div class="wrap clearfix">
+        <div class="left" style="background-image: none">
+          <div class="inner">
+<!--            <h2><i class="i1"></i>艺术云库<i class="i2"></i></h2>-->
+            <div class="text">
+              <p></p>
+              <p>
+中国的工艺美术，历史悠久，品种繁多，技艺高超。它蕴含着中国人民的智慧，融汇了中华民族特有的民族气质和文化素养，以其生动的神韵蜚声国内外，是世界文明中一颗闪光的明珠。中国的工艺美术，拥有岁月沉淀后的深邃和神秘，充满质感和韵味之美，并且反映中国历朝历代的政治、经济和生活面貌。
+              </p>
+              <p></p>
+            </div>
+          </div>
+          <span class="middle"></span>
+        </div>
+    
+        <div class="right">
+          <img
+            alt=""
+            title=""
+            class="img"
+            src="https://img.dpm.org.cn/Uploads/Picture/2017/01/09/s5873866876012.jpg"
+          />
+          <div class="button"><i></i></div>
+          <div class="deat">
+            <div class="text">
+              <p></p>
+              <p>
+中国的工艺美术，历史悠久，品种繁多，技艺高超。它蕴含着中国人民的智慧，融汇了中华民族特有的民族气质和文化素养，以其生动的神韵蜚声国内外，是世界文明中一颗闪光的明珠。中国的工艺美术，拥有岁月沉淀后的深邃和神秘，充满质感和韵味之美，并且反映中国历朝历代的政治、经济和生活面貌。
+              <p></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    	<!--<div class="col-lg-9">-->
+    	<div class="col-lg-12">
+    		<div class="row">
+    			<div id="filter" class="cation-middle">
+    
+    				<dl class="cation-list">
+    					<dt>类别</dt>
+    					<dd>
+    						<a href="" rel="" name="category" class="all on">全部</a>
+     						<a href="" rel="陶瓷" name="category" class="default">陶瓷</a>   						
+    						<a href="" rel="雕塑" name="category" class="default">雕塑</a>
+    						<a href="" rel="金属" name="category" class="default">金属</a>
+    						<a href="" rel="漆器" name="category" class="default">漆器</a>
+    						<a href="" rel="花画" name="category" class="default">花画</a>
+    						<a href="" rel="编织" name="category" class="default">编织</a>
+    						<a href="" rel="刺绣" name="category" class="default">刺绣</a>
+    						<a href="" rel="挂毯" name="category" class="default">挂毯</a>
+    						<a href="" rel="首饰" name="category" class="default">首饰</a>
+    						<a href="" rel="民族" name="category" class="default">民族</a>
+    					</dd>
+    				</dl>
+   				<dl class="cation-list">
+    					<dt>省份</dt>
+    					<dd>
+    					    <a href="" rel="" name="province" class="all on">全部</a>
+                            <a href="" rel="安徽"  name="province" class="default">安徽</a>
+                            <a href="" rel="北京"  name="province" class="default">北京</a>
+                            <a href="" rel="福建"  name="province" class="default">福建</a>
+                            <a href="" rel="甘肃"  name="province" class="default">甘肃</a>
+                            <a href="" rel="广东"  name="province" class="default">广东</a>
+                            <a href="" rel="广西"  name="province" class="default">广西</a>
+                            <a href="" rel="贵州"  name="province" class="default">贵州</a>
+                            <a href="" rel="海南"  name="province" class="default">海南</a>
+                            <a href="" rel="河北"  name="province" class="default">河北</a>
+                            <a href="" rel="河南"  name="province" class="default">河南</a>
+                            <a href="" rel="黑龙江"  name="province" class="default">黑龙江</a>
+                            <a href="" rel="湖北"  name="province" class="default">湖北</a>
+                            <a href="" rel="湖南"  name="province" class="default">湖南</a>
+                            <a href="" rel="吉林"  name="province" class="default">吉林</a>
+                            <a href="" rel="江苏"  name="province" class="default">江苏</a>
+                            <a href="" rel="江西"  name="province" class="default">江西</a>
+                            <a href="" rel="辽宁"  name="province" class="default">辽宁</a>
+                            <a href="" rel="南京"  name="province" class="default">南京</a>
+                            <a href="" rel="内蒙"  name="province" class="default">内蒙</a>
+                            <a href="" rel="宁夏"  name="province" class="default">宁夏</a>
+                            <a href="" rel="青海"  name="province" class="default">青海</a>
+                            <a href="" rel="山东"  name="province" class="default">山东</a>
+                            <a href="" rel="山西"  name="province" class="default">山西</a>
+                            <a href="" rel="陕西"  name="province" class="default">陕西</a>
+                            <a href="" rel="上海"  name="province" class="default">上海</a>
+                            <a href="" rel="四川"  name="province" class="default">四川</a>
+                            <a href="" rel="台湾"  name="province" class="default">台湾</a>
+                            <a href="" rel="天津"  name="province" class="default">天津</a>
+                            <a href="" rel="西藏"  name="province" class="default">西藏</a>
+                            <a href="" rel="新疆"  name="province" class="default">新疆</a>
+                            <a href="" rel="云南"  name="province" class="default">云南</a>
+                            <a href="" rel="浙江"  name="province" class="default">浙江</a>
+                            <a href="" rel="重庆"  name="province" class="default">重庆</a>
+
+
+    					</dd>
+    				</dl>   				
+    
+    			</div>
+                <div class="partj" id="search_list">  <ul>
+               
+                    <foreach name="artistList" item="vo">
+                    	<li class="block" data-rotate-y="-180deg">
+                    	    <div class="img_box"><img src="<?php echo cmf_get_image_url_with_token($vo['avatar']['thumbnail'],'!w300'); ?>"><h3>{$vo.name}</h3>
+                    	    </div>
+                    	     <p style="background-color:#996d44;">
+                        		<a href="current_artist/index/artistid/{$vo.artistid}">
+                        		</a>
+                    		</p>
+                    	</li>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+    
+    
+    
+    
+        <!--分页-->
+        <div class="text-center">
+        	<ul class="pagination">{$page|default=''}</ul>
+        </div>
+    
+    
+    </div>
+
+</block>
+
+
+<block name="scripts">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	pageIsOver = '<?php echo $pageIsOver; ?>';
+	totalPages = '<?php echo $totalPages; ?>';
+	currentPage = '<?php echo $currentPage; ?>';
+	
+	
+
+
+	if(pageIsOver && currentPage!=1)
+	{
+    		var curPath = window.document.location.href;
+            curPath = curPath+'&'
+            alert("您已到达最后一页，点击确定，系统将自动跳到第一页")
+    		var regex = /page=(.+?)&/;
+    		var pageNum = curPath.match(regex);
+    		var jumpUrl = curPath.replace(regex,"page=1&").replace("&&","&");
+    		window.location.href=jumpUrl;	        
+	  
+
+	}
+
+ 
+  });
+
+
+</script>
+</block>

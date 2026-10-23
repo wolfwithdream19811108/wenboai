@@ -1,0 +1,52 @@
+/*
+* @Author: llr
+* @Date:   2018-12-16 23:10:52
+* @Last Modified by:   llr
+* @Last Modified time: 2019-06-03 23:07:24
+*/
+body{
+	background-color: #f2f2f2;
+}
+
+.float-left{
+	float: left;
+}
+.float-right{
+	float: right;
+}
+.clearfix{
+	clear: both;
+}
+.color-green{
+	color: #009688 !important;
+}
+.color-red{
+	color: #FF5722 !important;
+	font-style: normal;
+}
+.color-orange{
+	color: #FFB800 !important;
+}
+.color-cyan{
+	color: #2F4056 !important;
+}
+.color-blue{
+	color: #01AAED !important;
+}
+.display-none{
+	display: none;
+}
+.form-common .layui-form-label{
+	width: 120px;
+	color: #666;
+}
+.form-common .layui-input-block{
+	margin-left: 150px;
+	color: #666;
+}
+.layui-tab-content{
+	background-color: #fff;
+}
+.layui-tip{
+	padding: 9px 0 0 !important;
+}

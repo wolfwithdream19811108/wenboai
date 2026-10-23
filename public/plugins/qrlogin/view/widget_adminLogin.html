@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>{$config_adminlogin_title}</title>
+		<meta http-equiv="X-UA-Compatible" content="chrome=1,IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<meta name="renderer" content="webkit|ie-comp|ie-stand">
+		<meta name="robots" content="noindex,nofollow">
+		<!-- HTML5 shim for IE8 support of HTML5 elements -->
+		<!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <![endif]-->
+		<link href="__ADMIN_TMPL__/public/assets/themes/{:cmf_get_admin_style()}/bootstrap.min.css" rel="stylesheet">
+		<link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="__ADMIN_TMPL__/public/assets/themes/{:cmf_get_admin_style()}/login.css" rel="stylesheet">
+		<link href="__PLUGIN_TMPL__/assets/css/admin_login.css" rel="stylesheet" type="text/css" />
+		<!--[if lt IE 9]>
+    <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+		<script>
+			if (window.parent !== window.self) {
+            document.write              = '';
+            window.parent.location.href = window.self.location.href;
+            setTimeout(function () {
+                document.body.innerHTML = '';
+            }, 0);
+        }
+    </script>
+		<style type="text/css">
+			body {
+				background: #fff url(<empty name='config_adminlogin_bg'>__PLUGIN_TMPL__/assets/images/bg.jpg<else/>{:cmf_get_image_url($config_adminlogin_bg)
+			}
+
+			</empty>) 50% 0 no-repeat
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header-title">
+			<h1>{$config_adminlogin_title}</h1>
+		</div>
+		<div class="login">
+			<div class="header">
+				<div class="switch" id="switch">
+					<in name="config_adminlogin_switch" value="1,2">
+						<a class="switch_btn_focus" id="switch_qrlogin" href="javascript:void(0);" tabindex="7">账号登录</a>
+					</in>
+					<in name="config_adminlogin_switch" value="1,3">
+						<a class="switch_btn" id="switch_login" href="javascript:void(0);" tabindex="8">扫码登录</a>
+					</in>
+					<div class="switch_bottom" id="switch_bottom" style="position: absolute; width: 64px; left: 0px;"></div>
+				</div>
+			</div>
+			<in name="config_adminlogin_switch" value="1,2">
+				<div class="web_qr_login" id="web_qr_login" style="display: block;">
+					<div class="web_login" id="web_login">
+						<div class="login-box">
+							<div class="login_form">
+								<form class="js-ajax-form" id="loginForm" action="{:url('public/doLogin')}" method="post">
+									<div class="form-group">
+										<input type="text" id="input_username" class="form-control" name="username" placeholder="{:lang('USERNAME_OR_EMAIL')}"
+										 title="{:lang('USERNAME_OR_EMAIL')}" value="{:cookie('admin_username')}" data-rule-required="true"
+										 data-msg-required="">
+									</div>
+									<div class="form-group">
+										<input type="password" id="input_password" class="form-control" name="password" placeholder="{:lang('PASSWORD')}"
+										 title="{:lang('PASSWORD')}" data-rule-required="true" data-msg-required="">
+									</div>
+									<div class="form-group">
+										<input type="hidden" name="redirect" value="">
+										<button class="btn btn-primary btn-block" id="loginButton" type="button" style="margin-left: 0px"
+										 data-loadingmsg="{:lang('LOADING')}">
+											{:lang('LOGIN')}
+										</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</in>
+			<in name="config_adminlogin_switch" value="1,3">
+				<div class="qrlogin" id="qrlogin" style="display: none; " style="height: 240px;">
+					<div class="qr_login">
+						<div id="qrcode_img"></div>
+						<div class="qrcode-msg" style="top: 65px;left: 33px;">
+							<p class="msg-title">扫码成功！</p>
+							<p class="msg-sub">请在微信上确认登录</p><button id="refresh">刷新二维码</button>
+						</div>
+						<p class="login-title" style="padding-top: 10px;">使用微信扫码登录</p>
+					</div>
+				</div>
+			</in>
+		</div>
+
+		<script type="text/javascript">
+			//全局变量
+			var GV = {
+				ROOT: "__ROOT__/",
+				WEB_ROOT: "__WEB_ROOT__/",
+				JS_ROOT: "static/js/",
+				APP: '' /*当前应用名*/
+			};
+		</script>
+		<script src="__ADMIN_TMPL__/public/assets/js/jquery-1.10.2.min.js"></script>
+		<script src="__STATIC__/js/wind.js"></script>
+		<script src="__STATIC__/js/admin.js"></script>
+		<script type="text/javascript" src="__PLUGIN_TMPL__/assets/js/jquery.qrcode.min.js"></script>
+		<script type="text/javascript" src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script>
+
+		<script type="text/javascript">
+			if ({$config_adminlogin_switch} == 3) {
+				$('#qrlogin').css('display', 'block');
+				refreshQrcode();
+			} else {
+				(function() {
+					document.getElementById('input_username').focus();
+				})();
+			}
+			
+			// 阿里云验证码初始化
+			let captcha;
+			initAliyunCaptcha({
+				SceneId: '1doig5bf', // 替换为您的场景ID
+				prefix: '9pvdp9', // 替换为您的身份标
+				mode: 'popup',
+				element: '#loginForm',
+				button: '#loginButton',
+				captchaVerifyCallback: captchaVerifyCallback,
+				onBizResultCallback: onBizResultCallback,
+				getInstance: getInstance,
+				slideStyle: {
+					width: 360,
+					height: 40,
+				},
+				language: 'cn',
+				region: 'cn'
+			});
+
+			// 绑定验证码实例函数
+			function getInstance(instance) {
+				captcha = instance;
+			}
+
+			// 业务请求(带验证码校验)回调函数
+			function captchaVerifyCallback(captchaVerifyParam, callback) {
+				// 这里可以添加其他业务参数
+				var formData = new FormData(document.getElementById('loginForm'));
+				formData.append('captchaVerifyParam', captchaVerifyParam);
+				
+				// 向后端发起业务请求，获取验证码验证结果和业务结果
+				fetch('/api/portal/user/captcha', {
+					method: 'POST',
+					body: formData
+				})
+				.then(response => response.json())
+				.then(result => {
+					// 构造标准返回参数
+					var verifyResult = {
+						captchaResult: result.data.verifyResult
+					};
+					// 调用回调函数，传入验证结果
+					callback(verifyResult);
+				})
+				.catch(error => {
+					console.error('Error:', error);
+				});
+			}
+
+			// 业务请求验证结果回调函数
+			function onBizResultCallback(bizResult) {
+				if (bizResult === true) {
+					// 验证通过，提交表单
+					document.getElementById('loginForm').submit();
+				} else {
+					// 验证不通过，显示错误信息
+					alert('验证失败，请重试！');
+				}
+			}
+
+			//切换到账号登录
+			$('#switch_qrlogin').click(function() {
+				$('#switch_login').removeClass("switch_btn_focus").addClass('switch_btn');
+				$('#switch_qrlogin').removeClass("switch_btn").addClass('switch_btn_focus');
+				$('#switch_bottom').animate({
+					left: '0px',
+					width: '70px'
+				});
+				$('#qrlogin').css('display', 'none');
+				$('#web_qr_login').css('display', 'block');
+				document.getElementById('input_username').focus();
+			});
+
+			//切换到扫码登录
+			$('#switch_login').click(function() {
+				$('#switch_login').removeClass("switch_btn").addClass('switch_btn_focus');
+				$('#switch_qrlogin').removeClass("switch_btn_focus").addClass('switch_btn');
+				$('#switch_bottom').animate({
+					left: '154px',
+					width: '70px'
+				});
+				$('#qrlogin').css('display', 'block');
+				$('#web_qr_login').css('display', 'none');
+				refreshQrcode();
+			});
+			
+			var interval = '';
+			function getQrcode() {
+				$.ajax({
+					type: "GET",
+					url: "{:cmf_plugin_url('Qrlogin://Index/QrUuid')}",
+					data: {},
+					success: function(data) {
+						if (data.code == 1) {
+							//显示二维码
+							var str = '{:cmf_plugin_url("Qrlogin://Index/QrLogin")}?t=admin&q=' + data.msg;
+							$("#qrcode_img").empty();
+							$('#qrcode_img').qrcode({
+								render: "canvas",
+								width: 260,
+								height: 260,
+								text: str,
+							});
+
+							//轮询QrUuid的状态，直到登录成功或过期
+							interval = setInterval(function() {
+								$.ajax({
+									type: "GET",
+									url: "{:cmf_plugin_url('Qrlogin://Index/checkQrUuid')}",
+									data: {
+										'q': data.msg,
+										't': 'admin'
+									},
+									success: function(data) {
+										if (data.code == 0) {
+											clearInterval(interval);
+											$('.qrcode-msg').show();
+											$('#refresh').show();
+											$('.msg-title').text('二维码已失效');
+											$('.msg-sub').hide();
+										} else {
+											if (data.msg == 2) {
+												$('.qrcode-msg').show();
+												$('.msg-title').text('扫码成功！');
+												$('.msg-sub').show();
+											}
+											if (data.msg == 3) {
+												$('.msg-title').text('登录成功...');
+												$('.msg-sub').hide();
+												//停止轮询
+												clearInterval(interval);
+												//跳转到上一页
+												window.location.href = "{:url("admin/Index/index")}";
+											}
+										}
+									}
+								});
+							}, 1000); //频率1秒
+						}
+					}
+				});
+			}
+
+			function refreshQrcode() {
+				clearInterval(interval);
+				getQrcode();
+				$('.qrcode-msg').hide();
+				$('#refresh').hide();
+			}
+			$("#refresh").click(function() {
+				refreshQrcode();
+			});
+		</script>
+	</body>
+</html>

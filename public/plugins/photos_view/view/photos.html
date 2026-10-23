@@ -1,0 +1,34 @@
+<if condition="!empty($photos)">
+
+    <link rel="stylesheet" href="__PLUGIN_TMPL__/style/photos.css">
+
+    <div class="htmleaf-container">
+        <div class="htmleaf-content bgcolor-3">
+            <ul class="Slideshow">
+                        <foreach name="photos" item="vo">
+                            <li><img data-original="{:cmf_get_image_url($vo['url'])}" src="{:cmf_get_image_url($vo['url'])}" alt="{$vo['name']}"></li>
+                        </foreach>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('.Slideshow').pgwSlideshow({
+            transitionEffect: 'fading',
+            autoSlide: true
+        });
+    });
+    </script>
+
+</if>
+ <if condition="!empty($video)">
+    <link rel="stylesheet" href="__PLUGIN_TMPL__/style/plyr.css">
+    <script type="text/javascript" src="__PLUGIN_TMPL__/script/plyr.js"></script>
+    <div class="m">
+        <video poster="vs.png" controls>
+          <source src="{:cmf_get_image_url($video)}" type="video/mp4">
+
+        </video>
+        <script>plyr.setup();</script>                        
+   </div>
+</if>

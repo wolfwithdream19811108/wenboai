@@ -1,0 +1,50 @@
+<!-- header -->
+<section class="section section-header no-mar no-pad">
+
+    <!--nav start-->
+    <nav class="navbar navbar-expand-lg light-bg no-mar no-pad">
+        <div class="container">
+            <a class="navbar-brand no-pad" href="/">
+                <img src="{:cmf_get_image_url($theme_vars.site_logo)}" alt="Logo">
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbars"
+                    aria-controls="navbars" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbars">
+
+                <ul class="navbar-nav mr-auto main-nav">
+                    <navigation nav-id="" root="" id="main-navigation" class="nav navbar-nav navbar-nav-custom"
+                                max-level="2">
+                        <navigationMenu root="li" class="nav-item nav-item-level-{$level} slow">
+                            <a class="nav-link " href="{$menu.href|default=''}" target="{$menu.target|default=''}">
+                                {$menu.name|default=''}
+                            </a>
+                        </navigationMenu>
+                        <navigationFolder root="li"
+                                          class="nav-item dropdown dropdown-custom dropdown-custom-level-{$level}"
+                                          dropdown="ul"
+                                          dropdown-class="dropdown-menu box-shadow-v1 dropdown-menu-level-{$level} fadeIn animated"
+                                          aria-labelledby="dropdown">
+                            <a href="{$menu.href|default=''}" class="nav-link dropdown-toggle dropdown-toggle-{$level}">
+                                {$menu.name|default=''}
+                            </a>
+                        </navigationFolder>
+                    </navigation>
+                </ul>
+                <div class="right-search-v1">
+                    <form class="form-inline my-2 my-md-0" method="post" action="{:cmf_url('portal/Search/index')}">
+                        <div class="form-group search-wrap">
+                            <input type="text" class="form-control" name="keyword" placeholder="Search"
+                                   value="{:input('param.keyword','')}"><span class="input-group-btn"> <button
+                                class="btn-u" type="submit"><i class="fa fa-search"></i></button> </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!--nav end-->
+</section>
+<!-- header end -->

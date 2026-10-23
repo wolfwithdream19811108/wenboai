@@ -1,0 +1,289 @@
+<extend name="public@base"/>
+
+<block name="head">
+    {__block__}
+    <style>
+/* 总体设置(不可更改) */
+p, h1, h2, h3, h4 {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+/* 清除浮动 */
+.clear {
+    clear: both;
+    font-size: 0;
+    line-height: 0;
+    height: 0;
+    vertical-align: middle;
+}
+
+/* 链接 */
+a {
+    outline: none;
+    text-decoration: none;
+    text-decoration: none;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    transition: all 0.5s;
+}
+
+a:hover {
+    text-decoration: none;
+    color: #715125;
+}
+
+/* ------------ 画家列表 ------------ */
+.partj {
+    width: 100%; /* 宽度设置为100%以适应屏幕 */
+    max-width: 1200px; /* 限制最大宽度 */
+    margin: 0 auto;
+    text-align: left;
+    padding: 0 0 60px 0;
+}
+
+.partj ul {
+    display: flex;
+    flex-wrap: wrap; /* 确保子元素能够自动换行 */
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.partj ul li {
+    flex: 1 1 19%; /* `flex-grow: 1` 表示可以扩展，`flex-shrink: 1` 表示可以缩小，`flex-basis: 19%` 设置基础宽度 */
+    margin-bottom: 20px; /* 项目之间的间距 */
+    position: relative;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column; /* 使项目在垂直方向排列 */
+    align-items: center;
+    height: 300px; /* 固定高度，避免重叠 */
+    box-sizing: border-box; /* 确保 padding 不会影响宽度 */
+}
+
+/* 固定尺寸 img_box 和 h3 */
+.partj ul li .img_box {
+    width: 200px; /* 固定宽度 200px */
+    height: 200px; /* 固定高度 200px */
+    border-radius: 1000px;
+    display: block;
+    position: relative;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    margin-bottom: 10px; /* 适当的间距，避免上下重叠 */
+}
+
+.partj ul li .img_box img {
+    height: 100%;
+    width: 100%;
+    border-radius: 1000px;
+}
+
+.partj ul li .img_box h3 {
+    width: 200px; /* 固定宽度 200px */
+    height: 200px; /* 固定高度 200px */
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.2);
+    font-size: 20px;
+    font-weight: 300;
+    color: #fff;
+    text-align: center;
+    padding: 66px 0 0 0;
+    z-index: 5;
+    border-radius: 1000px;
+    font-weight: bold;
+}
+
+.partj ul li .img_box h3 font {
+    display: block;
+    width: 70px;
+    font-size: 14px;
+    font-weight: 300;
+    color: #fff;
+    text-align: center;
+    margin: 0 auto;
+    border-top: 1px solid #fff;
+    line-height: 30px;
+    margin-top: 4px;
+}
+
+/* 在屏幕宽度大于 1200px 时，每行显示 5 个项目 */
+@media screen and (min-width: 1200px) {
+    .partj ul li {
+        flex: 1 1 19%; /* 每行 5 个项目 */
+    }
+}
+
+/* 在屏幕宽度小于 1024px 时，每行显示 4 个项目 */
+@media screen and (max-width: 1024px) {
+    .partj ul li {
+        flex: 1 1 23%; /* 每行 4 个项目 */
+    }
+}
+
+/* 在屏幕宽度小于 768px 时，每行显示 3 个项目 */
+@media screen and (max-width: 768px) {
+    .partj ul li {
+        flex: 1 1 31%; /* 每行 3 个项目 */
+    }
+}
+
+/* 在屏幕宽度小于 480px 时，每行显示 1 个项目 */
+@media screen and (max-width: 480px) {
+    .partj ul li {
+        flex: 1 1 100% !important; /* 每行 1 个项目 */
+        height: auto !important; /* 去除固定高度，适应内容 */
+    }
+}
+
+
+.intro{
+    padding: 100px 30px 0;
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+/*    width: 50%*/
+    
+}
+
+    </style>
+
+
+
+
+
+</block>
+<block name="body">
+
+    <div class="container">
+    
+    
+
+<div  style="
+      background-image: url('https://img.dpm.org.cn/Uploads/Picture/2017/01/09/s5873866876012.jpg');
+      background-size: cover;
+      height: 500px;
+    ">
+      <div class="intro">
+        <h2><i class="i1"></i>艺术大家<i class="i2"></i></h2>
+        <div class="text">
+          <p></p>
+          <p>
+            中国的工艺美术，历史悠久，品种繁多，技艺高超。它蕴含着中国人民的智慧，融汇了中华民族特有的民族气质和文化素养，以其生动的神韵蜚声国内外，是世界文明中一颗闪光的明珠。中国的工艺美术，拥有岁月沉淀后的深邃和神秘，充满质感和韵味之美，并且反映中国历朝历代的政治、经济和生活面貌。
+          </p>
+          <p></p>
+        </div>
+      </div>
+    
+</div>
+
+
+
+
+    	<!--<div class="col-lg-9">-->
+    	<div class="col-lg-12">
+    		<div class="row">
+    			<div id="filter" class="cation-middle">
+    
+    				<dl class="cation-list">
+    					<dt>年代</dt>
+    					<dd>
+    						<a href="" rel="" name="times" class="all on">全部</a>
+    						<a href="" rel="新石器时代" name="times" class="default">新石器时代</a>
+    						<a href="" rel="夏" name="times" class="default">夏</a>
+    						<a href="" rel="商" name="times" class="default">商</a>
+    						<a href="" rel="周" name="times" class="default">周</a>
+<!--    						<a href="" rel="春秋" name="times" class="default">春秋</a>
+    						<a href="" rel="战国" name="times" class="default">战国</a>-->
+    						<a href="" rel="秦" name="times" class="default">秦</a>
+    						<a href="" rel="汉" name="times" class="default">汉</a>
+<!--    						<a href="" rel="新莽" name="times" class="default">新莽</a>-->
+    						<a href="" rel="三国" name="times" class="default">三国</a>
+ <!--   						<a href="" rel="晋" name="times" class="default">晋</a>-->
+    						<a href="" rel="南北朝" name="times" class="default">南北朝</a>
+    						<a href="" rel="隋" name="times" class="default">隋</a>
+    						<a href="" rel="唐" name="times" class="default">唐</a>
+    						<a href="" rel="五代十国" name="times" class="default">五代十国</a>
+    						<a href="" rel="辽" name="times" class="default">辽</a>
+   <!-- 						<a href="" rel="西夏" name="times" class="default">西夏</a>-->
+    						<a href="" rel="宋" name="times" class="default">宋</a>
+    						<a href="" rel="金" name="times" class="default">金</a>
+    						<a href="" rel="元" name="times" class="default">元</a>
+    						<a href="" rel="明" name="times" class="default">明</a>
+    						<a href="" rel="清" name="times" class="default">清</a>
+    						<a href="" rel="近现代" name="times" class="default">近现代</a>
+    					</dd>
+    				</dl>
+    				
+    
+    			</div>
+                <div class="partj" id="search_list">  <ul>
+               
+                    <foreach name="artistList" item="vo">
+                    	<li class="block" data-rotate-y="-180deg">
+                    	    <div class="img_box">
+                    	        <a href="artist_article_list/index/author/{$vo.name}">
+                        	        <img src="<?php echo cmf_get_image_url_with_token($vo['work_image'],'!w300'); ?>">
+                        	        <h3>{$vo.name}<font>{$vo.age}<br>{$vo.works_num}作品</font></h3>
+                        	   </a>
+                    	    </div>
+                    	     <p style="background-color:#996d44;">
+
+                    		</p>
+                    	</li>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+    
+    
+    
+    
+        <!--分页-->
+        <div class="text-center">
+        	<ul class="pagination">{$page|default=''}</ul>
+        </div>
+    
+    
+    </div>
+
+</block>
+
+
+<block name="scripts">
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+	pageIsOver = '<?php echo $pageIsOver; ?>';
+	totalPages = '<?php echo $totalPages; ?>';
+	currentPage = '<?php echo $currentPage; ?>';
+	
+	
+
+
+	if(pageIsOver && currentPage!=1)
+	{
+    		var curPath = window.document.location.href;
+            curPath = curPath+'&'
+            alert("您已到达最后一页，点击确定，系统将自动跳到第一页")
+    		var regex = /page=(.+?)&/;
+    		var pageNum = curPath.match(regex);
+    		var jumpUrl = curPath.replace(regex,"page=1&").replace("&&","&");
+    		window.location.href=jumpUrl;	        
+	  
+
+	}
+
+ 
+  });
+
+
+</script>
+</block>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>搜索 {$keyword} </title>
+    <meta name="keywords" content=""/>
+    <meta name="description" content="">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+</head>
+
+<body class="">
+<include file="public@header"/>
+<div class="section section-breadcrumb no-mar no-pad">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <ul class="list-inline breadcrumb">
+                    <li class="breadcrumb-item"><a href="__ROOT__/"><i class="fa fa-home"></i>首页</a></li>
+
+                    <li class="breadcrumb-item"><a>文章搜索</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="section section-search">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="section-head">
+                    <h3>"{$keyword}" 搜索结果</h3>
+                    <div class="separator-2"></div>
+                </div>
+                <div class="section-body">
+                    <php>
+                        $where=[
+                        'post.create_time'=>['egt',0],
+                        'post.post_title'=>['like',"%$keyword%"]
+                        ];
+                    </php>
+                    <ul class="list-unstyled text-list-v1">
+                        <portal:articles item="vo" where="$where" order="post.create_time DESC" page="20">
+                            <if condition="(($key+1) % 5) == 0 ">
+                                <li class="list-separator">
+                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"><i class="fa fa-caret-right"></i>{$vo.post_title}</a>
+                                    <small>{:date('n/j,Y',$vo.published_time)}</small>
+                                </li>
+                                <else/>
+                                <li>
+                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"><i class="fa fa-caret-right"></i>{$vo.post_title}</a>
+                                    <small>{:date('n/j,Y',$vo.published_time)}</small>
+                                </li>
+                            </if>
+                        </portal:articles>
+                    </ul>
+                    <div class="pagination">
+                        <page/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<hook name="before_body_end"/>
+</body>
+</html>

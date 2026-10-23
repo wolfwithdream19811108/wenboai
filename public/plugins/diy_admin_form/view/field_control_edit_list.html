@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+<head>
+    <include file="public/head"/>
+    <title></title>
+    <style>
+        .form-required{
+            color: #ff2222;
+        }
+
+    </style>
+</head>
+<body>
+<div class="wrap js-check-wrap well form-inline" style="padding-top:10px;padding-bottom: 0;margin-bottom: 0">
+    <ul class="nav nav-tabs">
+        <li><a href="{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlEdit',['id'=>$row.id])}">
+            文本框</a></li>
+        <li class="active"><a>列表框</a></li>
+        <li><a href="{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldControlCheck',['id'=>$row.id])}">
+            复选框</a></li>
+    </ul>
+    <table class="table table-bordered" style="margin-top: 5px">
+        <tr>
+            <th><i class="fa fa-tasks" aria-hidden="true"></i>
+                字段名称和类型:</th>
+            <td>
+                <span class="text-danger" style="font-weight: bolder">{$row.field_name}</span>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <switch name="row.field_typename">
+                    <case value="number">数值型
+                        <span class="text-muted">({$row.field_datatype})</span></case>
+                    <case value="text">字符型
+                        <span class="text-muted">({$row.field_datatype})</span></case>
+                    <case value="datetime">日期时间型
+                        <span class="text-muted">({$row.field_datatype})</span></case>
+                    <default/>未定义
+                </switch>
+            </td>
+        </tr>
+        <tr>
+            <th width="180">
+                <i class="fa fa-cogs text-info" aria-hidden="true"></i>
+                选择控件类型:</th>
+            <td>
+                <select class="form-control" id="control_type" name="control_type" style="width: 100%">
+                    {$controlType_tree|default=''}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class="fa fa-exchange text-danger" aria-hidden="true"></i>
+                字段查询匹配方式:</th>
+            <td>
+                <select class="form-control" id="compare_type" name="compare_type" style="width: 100%">
+                    {$comparetype_tree|default=''}
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class="fa fa-list-ol text-success" aria-hidden="true"></i>
+                <a title="点击自动输入示例字符" href="javascript:setListCode(0);">
+                    <i class="fa fa-lightbulb-o text-warning" aria-hidden="true"></i>
+                    自定义列表选项:
+                </a>
+            </th>
+            <td style="padding: 0">
+                    <textarea maxlength="250" id="ctr_select_item" name="ctr_select_item" rows="1"
+                              class="form-control"  style="width: 100%"
+                              placeholder='[{"id":"1","title":"选项1"},{"id":"2","title":"选项2"}]'>{$row.ctr_select_item}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class="fa fa-database text-success" aria-hidden="true"></i>
+                <a title="点击自动输入示例字符" href="javascript:setListCode(1);">
+                    <i class="fa fa-lightbulb-o text-warning" aria-hidden="true"></i>
+                    指定列表数据源:
+                </a>
+            </th>
+            <td style="padding: 0">
+                    <textarea maxlength="250" id="ctr_select_table_info" name="ctr_select_table_info" rows="2"
+                              class="form-control" style="width: 100%"
+                              placeholder='{"tablename":"不带前缀的表名","valField":"值字段名","txtField":"文本字段名","where":"附加的查询条件"}'>{$row.ctr_select_table_info}</textarea>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                <i class="fa fa-exchange text-danger" aria-hidden="true"></i>
+                数据ID最小有效值:</th>
+            <td>
+                <input type="text" class="form-control" id="ctr_min_val" name="ctr_min_val"
+                       value="{$row.ctr_min_val}"  style="width: 100px"
+                       placeholder="整数值">
+            </td>
+        </tr>
+    </table>
+    <div style="display: none">
+        <table>
+            <tr>
+                <th>
+                    <i class="fa fa-check-square-o text-primary" aria-hidden="true"></i>
+                    复选框选中值(整数):</th>
+                <td>
+                    <input type="text" class="form-control" id="ctr_check_v1" name="ctr_check_v1"
+                           value="{$row.ctr_check_v1}" placeholder="请输入一个整数">
+                    默认值:
+                    <input type="text" class="form-inline" id="control_default" name="control_default"
+                           value="-1" style="width: 100px"
+                           placeholder="整数值">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <i class="fa fa-square-o text-primary" aria-hidden="true"></i>
+                    复选框未选中值(整数):</th>
+                <td>
+                    <input type="text" class="form-control" id="ctr_check_v0" name="ctr_check_v0"
+                           value="{$row.ctr_check_v0}" placeholder="请输入一个整数">
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <i class="fa fa-exchange text-danger" aria-hidden="true"></i>
+                    复选框默认状态:</th>
+                <td>
+                    <select class="form-control" id="ctr_check_default" name="ctr_check_default">
+                        {$check_default_tree|default=''}
+                    </select>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+        <span class="text-danger">请注意：文本框、列表框、复选框只能使用其中一项功能！</span>
+    </div>
+    <div>
+        <i class="fa fa-exclamation-triangle text-warning" aria-hidden="true"></i>
+        <span class="text-danger">列表框必须指定一个列表项数据,优先使用自定义的列表项！</span>
+    </div>
+    <div class="text-danger" style="margin-top: 3px">
+        <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+        <span>数据ID最小有效值必须根据定义的数据项或数据源的ID确定,不能弄错!!!</span>
+    </div>
+    <div>
+        <i class="fa fa-info-circle text-primary" aria-hidden="true"></i>
+        <span class="text-muted">点击"自定义列表选项"或"指定列表数据源"可自动输入示例代码!</span>
+    </div>
+    <input type="hidden" id="myid" name="myid" value="{$row.id}">
+</div>
+<include file="public/scripts"/>
+<script>
+    function confirm() {
+        var ctrSelectItem      = $('#ctr_select_item');
+        var ctrSelectTableInfo = $('#ctr_select_table_info');
+        var control_type       = $('#control_type');
+        var compare_type       = $('#compare_type');
+        var myid               = $('#myid');
+        var control_default    = $('#control_default');
+        var ctr_min_val        = $('#ctr_min_val');
+        var ctr_check_v1        = $('#ctr_check_v1');
+        var ctr_check_v0        = $('#ctr_check_v0');
+        var ctr_check_default  = $('#ctr_check_default');
+
+        return {
+            id:myid.val(),
+            tt: control_type.val(),
+            mt: compare_type.val(),
+            si: ctrSelectItem.val(),
+            ci: ctrSelectTableInfo.val(),
+            cd: control_default.val(),
+            cm: ctr_min_val.val(),
+            c1: ctr_check_v1.val(),
+            c0: ctr_check_v0.val(),
+            cv:ctr_check_default.val()
+        };
+    }
+
+    function setListCode(flag) {
+        var ctrSelectItem      = $('#ctr_select_item');
+        var ctrSelectTableInfo = $('#ctr_select_table_info');
+        if(flag === 0){
+            ctrSelectItem.val('[{"id":"1","title":"windows"},{"id":"2","title":"MacOS"}]');
+        }else{
+            ctrSelectTableInfo.val('{"tablename":"table","valField":"id","txtField":"name","where":"flag=0"}');
+        }
+    }
+
+
+</script>
+</body>
+</html>

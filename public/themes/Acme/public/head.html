@@ -1,0 +1,87 @@
+<taglib name="app\portal\taglib\Portal"/>
+<include file="public@function"/>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!-- Set render engine for 360 browser -->
+<meta name="renderer" content="webkit">
+
+<!-- No Baidu Siteapp-->
+<meta http-equiv="Cache-Control" content="no-siteapp"/>
+
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/jquery-2.0.0.min.js"></script>-->
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/jquery-2.0.0.min.js"></script>-->
+<script type="text/javascript" src="__TMPL__/public/assets/js/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap core CSS -->
+<!-- <link href="__TMPL__/public/assets/css/bootstrap.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/theme.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/bootstrap-reset.css" rel="stylesheet">-->
+ <link href="__TMPL__/public/assets/css/bootstrap.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/theme.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/bootstrap-reset.css" rel="stylesheet">
+
+
+<!--external css-->
+<!--<link href="https://static.hongmengyishu.com/public/static/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>-->
+<link href="/static/font-awesome/css/font-awesome.min.css" rel="stylesheet"/>
+<!--<link rel="stylesheet" href="__TMPL__/public/assets/css/flexslider.css"/>
+<link rel="stylesheet" href="__TMPL__/public/assets/css/animate.css">
+-->
+
+<!-- Custom styles for this template -->
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/style-responsive.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/component.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/demo.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/normalize.css" rel="stylesheet"/>
+
+
+
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/viewer/dist/viewer.js"></script>-->
+<script type="text/javascript" src="__TMPL__/public/assets/js/viewer/dist/viewer.js"></script>
+<!--<script src="__TMPL__/public/assets/js/bootstrap-waterfall.js"></script>
+<script type="text/javascript" src="__TMPL__/public/assets/js/mp.mansory.js"></script> --> 
+<script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+<!--<script type="text/javascript" src="__TMPL__/public/assets/js/Highcharts-10.0.0/code/highcharts.js"></script>-->
+
+
+<!--<link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/lightgallery/css/lightgallery.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/viewer/dist/viewer.css" type="text/css" media="screen" />-->
+
+
+
+
+
+
+
+
+<script type="text/javascript">
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/"
+    };
+    
+</script>
+
+
+
+<script>
+    $(function () {
+
+
+        $("#main-menu a").each(function () {
+            if ($(this)[0].href == String(window.location)) {
+                $(this).parents("ul.navbar-nav>li").addClass("active");
+            }
+        });
+    });
+
+</script>
+
+
+<script src="__STATIC__/js/wind.js"></script>

@@ -1,0 +1,60 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+    
+
+
+    <!--container start-->
+	<div class="container">
+	    <dt>标签：关于 {$tag} 的所有作品</dt>
+		<div class="" id="my-gallery-container">
+			<foreach name="articles" item="vo">
+				<div class="item">
+					<notempty name="$vo.more.thumbnail">
+						<div  align="center" class="blog-img img">
+						    <figure class="effect-ruby">
+    							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+    								<img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!300X'); ?>" />
+    							</a>
+							</figure>
+							
+						</div>
+					</notempty>
+						<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+							{$vo.post_title}|{$vo.post_age}|{$vo.post_museum}
+						</a>
+				</div>
+			</foreach>	
+		</div>
+	</div>
+	
+    <!--container end-->
+
+	<!--分页-->
+	<div class="text-center">
+        <ul class="pagination">{$page|default=''}</ul>
+	</div>
+
+</block>
+<block name="scripts">
+<script type="text/javascript">
+
+
+
+</script>
+
+</block>

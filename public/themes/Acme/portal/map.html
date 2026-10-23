@@ -1,0 +1,247 @@
+<extend name="public@base" />
+<block name="head">
+  {__block__}
+        <meta charset="utf-8" />
+        <title>MapVGL</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+        <style>
+            html,
+            body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            #map_container {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+            }
+        </style>
+        <script src="//api.map.baidu.com/api?v=1.0&type=webgl&ak=agiwRMJw4oSHfgOuVERtA71y3FduT42o"></script>
+        <script src="https://mapv.baidu.com/gl/examples/static/common.js"></script>
+        <script src="//mapv.baidu.com/build/mapv.min.js"></script>
+        <script src="https://unpkg.com/mapvgl@1.0.0-beta.168/dist/mapvgl.min.js"></script>
+</block>
+<block name="body">
+<div id="map_container"></div>
+        <script>
+            museums = '<?php echo $museums; ?>';
+            museums = JSON.parse(museums);
+            url = window.location.href;
+            var params = new URLSearchParams(new URL(url).search);
+            var minworks = params.get('minworks');  
+
+            if(typeof minworks === 'undefined'){
+                minworks = 1000000;//如果最小显示作品数目未定义，则设定最大值
+            }
+            if(minworks<100){
+                collidesflag = true;//如果最小显示作品数目小于100件，则打开碰撞检测
+            }else{ 
+                collidesflag = false
+            }    
+                
+                
+            /* global BMapGL */
+
+            /* global mapv */
+
+            /* global mapvgl */
+
+            /* global initMap */
+
+            /* global whiteStyle */
+
+
+
+
+            var map = initMap({
+                tilt: 30,
+                heading: 0,
+                center: [109.792816,27.702774],
+                zoom: 7,
+                style: whiteStyle,
+                skyColors: [
+                    // 地面颜色
+                    'rgba(226, 237, 248, 0)',
+                    // 天空颜色
+                    'rgba(186, 211, 252, 1)',
+                ],
+            });
+
+
+// 创建定位控件
+        var locationControl = new BMapGL.LocationControl({
+            // 控件的停靠位置（可选，默认左上角）
+            anchor: BMAP_ANCHOR_TOP_RIGHT,
+            // 控件基于停靠位置的偏移量（可选）
+            offset: new BMapGL.Size(10, 10)
+        });
+        // 将控件添加到地图上
+        map.addControl(locationControl);
+
+        // 添加定位事件
+        locationControl.addEventListener("locationSuccess", function(e){
+            var address = '';
+            address += e.addressComponent.province;
+            address += e.addressComponent.city;
+            address += e.addressComponent.district;
+            address += e.addressComponent.street;
+            address += e.addressComponent.streetNumber;
+            alert("当前定位地址为：" + address);
+        });
+        locationControl.addEventListener("locationError",function(e){
+            alert(e.message);
+        });
+
+        // 创建城市选择控件
+        var cityControl = new BMapGL.CityListControl({
+            // 控件的停靠位置（可选，默认左上角）
+            anchor: BMAP_ANCHOR_TOP_RIGHT,
+            // 控件基于停靠位置的偏移量（可选）
+            offset: new BMapGL.Size(10, 60)
+        });
+        // 将控件添加到地图上
+        map.addControl(cityControl);
+
+
+
+
+
+
+        //定义一个控件类
+        function worksControl() {
+            this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+            this.defaultOffset = new BMapGL.Size(20, 20)
+        }
+        //通过JavaScript的prototype属性继承于BMap.Control
+        worksControl.prototype = new BMapGL.Control();
+
+        //自定义控件必须实现自己的initialize方法，并且将控件的DOM元素返回
+        //在本方法中创建个div元素作为控件的容器，并将其添加到地图容器中
+        worksControl.prototype.initialize = function(map) {
+            
+        // 创建下拉列表
+          var dropdown = document.createElement('div');
+          dropdown.style.width = '100px';
+          dropdown.style.height = 'auto';
+          dropdown.style.backgroundColor = '#fff';
+          dropdown.style.border = '1px solid #ccc';
+          dropdown.style.padding = '5px';
+          dropdown.style.display = 'display'; // 初始状态下隐藏下拉列表
+        
+          // 添加列表项
+          var items = [
+            { label: '全部显示', worknum: '1' },
+            { label: '100件以上', worknum: '100' },
+            { label: '200件以上', worknum: '200' },
+            { label: '500件以上', worknum: '500' },
+            { label: '1000件以上', worknum: '1000' }
+          ];
+          for (var i = 0; i < items.length; i++) {
+            var item = document.createElement('div');
+            item.innerHTML = items[i].label;
+            item.style.padding = '5px';
+            item.style.cursor = 'pointer';
+            item.setAttribute('data-worknum', items[i].worknum); // 设置自定义属性
+            item.onclick = function() {
+              // 处理列表项的点击事件
+              var worknum = this.getAttribute('data-worknum'); // 获取自定义属性值
+              console.log('您点击了' + this.innerHTML + '，对应的worknum为' + worknum);
+              window.location.href = "https://www.hongmengyishu.com/portal/map?minworks="+worknum
+            };
+            dropdown.appendChild(item);
+          }
+        
+          // 在控件容器中添加下拉列表
+          map.getContainer().appendChild(dropdown);
+          return dropdown;            
+  
+        }
+        //创建控件元素
+        var myworksCtrl = new worksControl();
+        //添加到地图中
+        map.addControl(myworksCtrl);
+
+
+
+
+
+
+            
+            
+            var museumCount = museums.length;
+            var data = [];
+
+
+            // 构造数据
+            while (museumCount--) {
+               // console.log(museums[museumCount].lng, museums[museumCount].lat)
+                var worksNum = museums[museumCount].works_num;
+                if(typeof minworks !== 'undefined' && worksNum < minworks){
+                    continue;
+                }
+                var backgroundColor;
+                if (worksNum > 1000) {
+                    borderColor = '#f00';
+                    backgroundColor = '#f00';
+                } else if (worksNum > 500) {
+                    borderColor = '#00f';
+                    backgroundColor = '#00f';
+                } else if (worksNum > 100) {
+                    borderColor = '#800080';
+                    backgroundColor = '#800080';
+                } else {
+                    borderColor = '#cd853f';
+                    backgroundColor = '#cd853f';
+                }
+                data.push({
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [museums[museumCount].lng, museums[museumCount].lat]
+                    },
+                    properties: {
+                        text: museums[museumCount].museum_name+'\n'+museums[museumCount].works_num+'件作品',
+                         museum_id:museums[museumCount].id,
+                         textColor: '#fff',
+                         borderColor: borderColor,
+                         backgroundColor: backgroundColor
+                    },
+                });
+            }
+
+            var view = new mapvgl.View({
+                map: map,
+            });
+
+            var layer = new mapvgl.LabelLayer({
+                textAlign: 'center',
+                textColor: '#fc0',
+                borderColor: '#666',
+                backgroundColor: '#666',
+                // pickedTextColor: '#fff',
+                // pickedBorderColor: '#666',
+                // pickedBackgroundColor: '#666',
+                padding: [2, 5],
+                borderRadius: 5,
+                fontSize: 12,
+                lineHeight: 16,
+                collides: collidesflag, // 是否开启碰撞检测, 数量较多时建议打开
+                enablePicked: true,
+                autoSelect: true,
+                onClick: item => {
+                    // 点击事件
+                        console.log(item.dataItem)
+                        var url = "/portal/museum?museum="+item.dataItem.properties.museum_id
+                        window.open(url,"_blank")
+                },
+            });
+            view.addLayer(layer);
+            layer.setData(data);
+        </script>
+	
+  
+</block>
+
+

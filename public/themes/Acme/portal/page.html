@@ -1,0 +1,42 @@
+<extend name="public@base"/>
+<block name="head">
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .blog-post img{
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+    <include file="public@breadcrumb_page"/>
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-9">
+                <div class="blog-item row">
+                    <div class="col-lg-12 col-sm-12">
+                        <notempty name="$article.more.thumbnail">
+                            <div class="blog-img gs">
+                                <img src="{$article.more.thumbnail|cmf_get_image_url}"/>
+                            </div>
+                        </notempty>
+                        {$page.post_content}
+                    </div>
+                </div>
+            </div>
+
+            <!--右侧栏目-->
+            <div class="col-lg-3 mar-b-30">
+                <include file="public@right_side"/>
+            </div>
+            <!--blog end-->
+        </div>
+    </div>
+    <!--container end-->
+</block>

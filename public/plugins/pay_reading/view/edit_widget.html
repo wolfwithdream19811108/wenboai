@@ -1,0 +1,49 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label for="__pay_is_pay" class="col-md-2 label-control">是否付费</label>
+                <div class="col-md-10">
+                    <php>
+                        $val = -1;
+                        if($__is_edit) $val = $__info['__pay_is_pay'];
+                    </php>
+                    <select name="post[__pay_is_pay]" id="__pay_is_pay" class="form-control">
+                        <option value="0" <?php if($val==0) echo 'selected';?>>否</option>
+                        <option value="1" <?php if($val==1) echo 'selected';?>>是</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="__pay_money" class="col-md-2 label-control">付费金额</label>
+                <div class="col-md-10">
+                    <input type="number" value="<?php if($__is_edit) echo $__info['__pay_money'];?>" name="post[__pay_money]" id="__pay_money" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="__pay_content" class="col-md-2 label-control">付费内容</label>
+                <div class="col-md-10">
+                    <script type="text/plain" id="__pay_content" name="post[__pay_content]"><?php if($__is_edit) echo $__info['__pay_content'];?></script>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function () {
+
+editorcontent = new baidu.editor.ui.Editor();
+editorcontent.render('__pay_content');
+try {
+    editorcontent.sync();
+} catch (err) {
+}
+
+$('.btn-cancel-thumbnail').click(function () {
+    $('#thumbnail-preview').attr('src', '/public/themes/admin_simpleboot3/public/assets/images/default-thumbnail.png');
+    $('#thumbnail').val('');
+});
+
+$('#more-template-select').val("");
+});
+</script>

@@ -1,0 +1,6 @@
+{
+    "name": "简单文章页",
+    "action": "portal/Article/index",
+    "description": "简单文章页面，无右侧推荐边栏",
+    "order": 50.0
+}

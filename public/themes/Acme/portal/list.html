@@ -1,0 +1,402 @@
+<extend name="public@base"/>
+<block name="head">
+
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+        
+
+
+     
+        
+        
+        
+        
+        
+        
+/* 精准定位解决方案 */
+#museumlist.cation-list {
+    position: relative;
+}
+
+#museumlist.cation-list .header-wrap {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 2; /* 确保标题栏在上层 */
+}
+
+#museumlist.cation-list .content-wrap {
+    max-height: 45px;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+#museumlist.cation-list.expanded .content-wrap {
+    max-height: 500px;
+}
+
+#museumlist.cation-list .scroll-container {
+    /*display: flex;*/
+    flex-wrap: wrap;
+}
+
+/* 按钮基础样式 */
+#museumlist .toggle-more {
+  /* 定位 */
+  position: absolute;
+  right: 15px;
+/*  top: 50%;*/
+  transform: translateY(-50%);
+  
+  /* 尺寸 */
+  width: 30px;
+  height: 30px;
+  
+  /* 样式 */
+  background: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  
+  /* 文字 */
+  font-size: 12px;
+  color: #666;
+  line-height: 1;
+  
+  /* 交互 */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  /* 布局 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top:20px;
+  gap: 4px;
+}
+
+/* 悬停状态 */
+#museumlist .toggle-more:hover {
+  background: #f8f9fa;
+  border-color: #48cfad;
+  color: #48cfad;
+}
+
+/* 箭头图标 */
+#museumlist .toggle-more .arrow {
+  display: inline-block;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 10px;
+}
+
+/* 展开状态 */
+#museumlist.expanded .toggle-more .arrow {
+  transform: rotate(180deg);
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  #museumlist .toggle-more {
+    right: 10px;
+    padding: 0 8px;
+    min-width: 52px;
+    height: 26px;
+  }
+}
+
+
+    </style>
+</block>
+<block name="body">
+<div class="container">
+
+	<!--<div class="col-lg-9">-->
+	<div class="col-lg-12">
+		<div class="row">
+			<div id="filter" class="cation-middle">
+				<dl class="cation-list">
+					<dt>分类</dt>
+					<dd>
+					<!--	<a href="" rel="" name="category" class="all on">全部</a>-->
+						<portal:categories order="id ASC">
+						<a href="" rel="{$vo.id}" name="category" class="default" data-categoryid="{$vo.id}">{$vo.name}</a>
+						</portal:categories>
+					</dd>
+				</dl>
+				<dl class="cation-list">
+					<dt>年代</dt>
+					<dd>
+						<a href="" rel="" name="times" class="all on">全部</a>
+						<a href="" rel="旧石器时代" name="times" class="default">旧石器时代</a>
+						<a href="" rel="新石器时代" name="times" class="default">新石器时代</a>
+						<a href="" rel="夏" name="times" class="default">夏</a>
+						<a href="" rel="商" name="times" class="default">商</a>
+						<a href="" rel="周" name="times" class="default">周</a>
+						<a href="" rel="春秋战国" name="times" class="default">春秋战国</a>
+						<a href="" rel="秦" name="times" class="default">秦</a>
+						<a href="" rel="汉" name="times" class="default">汉</a>
+						<a href="" rel="新莽" name="times" class="default">新莽</a>
+						<a href="" rel="三国" name="times" class="default">三国</a>
+						<a href="" rel="魏晋" name="times" class="default">魏晋</a>
+						<a href="" rel="南北朝" name="times" class="default">南北朝</a>
+						<a href="" rel="隋" name="times" class="default">隋</a>
+						<a href="" rel="唐" name="times" class="default">唐</a>
+						<a href="" rel="五代十国" name="times" class="default">五代十国</a>
+						<a href="" rel="辽" name="times" class="default">辽</a>
+						<a href="" rel="西夏" name="times" class="default">西夏</a>
+						<a href="" rel="宋" name="times" class="default">宋</a>
+						<a href="" rel="金" name="times" class="default">金</a>
+						<a href="" rel="元" name="times" class="default">元</a>
+						<a href="" rel="明" name="times" class="default">明</a>
+						<a href="" rel="清" name="times" class="default">清</a>
+						<a href="" rel="近现代" name="times" class="default">近现代</a>
+				<!--		<a href="" rel="其他" name="times" class="default">其他</a>
+						
+						<a href="" rel="长卷" name="times" class="default">长卷</a>-->
+					</dd>
+				</dl>
+				
+<!--                <dl id="museumlist" class="cation-list">
+                    <dt class="">
+                        <span class="title">博物馆</span>
+                        <button class="toggle-more">
+                            <span class="arrow">▼</span>
+                        </button>
+                    </dt>
+                    <dd class="content-wrap">
+                        <div class="scroll-container">
+                            <a href="" rel="" name="museum" class="all on">全部</a>
+                            <foreach name="museums" item="vo">
+                            <a href="" rel="{$vo.id}" name="museum" class="default">{$vo.museum_name}</a>
+                            </foreach>
+                        </div>
+                    </dd>
+                </dl>-->	
+				
+
+			</div>
+		
+
+			<div class="" id="my-gallery-container">
+				<foreach name="articles" item="vo">
+					<div class="item">
+
+    						<notempty name="$vo.more.thumbnail">
+    							<div  align="left" class="blog-img img">
+    							    <figure class="effect-ruby">
+        								<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+                                        	<if condition="$vo['firstpic_width'] gt $vo['firstpic_height']*8 ">
+                                              <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!longimg'); ?>" />
+                                           <elseif condition="$vo['firstpic_height'] gt $vo['firstpic_width']*2" />
+                                              <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!shuimg'); ?>" />
+                                            <else />
+        									  <img class="img002" src="<?php echo cmf_get_image_url_with_token($vo['more']['thumbnail'],'!300X'); ?>" />
+                                            </if>
+        								</a>
+    								</figure>
+    							</div>
+    						</notempty>
+    							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+    							<!--	{$vo.post_title}| {$vo.post_age}| {$vo.firstpic_width}| {$vo.firstpic_height}-->
+                                  {$vo.post_title}|{$vo.post_age}<notempty name="$vo.post_author">| {$vo.post_author}</notempty>
+    							</a>
+
+					</div>
+				</foreach>
+			</div>
+		</div>
+		<!--分页-->
+		<div class="text-center">
+			<ul class="pagination">{$page|default=''}</ul>
+		</div>
+	</div>
+
+</div>
+
+</block>
+
+<block name="scripts">
+<script type="text/javascript">
+
+// 在页面加载完成后执行
+/*window.onload = function() {
+    // 获取屏幕分辨率（Physical Resolution）
+    var screenWidth = screen.width;    // 屏幕宽度（物理分辨率）
+    var screenHeight = screen.height;  // 屏幕高度（物理分辨率）
+
+    // 获取视口大小（Viewport Size）
+    var viewportWidth = window.innerWidth;   // 视口宽度
+    var viewportHeight = window.innerHeight; // 视口高度
+
+    // 打印结果
+    console.log("屏幕分辨率（Physical Resolution）:");
+    console.log("宽度: " + screenWidth + "px, 高度: " + screenHeight + "px");
+
+    console.log("视口大小（Viewport Size）:");
+    console.log("宽度: " + viewportWidth + "px, 高度: " + viewportHeight + "px");
+
+    var scale = window.devicePixelRatio;
+    console.log("当前缩放比例: " + scale);
+
+    console.log('Device Pixel Ratio (devicePixelRatio):', window.devicePixelRatio);
+    console.log('Viewport Width (window.innerWidth):', window.innerWidth);
+    console.log('Viewport Height (window.innerHeight):', window.innerHeight);
+    console.log('Screen Width (screen.width):', screen.width);
+    console.log('Screen Height (screen.height):', screen.height);
+
+    // 获取设备像素比和视口宽度
+    const devicePixelRatio = window.devicePixelRatio || 1;
+
+    // 计算有效宽度，考虑设备像素比
+    const effectiveWidth = viewportWidth * devicePixelRatio;
+
+    // 获取容器元素
+    const container = document.querySelector('.row-container');
+
+    // 如果设备像素比为 1.5 且有效宽度大于等于 1700px，直接设置容器的宽度
+    if (effectiveWidth >= 1700) {
+        container.style.width = '1500px';  // 设置容器固定宽度
+    } else {
+        container.style.width = '100%';  // 或者使用百分比，确保容器响应式布局
+    }
+};*/
+
+
+
+
+
+$(document).ready(function() {
+
+
+
+
+
+	category = '<?php echo $category; ?>'
+    pageIsOver = '<?php echo $pageIsOver; ?>'
+    idInMuseumList = '<?php echo $idInMuseumList; ?>'
+    total_pages = '<?php echo $total_pages; ?>'
+    const urlParams = new URLSearchParams(location.search);
+	if (category == 0)
+	{
+		var filter=document.getElementById("filter");
+		var child=document.getElementById("museumlist");
+		filter.removeChild(child);
+	}
+
+  	if(pageIsOver)
+	{
+		var curPath = window.document.location.href;
+        curPath = curPath+'&'
+		var regex = /page=(.+?)&/;
+		var pageNum = curPath.match(regex);
+		var jumpUrl = curPath.replace(regex,"page=1&").replace("&&","&");
+		window.location.href=jumpUrl;
+	}
+	
+  // 同步分类状态
+  const categoryId = urlParams.get('category');
+  $('a[name="category"]').removeClass('on');
+  if(categoryId) {
+    $(`a[name="category"][rel="${categoryId}"]`).addClass('on');
+  } else {
+    $('a[name="category"].all').addClass('on');
+  }	
+	
+	
+	
+	
+  
+/*    if(!idInMuseumList)
+    {
+		var curPath = window.document.location.href;
+        curPath = curPath+'&'
+		var regex = /museum=(.+?)&/;
+		var pageNum = curPath.match(regex);
+		var jumpUrl = curPath.replace(regex,"");
+		
+		window.location.href=jumpUrl;
+    }*/
+    if(total_pages==0)
+	{
+
+	    	layer.msg('无更多作品，请重新筛选作品', {
+            	  icon: 1,
+            	  time: 5000 //2秒关闭（如果不配置，默认是3秒）
+            	}, function(){
+                    var curPath = window.document.location.href;
+                    var jumpUrl = curPath.substr(0,curPath.indexOf("&")+1);
+                    window.location.href=jumpUrl;
+                });
+	}
+	
+	
+	    // 处理颜色筛选点击
+    $('a[name="color"]').on('click', function(e) {
+        e.preventDefault();
+        var colorUrl = $(this).attr('href');
+        window.location.href = colorUrl;
+    });
+ 
+  });
+
+/*
+$(document).on('click', 'a[name="museum"]', function() {
+    event.preventDefault(); // 取消a标签的默认跳转行为
+    var museumId = $(this).data('museumid');
+
+    url = window.document.location.href;
+    var params = new URLSearchParams(new URL(url).search);
+    var category = params.get('category');
+    var museum = params.get('museum');
+    var times = params.get('times');
+    var jumpUrl = 'https://www.hongmengyishu.com/';
+    if (category) {
+      jumpUrl += '?category=' + category;
+    }
+    if (museumId) {
+      jumpUrl += '&museum=' + museumId;
+    }
+    if (times) {
+      jumpUrl += '&times=' + times;
+    }
+    window.location.href=jumpUrl;
+    
+});
+*/
+//如果选了类别，则重置所有筛选参数
+$(document).on('click', 'a[name="category"]', function() {
+    event.preventDefault(); // 取消a标签的默认跳转行为
+    var clickCategoryId = $(this).data('categoryid');
+    var jumpUrl = 'https://www.hongmengyishu.com/';
+    if (clickCategoryId) {
+      jumpUrl += '?category=' + clickCategoryId;
+    }
+   
+    window.location.href=jumpUrl;
+    
+});
+
+document.querySelector('#museumlist .toggle-more').addEventListener('click', function() {
+    document.getElementById('museumlist').classList.toggle('expanded');
+    this.querySelector('.arrow').style.transform = 
+        document.getElementById('museumlist').classList.contains('expanded') 
+        ? 'rotate(180deg)' 
+        : 'rotate(0deg)';
+});
+</script>
+
+</block>

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>页面统计</title>
+    <include file="public/head"/>
+</head>
+<body>
+    <include file="public/function"/>
+    <div class="container-fluid wrap">
+        <ul class="nav nav-tabs">
+            <li><a href="{:cmf_plugin_url('SiteAnalysis://AdminIndex/index')}">站点统计</a></li>
+            <li class="active"><a>页面统计</a></li>
+        </ul>
+        <form class="well form-inline margin-top-20" method="get" action="{:cmf_plugin_url('SiteAnalysis://AdminIndex/page')}" style="margin-top: 20px;">
+            时间:
+            <input type="text" class="form-control js-bootstrap-date" name="start_time"
+                   value="{$start_time|default=''}"
+                   style="width: 140px;" autocomplete="off">-
+            <input type="text" class="form-control js-bootstrap-date" name="end_time"
+                   value="{$end_time|default=''}"
+                   style="width: 140px;" autocomplete="off"> &nbsp; &nbsp;
+            关键字:
+            <input type="text" class="form-control" name="keyword" style="width: 200px;"
+                   value="{$keyword|default=''}" placeholder="请输入关键字..."> &nbsp; &nbsp;
+            <input type="submit" class="btn btn-primary" value="确定"/>
+            <a class="btn btn-danger" href="{:cmf_plugin_url('SiteAnalysis://AdminIndex/page')}">清空</a>
+            <span style="border-left: 2px solid #000;margin-left: 30px;padding: 5px 10px">
+                {:makeDateUrl(cmf_plugin_url('SiteAnalysis://AdminIndex/page'),$start_time,$end_time)}
+            </span>
+        </form>
+        <div class="row site_analysis_main">
+            <div class="col-lg-12 col-md-12">
+                <table class="table table-hover table-bordered table-list">
+                    <thead>
+                    <tr>
+                        <th>页面</th>
+                        <th>访客数</th>
+                        <th>浏览量</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <foreach name="pages" item="vo">
+                            <tr>
+                                <td>
+                                    <span><a href="//{$vo.domain}{$vo.page}" target="_blank">{$vo.title}  <i class="glyphicon glyphicon-new-window" style="font-size: 12px;"></i></a></span>
+                                    <span class="help-block">{$vo.domain}{$vo.page}</span>
+                                </td>
+                                <td>{$vo.count}</td>
+                                <td>{$vo.view_count}</td>
+                            </tr>
+                        </foreach>
+                    </tbody>
+
+                </table>
+            </div>
+            <ul class="pagination">{$page|default=''}</ul>
+        </div>
+    </div>
+    <include file="public/script"/>
+</body>
+</html>

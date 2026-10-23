@@ -1,0 +1,1576 @@
+<head>
+
+    
+</head>
+
+<extend name="public@base"/>
+
+<block name="head">
+    <title>{$site_info.site_name|default=''}:{$article.post_title}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''},{$article.post_title},{$article.post_category},{$article.post_author},{$article.post_museum},{$article.post_age}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''},{$article.post_title},{$article.post_category},{$article.post_author},{$article.post_museum},{$article.post_age}:{$description}"/>
+    <meta name="author" content="{$article.post_author}"> 
+    
+ <style>
+ 
+ .shadows{background-color: transparent !important;box-shadow: 0 0 0 rgba(0,0,0,0) !important;}
+ .layui-layer-title {
+  text-align: center !important;
+  font-weight:bolder;
+}
+
+/* 图片画廊 */
+.gallery-item {
+    margin: 1rem 0;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover {
+    transform: translateY(-3px);
+}
+
+/* 标签云 */
+.tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.tag-item {
+    padding: 0.3rem 0.8rem;
+    background: #f3f4f6;
+    border-radius: 20px;
+    font-size: 0.9em;
+    transition: all 0.2s;
+}
+
+.tag-item:hover {
+    background: #48cfad;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* 响应式分页 */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 1.5rem 0;
+}
+/* 元数据列表 */
+.artwork-meta {
+    margin: 1.5rem 0;
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.meta-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    margin: 0.8rem 0;
+    line-height: 1.4;
+}
+
+.meta-item dt {
+    color: #666;
+    font-weight: 500;
+}
+
+.meta-item dd {
+    margin: 0;
+}
+
+/* 标签样式 */
+.tag-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag {
+    padding: 4px 12px;
+    border-radius: 16px;
+    transition: all 0.2s;
+}
+
+.tag:hover {
+    background: #48cfad;
+    color: white;
+}
+
+/* 清除浮动影响 */
+@media (min-width: 992px) {
+    .col-lg-push-9 {
+        left: 75%;
+    }
+    .col-lg-pull-3 {
+        right: 25%;
+    }
+}
+@media (max-width: 991px) {
+    .artwork {
+        margin-bottom: 20px;
+    }
+}
+
+
+/* 新增样式 */
+.adjust-mobile-margin {
+    margin-left: -7px;  /* 补偿Bootstrap的默认外边距 */
+    margin-right: -7px;
+}
+
+@media (max-width: 767px) {
+    .adjust-mobile-margin [class*="col-"] {
+        padding-left: 7px !important;
+        padding-right: 7px !important;
+    }
+    
+    .item-wrapper {
+        margin: 0 8px 15px;  /* 增加底部间距 */
+    }
+    
+    .feature-box-heading {
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .feature-box-heading h5 {
+        padding: 0 5px;
+        margin: 10px 0;
+    }
+}
+
+/* 移动端优化 */
+@media (max-width: 767px) {
+    /* 启用flex布局 */
+    .equal-height {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -5px;
+    }
+    
+    .col-xs-6 {
+        flex: 0 0 50%;
+        max-width: 50%;
+        padding: 0 5px 10px;
+        float: none !important; /* 禁用浮动 */
+    }
+    
+    /* 卡片高度统一 */
+    .item-card {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .feature-box-heading {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* 图片容器 */
+    .image-container {
+        position: relative;
+        padding-top: 100%; /* 1:1比例 */
+    }
+    
+    .responsive-img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    /* 标题截断 */
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        line-height: 1.3;
+        max-height: 2.6em;
+    }
+}
+
+/* 桌面端保持原有布局 */
+@media (min-width: 768px) {
+    .equal-height {
+        display: block; /* 恢复Bootstrap浮动布局 */
+    }
+    
+    .col-xs-6 {
+        float: left; /* 恢复浮动 */
+    }
+    
+    .responsive-img {
+        width: 100%;
+        height: auto;
+    }
+    
+    /* 桌面端标题截断 */
+    .title-wrapper {
+        max-height: 3em;
+        overflow: hidden;
+    }
+}
+
+/* 颜色调色板样式 */
+.color-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.color-chip {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.color-chip:hover {
+    transform: scale(1.2);
+    z-index: 1;
+}
+
+.color-match {
+    position: absolute;
+    bottom: -6px;
+    right: -6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+
+/* 移动端适配 */
+@media (max-width: 767px) {
+    .color-chip {
+        width: 20px;
+        height: 20px;
+    }
+    .color-match {
+        width: 10px;
+        height: 10px;
+    }
+}
+
+
+/* Markdown内容样式 */
+#deep_content {
+    line-height: 1.8;
+    color: #333;
+    padding: 20px 0;
+}
+
+#deep_content h1, 
+#deep_content h2, 
+#deep_content h3 {
+    margin: 1.5em 0 1em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.3em;
+}
+
+#deep_content pre {
+    background: #f6f8fa;
+    padding: 16px;
+    border-radius: 6px;
+    overflow: auto;
+}
+
+#deep_content code {
+    font-family: SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    background: rgba(175,184,193,0.2);
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+}
+
+#deep_content blockquote {
+    border-left: 4px solid #48cfad;
+    padding-left: 1em;
+    color: #666;
+    margin-left: 0;
+}
+
+#deep_content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+
+/* 深度解析按钮样式 */
+#deepAnalysisBtn, 
+#knowledgeGraphBtn {
+    transition: all 0.3s ease;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    box-shadow: 0 2px 10px rgba(72, 207, 173, 0.3);
+}
+
+#deepAnalysisBtn:hover,
+#knowledgeGraphBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(72, 207, 173, 0.4);
+}
+
+#deepAnalysisBtn i,
+#knowledgeGraphBtn i {
+    margin-right: 5px;
+} 
+ 
+ 
+      /* 自定义右键菜单样式 */
+        .custom-context-menu {
+            position: absolute;
+            display: none;
+            background-color: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+            z-index: 9999;
+            min-width: 150px;
+        }
+     
+        .custom-context-menu ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .custom-context-menu li {
+            padding: 8px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .custom-context-menu li:last-child {
+            border-bottom: none;
+        }
+        
+        .custom-context-menu li:hover {
+            background-color: #f0f0f0;
+        }
+        
+        /* 高亮选中文本 */
+        ::selection {
+            background-color: rgba(0, 120, 215, 0.3);
+        }
+ 
+</style>  
+    
+    
+</block>
+
+<block name="body">
+    <include file="public@breadcrumb"/>
+
+    <!--container start-->
+    <div class="container">
+
+        
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-3 col-lg-push-9">
+                <ul class="artwork">
+	
+                    <!-- 标题 -->
+                    <div class="artwork-header">
+                        <h2 class="artwork-title">{$article.post_title}</h2>
+                    </div>
+                    
+
+                    <!-- 元数据列表 -->
+                    <dl class="artwork-meta">
+                        <!-- 作者 -->
+                        <notempty name="article.post_author">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-paint-brush" aria-hidden="true"></i> 作者:</dt>
+                            <dd>
+                                <a target="_blank" 
+                                   href="{:cmf_url('portal/artist_article_list/index',['author'=>$article.post_author])}"
+                                   rel="noopener">
+                                   {$article.post_author}
+                                </a>
+                            </dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 年代 -->
+                        <notempty name="article.post_age">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-clock-o" aria-hidden="true"></i> 年代:</dt>
+                            <dd>
+                                <a target="_blank" 
+                                   href="/?times={$article.post_age}"
+                                   rel="noopener">
+                                   {$article.post_age}
+                                </a>
+                            </dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 分类 -->
+                        <notempty name="article.post_category">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-tag" aria-hidden="true"></i> 种类:</dt>
+                            <dd>
+                                <a target="_blank" 
+                                   href="/?category={$article.post_category_id}"
+                                   rel="noopener">
+                                   {$article.post_category}
+                                </a>
+                            </dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 规格 -->
+                        <notempty name="article.post_size">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-cube" aria-hidden="true"></i> 规格:</dt>
+                            <dd>{$article.post_size}</dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 材质 -->
+                        <notempty name="article.post_material">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-slack" aria-hidden="true"></i> 材质:</dt>
+                            <dd>{$article.post_material}</dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 博物馆 -->
+                        <notempty name="article.post_museum">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-university" aria-hidden="true"></i> 博物馆:</dt>
+                            <dd>
+                                   {$article.post_museum}
+                            </dd>
+<!--                            <dd>
+                                <a target="_blank" 
+                                   href="/portal/museum?museum={$article.post_museum_id}"
+                                   rel="noopener">
+                                   {$article.post_museum}
+                                </a>
+                            </dd>-->
+                        </div>
+                        </notempty>
+                    
+                        <!-- 标签 -->
+                        <notempty name="title_tags">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-tags" aria-hidden="true"></i> 标签:</dt>
+                            <dd>
+                                <foreach name="title_tags" item="tag">
+                                <a target="_blank" 
+                                   href="{:cmf_url('portal/tagpostlist/index',['tag'=>$tag.tag])}"
+                                   rel="tag noopener">
+                                   {$tag.tag}
+                                </a>
+                                </foreach>
+                            </dd>
+                        </div>
+                        </notempty>
+                    
+                        <!-- 百科 -->
+                        <notempty name="entitys">
+                        <div class="meta-item">
+                            <dt><i class="fa fa-book" aria-hidden="true"></i> 百科:</dt>
+                            <dd class="encyclopedia-links">
+                                <foreach name="entitys" item="vo">
+                                <a target="_blank" 
+                                   href="{$vo._bdbkUrl}"
+                                   rel="noopener noreferrer">
+                                   {$vo.mention}
+                                </a>
+                                </foreach>
+                            </dd>
+                        </div>
+                        </notempty>
+                    </dl>
+                    
+                    <!-- 在entitys条目后面添加颜色条目 -->
+                    <notempty name="colors">
+                    <div class="meta-item">
+                        <dt><i class="fa fa-dashboard" aria-hidden="true"></i> 颜色:</dt>
+                        <dd>
+                            <div class="color-palette">
+                                <foreach name="colors" item="color">
+                                    <a href="{:url('portal/Samecolor/index', ['color' => $color['color_match']])}" 
+                                       class="color-chip" 
+                                       style="background-color:{$color.color_origin}; 
+                                              border: 1px solid #eee;
+                                              width: 20px; 
+                                              height: 20px; 
+                                              display: inline-block; 
+                                              margin-right: 5px;
+                                              position: relative;"
+                                       title="点击查看相似颜色作品 (匹配色: {$color.color_match})"
+                                       data-color="{$color.color_match}">
+                                    </a>
+                                </foreach>
+                            </div>
+                        </dd>
+                    </div>
+                    </notempty>                    
+                    
+                    
+                  
+				<!--	<li>{$source}</li>-->
+					<!--	<a class="btn btn-primary" href="{:url('user/favorite/add',array('id'=>1))}" >收藏</a>-->
+					<a href="{:url('user/favorite/add')}" id="js-favorite-btn" class="js-favorite-btn btn btn-success" data-title="{:base64_encode($article.post_title)}"
+					   data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}"
+					   data-table="portal_post" data-id="{$article['id']}"  style="margin-top:10px;" >
+						<i class="fa fa-star-o"></i> 收藏
+					</a>
+<!--					<a target="_blank"  class="btn btn-success btn-style-change"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 灵感
+					</a>-->
+<!--					<a target="_blank"  class="btn btn-success btn-similar-works"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 相似
+					</a>-->
+					<a target="_blank"  class="btn btn-success btn-style-knowledge"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 图谱
+					</a>					
+					
+					<a target="_blank"  class="btn btn-primary btn-ai"  style="margin-top:10px;" >
+						<i class="fa fa-headphones"></i> 问AI
+					</a>
+<!--					<a target="_blank"  class="btn btn-success btn-reimage-works"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 变体
+					</a>-->
+                    <eq name="isMobile" value="true">
+    					<a id="wechatMiniProgramLink" target="_blank"  class="btn btn-success"  style="margin-top:10px;" href="weixin://dl/business/?appid=wx18cda18a1accdf79&path=pages/subpages/productDetail/productDetail&query=id={$articleId}">
+						<i class="fa fa-file-image-o"></i> 小程序
+					    </a>
+    
+                    </eq> 
+                    
+
+					
+<!--					<a target="_blank"  class="btn btn-success btn-imilar-auction"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 相似拍品
+					</a>-->	
+					
+<!--				<if condition="$userId eq 1 ">  
+					<a href="{:url('AdminArticle/delete')}" id="js-favorite-btn" class="js-favorite-btn" data-title="{:base64_encode($article.post_title)}"
+					   data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}"
+					   data-table="portal_post" data-id="{$article['id']}">
+						<i class="fa fa-star-o"></i> 删除
+					</a>
+                 </if>-->
+                </ul>
+            </div>
+            
+            
+            
+            <div class="col-lg-9 col-lg-pull-3">
+                <ul id="imageGallery">
+                    <!-- 修正1：使用模板引擎的正确数组访问语法 -->
+                    <foreach name="$article['more']['photos']" item="vo">
+                        <li data-thumb="{:cmf_get_image_url_with_token($vo['url'],'!w300')}">
+								  <if condition="cmf_is_mobile()">  
+                                      <if condition="$article['bigimg'] eq 0 ">
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" />  
+                                      <else />
+    										<img src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" onclick="bigimg('/portal/image/index?image=<?php echo ($vo['url']); ?>')"/>
+    								  </if> 								  
+								  <else />
+                                      <if condition="$article['bigimg'] eq 0 ">
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url'],'!big'); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" />  
+                                      <else />
+    										<img src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" onclick="bigimg('/portal/image/index?image=<?php echo ($vo['url']); ?>')"/>
+    								  </if>  
+								  </if>
+                        </li>
+                    </foreach>
+                </ul>
+                
+                
+                                  
+   	            
+                <div id="post_content">
+                    <!-- 内容区域 -->
+                    <div class="mar-b-30">
+                        {$processed_post_content}
+                    </div>
+                    <notempty name="content_tags">
+                        <div class="content-tags">
+                            <span class="tag-label">文章标签：</span>
+                            <foreach name="content_tags" item="tag">
+                                <a href="{:cmf_url('portal/tagpostlist/index',['tag'=>$tag])}" 
+                                   class="tag-item" 
+                                   rel="tag">
+                                    {$tag}
+                                </a>
+                            </foreach>
+                        </div>
+                    </notempty>                
+                    <div class="text-center d-flex justify-content-center" style="margin: 20px 0;">
+                        <!-- 第一个按钮 -->
+                        <button id="deepAnalysisBtn" class="btn btn-primary" style="margin-right: 40px;">
+                            <i class="fa fa-search-plus"></i> 深度解析
+                        </button>
+                        
+                        <!-- 第二个按钮 -->
+                        <button id="knowledgeGraphBtn" class="btn btn-primary" onclick="knowledgegraph()">
+                            <i class="fa fa-search-plus"></i> 查看图谱
+                        </button>
+                    </div>
+                    
+                    <!-- 深度解析内容容器（受 article.deep_content 控制） -->
+                    <notempty name="article.deep_content">
+                        <div class="deep_content" id="deep_content" style="display: none;"></div>
+                    </notempty>                    
+                    
+                </div>
+                
+            
+
+                
+
+            
+            
+
+                <!-- 分页优化 -->
+                <notempty name="article.page">
+                    <div class="pagination-wrapper">
+                        {$article.page}
+                    </div>
+                </notempty>
+        </div>
+            <!--右侧栏目-->
+
+            <!--blog end-->
+
+
+
+        </div>
+    </div>
+    <!--container end-->
+	
+        <!-- 修改猜你喜欢板块结构 -->
+    <div class="container">
+        <div class="row mar-b-50">
+            <div class="col-md-12">
+                <div class="text-center feature-head wow fadeInDown">
+                    <h1 class="">猜你喜欢</h1>
+                </div>
+                
+                <!-- 添加flex容器 -->
+                <div class="feature-box row equal-height">
+                    <foreach name="recommend_articles" item="vo">
+                        <div class="col-md-4 col-sm-4 col-xs-6">
+                            <div class="item-card">  <!-- 新增卡片容器 -->
+                                <div class="feature-box-heading">
+                                    <div class="image-container">  <!-- 图片容器 -->
+                                        <figure class="effect-ruby">
+                                            <a href="{:cmf_url('portal/article/index',['id'=>$vo['id']])}">
+                                                <img src="{:cmf_get_image_url_with_token($vo.more.thumbnail,'!w300')}" 
+                                                     class="responsive-img">
+                                            </a>
+                                        </figure>
+                                    </div>
+                                    <!-- 标题容器添加截断样式 -->
+                                    <div class="title-wrapper line-clamp-2">
+                                        <h5><b>{$vo.post_title}</b></h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+        <!-- 自定义右键菜单 -->
+    <div id="customContextMenu" class="custom-context-menu">
+        <ul>
+            <li id="copyOption">复制</li>
+            <li id="searchOption">搜索</li>
+            <li id="highlightOption">高亮</li>
+            <li id="noteOption">添加笔记</li>
+        </ul>
+    </div>
+
+<style>
+/* 新增移动端边距修正 */
+.mobile-edge-adjust {
+    margin-left: -5px;
+    margin-right: -5px;
+}
+
+@media (max-width: 767px) {
+    .mobile-edge-adjust [class*="col-"] {
+        padding-left: 5px !important;
+        padding-right: 5px !important;
+    }
+    
+    /* 保持图片原始比例 */
+    .image-wrapper {
+        margin: 0 5px 10px;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+    
+    /* 标题容器增加内边距 */
+    .title-wrapper {
+        padding: 0 8px;
+        margin-bottom: 15px;
+    }
+    
+    /* 保持原有图片尺寸逻辑 */
+    .effect-ruby img {
+        width: 100% !important;    /* 覆盖可能存在的其他样式 */
+        height: auto !important;   /* 保持原始高宽比 */
+        max-width: 400px;          /* 保持原有最大尺寸 */
+    }
+}
+</style>
+
+
+
+</block>
+
+
+<block name="scripts">
+  
+<!--<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.3/libs/cn/index.js"></script>-->
+
+<script src="__TMPL__/public/assets/js/marked.min.js" defer></script>
+<script src="__TMPL__/public/assets/js/purify.min.js" defer></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>-->
+  
+<script>
+
+
+
+
+
+<if condition="$article['bigimg'] eq 0 ">  
+	var viewer = new Viewer(document.getElementById('imageGallery'), {
+		url: 'data-original',
+		maxZoomRatio:50,
+		title:true,
+		show: function() {
+		 //  fullScreen();
+		},
+		viewed: function() {
+		   /*viewer.fullImage($(document).width()-100);*/
+		},
+		hide: function() {
+	//	   fullScreen();
+		}
+	});
+</if> 
+
+/*var cozeWebSDK = null*/
+$(document).ready(function() {
+    
+/*    cozeWebSDK = new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7476461351306018855',
+    },
+    componentProps: {
+      title: '问艺',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_2mChaYuzfsky5M28elBd1j46LwU5EiGGStVCBeHNwntkrLSuLAT1TDhGDaLHcqv9',
+      onRefreshToken: function () {
+        return 'pat_2mChaYuzfsky5M28elBd1j46LwU5EiGGStVCBeHNwntkrLSuLAT1TDhGDaLHcqv9'
+      }
+    },
+    ui: {
+      base: {
+          icon: 'https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/obric/coze/favicon.1970.png',
+          layout: 'pc',
+          zIndex: 1,
+      },
+      asstBtn: {
+          isNeed: true,
+      },
+      
+        footer: {
+            isShow: false,
+            expressionText: 'Powered by {{name}}',
+            linkvars: {
+              name: {
+                text: '皓云文化',
+                link: 'https://www.hongmengyishu.com'
+              }
+            }   
+        }      
+      
+    },
+
+    
+    
+    });  */
+    
+    
+    
+    
+    //cozeWebSDK.showChatBot();
+    
+    
+    delete_wxbtn()
+    
+	$('#imageGallery').lightSlider({
+	gallery:true,
+	minSlide:1,
+	maxSlide:1,
+	currentPagerPosition:'centercenter'  
+	}); 
+	
+	isMobile = '<?php echo (bool)$isMobile; ?>'
+	if(!isMobile){
+ 
+        layer.ready(function(){
+          // 弹出层类型为图片展示
+      
+          index = layer.open({
+            type: 1,
+            title: '<div class="layui-layer-title">扫码小程序</div>',
+            anim: 2,
+            closeBtn: 0,
+            area: ['170px', '200px'], // 图片大小
+            shade: 0, // 不显示遮罩层
+            fixed: true, // 确保弹窗固定在视口
+            align: 'center', // 内容垂直居中
+            zIndex: 9999, // 设置z-index为较大值
+            skin: 'layui-layer-nobg', // 无背景
+            offset: 'rb', // 设置水平方向（第一个参数）自动定位，垂直方向（第二个参数）为自定义偏移量
+            content: '<img src="<?php echo $qrcode; ?>" alt="图片展示" style="max-height: 100%; display: block;">'
+          });
+        });
+       
+    }
+    
+    
+    // Markdown内容处理
+    const markdownContent = `{$article.deep_content}`; 
+    
+    if (markdownContent && markdownContent.trim() !== '') {
+        // 配置marked.js
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            highlight: function(code, lang) {
+                if (hljs && lang) {
+                    return hljs.highlight(lang, code).value;
+                }
+                return code;
+            }
+        });
+
+        // 渲染Markdown到指定区域
+        const cleanHtml = DOMPurify.sanitize(marked.parse(markdownContent));
+        document.getElementById('deep_content').innerHTML = cleanHtml;
+        
+        // 为表格添加Bootstrap样式
+        $('#deep_content table').addClass('table table-bordered table-hover');
+        
+        // 图片灯箱效果
+        new Viewer(document.getElementById('deep_content'), {
+            url: 'src',
+            toolbar: {
+                zoomIn: 1,
+                zoomOut: 1,
+                oneToOne: 1,
+                reset: 1,
+                rotateLeft: 1,
+                rotateRight: 1
+            }
+        });
+
+        // 绑定按钮点击事件
+        $('#deepAnalysisBtn').click(function() {
+            $('#deep_content').slideToggle(300);
+            $(this).find('i').toggleClass('fa-search-plus fa-search-minus');
+            $(this).toggleClass('btn-primary btn-info');
+        });
+    } else {
+        // 如果没有深度内容，隐藏整个区块
+        $('.deep_content').parent().remove();
+    }
+});
+
+
+function bigimg(url)
+{
+
+  articleId = '<?php echo $articleId; ?>'
+  url = url + "&"+"articleId="+articleId
+  var bigimgurl=""
+   
+  if (url.indexOf("故宫博物院M")==-1)
+  {
+    url =url.replace("压缩图","高清")  
+  }
+//	fullScreen();
+ //window.location.href=url;
+
+/*	var height = window.screen.height-250;
+	var width = window.screen.width-250;*/
+	
+	var height = window.innerHeight;
+	var width = window.innerWidth;	
+	
+	width = width + 'px'
+	height = height+'px'
+
+   var index = layer.open({
+      type: 2,
+      //title: '艺术云库高清展示',
+      title:false,
+      scrollbar:false,
+      maxmin: true,
+      shade: [0.8, '#393D49'],
+      shadeClose:true,
+      anim: 2,
+      area: [width,height],
+      content: url ,
+      end: function(){
+      //  fullScreen();
+      },
+
+    });
+  //layer.full(index)
+}
+function delete_wxbtn(){  
+        var ua = navigator.userAgent.toLowerCase();  
+        if(ua.match(/MicroMessenger/i)=="micromessenger") {
+            // 获取a标签
+            var wechatMiniProgramLink = document.getElementById("wechatMiniProgramLink");
+            // 删除a标签
+            if (wechatMiniProgramLink) {
+                wechatMiniProgramLink.parentNode.removeChild(wechatMiniProgramLink);
+            }
+            return true;  
+        } else {  
+            return false;  
+        }  
+    }
+
+
+function sparktrigger()
+{
+    
+    var firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>'
+    var imgWidth = 0
+    var imgHeight = 0
+    var areaWidth = 0
+    var areaHeight = 0
+    
+    var img = new Image();
+    img.src = firstImage;
+    img.onload = function(){
+   //  alert('width:'+img.width+',height:'+img.height);
+         
+         if(img.width > img.height){
+             //横图处理
+                if(os.isPc){
+                 //电脑端最大宽度800
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!w800hauto';
+                imgWidth = 800
+             }else{
+                 
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!300X';
+                imgWidth = 400
+             } 
+             imgHeight = img.height*imgWidth/img.width
+         }else{
+             //竖图处理
+             // alert('width:'+img.width+',height:'+img.height);
+            
+            if(img.height>=400){
+                //最大高度超过800
+                if(os.isPc){
+                    firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!wautoh800';
+                    imgHeight = 800
+                   
+                }else{
+                    firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!wautoh400';
+                    imgHeight = 400
+                }
+                imgWidth = img.width*imgHeight/img.height
+             }else{
+                 
+                 //自身高度小于400
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>';
+                imgWidth = img.width
+                imgHeight = img.height
+                
+             }           
+             
+             
+         }  
+  
+        //区域宽度和高度都比图片大50
+        areaWidth = imgWidth + 50 
+        areaHeight = imgHeight + 50 
+  
+        if(os.isPc){
+            //电脑上最小宽度为700，否则按钮无法铺满
+            areaWidth = areaWidth >= 700 ? areaWidth : 700
+        }else{
+           areaHeight = imgHeight + 100 
+
+        }            
+           
+        
+        areaWidth = areaWidth + 'px'
+        areaHeight = areaHeight+'px'
+        
+        var index = layer.open({
+            type: 2,
+            title: '灵感探索',
+            title:false,
+            scrollbar:false,
+            maxmin: true,
+            //  shade: [0.8, '#393D49'],
+            // shadeClose:true,
+            shade: true,
+            shade: [0.5],
+            shadeClose: true,
+            closeBtn: 0,
+            skin: 'shadows',
+            anim: 2,
+            area: [areaWidth,areaHeight],
+            offset: '50px',
+            
+            content: ['https://www.hongmengyishu.com/portal/searchimage/styleShift?image_url='+firstImage, 'no'],
+        
+        });
+        console.log(index)
+         
+         
+         
+        
+    };
+    
+}
+
+function reimageWorks()
+{
+    
+    var firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>'
+    var imgWidth = 0
+    var imgHeight = 0
+    var areaWidth = 0
+    var areaHeight = 0
+    
+    var img = new Image();
+    img.src = firstImage;
+    img.onload = function(){
+   //  alert('width:'+img.width+',height:'+img.height);
+         
+         if(img.width > img.height){
+             //横图处理
+                if(os.isPc){
+                 //电脑端最大宽度800
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!w800hauto';
+                imgWidth = 800
+             }else{
+                 
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!300X';
+                imgWidth = 400
+             } 
+             imgHeight = img.height*imgWidth/img.width
+         }else{
+             //竖图处理
+             // alert('width:'+img.width+',height:'+img.height);
+            
+            if(img.height>=400){
+                //最大高度超过800
+                if(os.isPc){
+                    firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!wautoh800';
+                    imgHeight = 800
+                   
+                }else{
+                    firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>' +'!wautoh400';
+                    imgHeight = 400
+                }
+                imgWidth = img.width*imgHeight/img.height
+             }else{
+                 
+                 //自身高度小于400
+                firstImage = '<?php echo $article['more']['photos'][0]['url']; ?>';
+                imgWidth = img.width
+                imgHeight = img.height
+                
+             }           
+             
+             
+         }  
+  
+        //区域宽度和高度都比图片大50
+        areaWidth = imgWidth + 50 
+        areaHeight = imgHeight + 50 
+  
+        if(os.isPc){
+            //电脑上最小宽度为700，否则按钮无法铺满
+            areaWidth = areaWidth >= 700 ? areaWidth : 700
+        }else{
+           areaHeight = imgHeight + 100 
+
+        }            
+           
+        
+        areaWidth = areaWidth + 'px'
+        areaHeight = areaHeight+'px'
+        
+        var index = layer.open({
+            type: 2,
+            title: '灵感探索',
+            title:false,
+            scrollbar:false,
+            maxmin: true,
+            //  shade: [0.8, '#393D49'],
+            // shadeClose:true,
+            shade: true,
+            shade: [0.5],
+            shadeClose: true,
+            closeBtn: 0,
+            skin: 'shadows',
+            anim: 2,
+            area: [areaWidth,areaHeight],
+            offset: '50px',
+            
+            content: ['https://www.hongmengyishu.com/portal/searchimage/styleShift?image_url='+firstImage, 'no'],
+        
+        });
+        console.log(index)
+         
+         
+         
+        
+    };
+    
+    
+      
+    
+	
+
+
+}
+
+/*
+ * 浏览器全屏
+ */
+function fullScreen() {
+
+	/*判断是否全屏*/
+   	var isFullscreen = document.fullScreenElement//W3C
+			    	||document.msFullscreenElement //IE
+			    	||document.mozFullScreenElement //火狐
+			    	||document.webkitFullscreenElement //谷歌
+			    	||false;
+   	if(!isFullscreen){
+	   	var el = document.documentElement;
+   		if (el.requestFullscreen) { 
+   			el.requestFullscreen(); 
+	    } else if (el.mozRequestFullScreen) { 
+	    	el.mozRequestFullScreen(); 
+	    } else if (el.webkitRequestFullscreen) { 
+	    	el.webkitRequestFullscreen(); 
+	    } else if (el.msRequestFullscreen) { 
+	    	el.msRequestFullscreen(); 
+	    } 
+   	}else{
+   		if (document.exitFullscreen) { 
+   			document.exitFullscreen(); 
+	    } else if (document.msExitFullscreen) { 
+	    	document.msExitFullscreen(); 
+	    } else if (document.mozCancelFullScreen) { 
+	    	document.mozCancelFullScreen(); 
+	    } else if (document.webkitCancelFullScreen) { 
+	    	document.webkitCancelFullScreen(); 
+	    } 
+   	}
+
+
+}
+function knowledgegraph() {
+    var articleId = '<?php echo $articleId; ?>';
+
+    // 计算屏幕宽高的 90%
+    var winWidth = window.innerWidth * 1 + 'px';
+    var winHeight = window.innerHeight * 0.95 + 'px';
+
+    var index = layer.open({
+        type: 2,
+        title: '知识图谱',
+        scrollbar: false,
+        maxmin: true,
+        shade: [0.5],
+        shadeClose: true,
+        closeBtn: 1, // 显示关闭按钮
+        skin: 'shadows',
+        anim: 2,
+        area: [winWidth, winHeight], // 使用屏幕90%的宽高
+        offset: '50px',
+        content: ['https://www.hongmengyishu.com/portal/visual?id=' + articleId, 'no']
+    });
+}
+
+function openAiChat() {
+    var articleId = '<?php echo $articleId; ?>';
+
+    // 获取当前浏览器窗口的宽度和高度
+    var winWidth, winHeight;
+
+    // 根据屏幕尺寸设置宽高比例
+    if (window.innerWidth >= 1200) {  // 大屏幕（例如桌面）
+        winWidth = window.innerWidth * 0.5 + 'px';  // 宽度为屏幕宽度的70%
+        
+    } else if (window.innerWidth >= 768) {  // 中等屏幕（如平板）
+        winWidth = window.innerWidth * 0.8 + 'px';  // 宽度为屏幕宽度的80%
+    } else {  // 小屏幕（如手机）
+        winWidth = window.innerWidth * 1 + 'px';  // 宽度为屏幕宽度的90%
+    }
+    winHeight = window.innerHeight * 1 + 'px';  // 高度为屏幕高度的80%
+    var index = layer.open({
+        type: 2,
+        title: '问艺',
+        scrollbar: false,
+        maxmin: true,
+        shade: [0.5],
+        shadeClose: true,
+        closeBtn: 1, // 显示关闭按钮
+        skin: 'shadows',
+        anim: 2,
+        area: [winWidth, winHeight], // 动态计算的宽高
+        offset: '10px',
+        content: ['https://www.hongmengyishu.com/portal/chat/openchat?id=' + articleId, 'no']
+    });
+}
+
+
+function openAiChatWithKey(key) {
+
+
+    // 计算屏幕宽高的 90%
+    var winWidth = '800px';
+    var winHeight = '800px';
+
+    var index = layer.open({
+        type: 2,
+        title: '问艺',
+        scrollbar: false,
+        maxmin: false,
+        shade: [0.5],
+        shadeClose: true,
+        closeBtn: 1, // 显示关闭按钮
+        skin: 'shadows',
+        anim: 2,
+        area: [winWidth, winHeight], // 使用屏幕90%的宽高
+        offset: '50px',
+        content: ['https://www.hongmengyishu.com/portal/chat/openchat?key=' + key, 'no']
+    });
+}
+globalContextMenu = null
+customMenu = null
+/**
+ * 划词右键菜单功能封装
+ * @param {Object} options 配置选项
+ * @param {HTMLElement|string} options.container 要应用划词功能的容器元素或选择器
+ * @param {Array} options.menuItems 菜单项配置数组
+ * @param {Function} options.onInit 初始化完成回调
+ */
+function initTextSelectionContextMenu(options) {
+    // 默认配置
+    const defaultOptions = {
+        container: document.body,
+        
+         menuItems: [
+            { text: '问艺', id: 'copy', action: function(text) {
+                openAiChatWithKey(text)
+            }},
+            { text: '搜索作品', id: 'highlight', action: function(text) {
+                window.open('/portal/Search/index?keyword=' + encodeURIComponent(text), '_blank')
+            }},
+            { text: '查看图谱', id: 'bookmark', action: function(text) {
+                window.open('/portal/visual?tag=' + encodeURIComponent(text), '_blank')
+            }}
+        ],       
+        
+        
+        
+        onInit: null
+    };
+    
+    // 合并配置
+    const config = { ...defaultOptions, ...options };
+    
+    // 获取容器元素
+    const container = typeof config.container === 'string' 
+        ? document.querySelector(config.container) 
+        : config.container;
+    
+    if (!container) {
+        console.error('未找到指定的容器元素');
+        return;
+    }
+    
+    // 创建菜单元素
+    const menuId = 'custom-context-menu-' + Math.random().toString(36).substr(2, 9);
+    const menuHTML = `
+        <div id="${menuId}" class="custom-context-menu">
+            <ul>
+                ${config.menuItems.map(item => `<li id="${item.id}">${item.text}</li>`).join('')}
+            </ul>
+        </div>
+    `;
+    
+    // 添加到文档
+    document.body.insertAdjacentHTML('beforeend', menuHTML);
+    customMenu = document.getElementById(menuId);
+    
+    let selectedText = '';
+    let selectedRange = null;
+    
+
+    
+    // 监听鼠标抬起事件，获取选中的文本
+    container.addEventListener('mouseup', function(e) {
+        const selection = window.getSelection();
+        selectedText = selection.toString().trim();
+        
+        // 如果有选中文本，记录位置和Range对象
+        if (selectedText.length > 0) {
+            selectedRange = selection.getRangeAt(0);
+        }
+    });
+    
+    // 阻止默认右键菜单
+    container.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        
+        // 检查是否有选中文本
+        const selection = window.getSelection();
+        selectedText = selection.toString().trim();
+        
+        if (selectedText.length > 0) {
+            // 显示自定义菜单
+            customMenu.style.display = 'block';
+            customMenu.style.left = e.pageX + 'px';
+            customMenu.style.top = e.pageY + 'px';
+        }
+    });
+    
+    // 点击其他地方隐藏菜单
+    document.addEventListener('click', function() {
+        customMenu.style.display = 'none';
+    });
+    
+    // 为每个菜单项添加点击事件
+    config.menuItems.forEach(item => {
+        const menuItem = document.getElementById(item.id);
+        if (menuItem) {
+            menuItem.addEventListener('click', function() {
+                const action = item.action || defaultOptions.menuItems.find(i => i.id === item.id)?.action;
+                if (action && typeof action === 'function') {
+                    action(selectedText, selectedRange);
+                }
+                customMenu.style.display = 'none';
+            });
+        }
+    });
+    
+    // 初始化完成回调
+    if (config.onInit && typeof config.onInit === 'function') {
+        config.onInit({
+            menuElement: customMenu,
+            getSelectedText: () => selectedText,
+            getSelectedRange: () => selectedRange
+        });
+    }
+    
+    // 返回API对象
+    return {
+        getMenuElement: () => customMenu,
+        getSelectedText: () => selectedText,
+        getSelectedRange: () => selectedRange,
+        destroy: function() {
+            // 移除事件监听器
+            container.removeEventListener('mouseup');
+            container.removeEventListener('contextmenu');
+            document.removeEventListener('click');
+            
+            // 移除菜单元素
+            if (customMenu && customMenu.parentNode) {
+                customMenu.parentNode.removeChild(customMenu);
+            }
+        }
+    };
+}
+
+// 弹出右键菜单的函数
+function popupRightMenu(event) {
+    if (!globalContextMenu) return;
+    event.preventDefault();
+
+    // 获取定位父级（如果没有，则使用 document.body）
+    const parent = customMenu.parentElement;
+    const parentRect = parent.getBoundingClientRect();
+
+    // 计算相对于定位父级的坐标
+    const x = event.clientX - parentRect.left;
+    const y = event.clientY - parentRect.top;
+
+    // 确保菜单不超出父级边界
+    const maxX = parentRect.width - customMenu.offsetWidth;
+    const maxY = parentRect.height - customMenu.offsetHeight;
+    const adjustedX = Math.min(x, maxX);
+    const adjustedY = Math.min(y, maxY);
+
+    // 显示菜单
+    customMenu.style.display = 'block';
+    customMenu.style.left = adjustedX + 'px';
+    customMenu.style.top = adjustedY + 'px';
+}
+
+
+
+$(function () {
+    $('.btn-similar-works').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            console.log('真实点击');
+            window.location.href = "/portal/searchimage/index?image_url={:cmf_get_image_url_with_token($article['more']['photos'][0]['url'],'!300X')}";
+            
+        } else {
+            console.log('模拟触发');
+            alert("sss11");
+        }
+    });
+    $('.btn-ai').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            openAiChat()
+            //cozeWebSDK.showChatBot();
+            
+        } else {
+            console.log('模拟触发');
+            alert("sss11");
+        }
+    });        
+    
+    $('.btn-similar-auction').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            console.log('真实点击');
+            window.location.href = "/portal/searchimage/index?search_type=auction&image_url={:cmf_get_image_url_with_token($article['more']['photos'][0]['url'],'!300X')}";
+            
+        } else {
+            console.log('模拟触发');
+           
+        }
+    });
+    $('.btn-style-change').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            console.log('真实点击');
+            sparktrigger();
+
+        } else {
+            console.log('模拟触发');
+            alert("sss11");
+        }
+    });
+    $('.btn-style-knowledge').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            console.log('真实点击');
+            knowledgegraph();
+
+        } else {
+            console.log('模拟触发');
+            alert("sss11");
+        }
+    });
+
+    $('.btn-reimage-works').click(function(event){
+        if(event && event.originalEvent !== undefined) {
+            console.log('真实点击');
+            sparktrigger();
+
+        } else {
+            console.log('模拟触发');
+            alert("sss11");
+        }
+    });
+    
+    
+    
+    const post_content = document.getElementById('post_content');
+    
+    if (!post_content) {
+        console.error('未找到post_content元素');
+        return;
+    }    
+
+    // 初始化划词右键菜单
+    globalContextMenu = initTextSelectionContextMenu({
+        container: post_content,
+        onInit: function(api) {
+            console.log('划词右键菜单初始化完成', api);
+        }
+    });    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+});
+
+    
+var os = function() {
+    var ua = navigator.userAgent,
+    isWindowsPhone = /(?:Windows Phone)/.test(ua),
+    isSymbian = /(?:SymbianOS)/.test(ua) || isWindowsPhone,
+    isAndroid = /(?:Android)/.test(ua),
+    isFireFox = /(?:Firefox)/.test(ua),
+    isChrome = /(?:Chrome|CriOS)/.test(ua),
+    isTablet = /(?:iPad|PlayBook)/.test(ua) || (isAndroid && !/(?:Mobile)/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua)),
+    isPhone = /(?:iPhone)/.test(ua) && !isTablet,
+    isPc = !isPhone && !isAndroid && !isSymbian;
+    return {
+    isTablet: isTablet,
+    isPhone: isPhone,
+    isAndroid: isAndroid,
+    isPc: isPc
+    };
+}();
+
+    
+</script>
+
+
+
+</block>

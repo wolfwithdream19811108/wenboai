@@ -1,0 +1,46 @@
+<widget name="online_service">
+    <div id="online-service" class="section-online">
+        <div class="online-unit">
+            <notempty name="widget.vars.online_qq">
+                <div class="online-item online-qq slow">
+                    <a href="http://wpa.qq.com/msgrd?v=3&uin={$widget.vars.online_qq}&site={$_SERVER['HTTP_HOST']}&menu=yes">
+                        <i class="fa fa-qq"></i></a>
+                </div>
+            </notempty>
+            <notempty name="widget.vars.online_tel">
+                <div class="online-item online-tel slow">
+                    <a href="#" data-toggle="tooltip" data-placement="left" title="{$widget.vars.online_tel}"> <i
+                            class="fa fa-phone"></i></a>
+                </div>
+            </notempty>
+            <notempty name="widget.vars.online_wechat" >
+                <div class="online-item online-wechat slow">
+                    <a id="tooltip-img" href="#" data-toggle="tooltip" data-placement="left" data-html="true"
+                       title="<img src='{:cmf_get_image_url($widget.vars.online_wechat)}' class='img-fluid'>"> <i
+                            class="fa fa-wechat"></i></a>
+                </div>
+            </notempty>
+            <notempty name="widget.vars.online_email">
+                <div class="online-item online-email slow">
+                    <a href="mailto:{$widget.vars.online_email}" data-toggle="tooltip" data-placement="left"
+                       title="{$widget.vars.online_email}"> <i
+                            class="fa fa-envelope-o"></i></a>
+                </div>
+            </notempty>
+        </div>
+    </div>
+</widget>
+    <style>
+        .tooltip .tooltip-inner {
+            background-color: {$theme_vars.online_bg_hover} !important;
+        }
+        .tooltip .arrow::before {
+            border-left-color: {$theme_vars.online_bg_hover} !important;
+        }
+        .section-online .online-item:hover, .section-online .online-item:active {
+            background: {$theme_vars.online_bg_hover} !important;
+        }
+        .section-online .online-item {
+            background: {$theme_vars.online_bg} !important;
+        }
+    </style>

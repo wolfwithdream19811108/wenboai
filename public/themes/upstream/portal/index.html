@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>首页 {$site_info.site_name|default=''}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''}">
+    <include file="public@head"/>
+    <!-- CSS Swiper Plugins -->
+    <link rel="stylesheet" href="__TMPL__/assets/static/swiper/3.4.2/css/swiper.min.css">
+    <!-- CSS Owl.Carousel Plugins -->
+    <link rel="stylesheet" href="__TMPL__/assets/static/owl-carousel/owl.carousel.min.css"/>
+    <link rel="stylesheet" href="__TMPL__/assets/static/owl-carousel/owl.theme.default.css"/>
+    <hook name="before_head_end"/>
+</head>
+<body>
+<include file="public@header"/>
+<!--slider start-->
+<section class="section section-slider no-pad no-mar relative dark-bg">
+    <div class="swiper-container swiper-container-horizontal">
+        <php>
+            $top_slide_id=empty($theme_vars['top_slider'])?1:$theme_vars['top_slider'];
+        </php>
+        <div class="swiper-wrapper">
+            <slides id="$top_slide_id">
+                <div class="swiper-slide">
+                    <img src="{:cmf_get_image_url($vo['image'])}"
+                         alt="{$vo.title}" class="img-fluid swiper-lazy">
+                    <div class="swiper-lazy-preloader"></div>
+                    <div class="text-wrap">
+                        <div class="container">
+                            <div class="row justify-content-center">
+                                <div class="col-8 text-center">
+                                    <notempty name="$vo.description">
+                                        <h1 class="ani mb-20" swiper-animate-effect="fadeInUp"
+                                            swiper-animate-duration="0.6s" swiper-animate-delay="0.5s">
+                                            {$vo.description}</h1>
+                                    </notempty>
+                                    <notempty name="$vo.description">
+                                        <h2 class="ani mb-20" swiper-animate-effect="fadeInUp"
+                                            swiper-animate-duration="0.6s" swiper-animate-delay="1s">{$vo.content}</h2>
+                                    </notempty>
+                                    <notempty name="$vo.url">
+                                        <a class="ani btn btn-lg btn-outline-white default-hovered font-white"
+                                           swiper-animate-effect="fadeInUp" swiper-animate-duration="0.6s"
+                                           swiper-animate-delay="1.5s" href="{$vo.url}">查看详情</a>
+                                    </notempty>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </slides>
+        </div>
+        <!-- Add Pagination -->
+        <div class="swiper-pagination"></div>
+        <!-- Add Navigation -->
+        <div class="swiper-button-prev swiper-button-black"></div>
+        <div class="swiper-button-next swiper-button-black"></div>
+    </div>
+</section>
+<!--slider end-->
+
+<!--service start-->
+<!--模板配置文件设置了标题和描述就显示模板配置文件中的，若留空，则显示栏目名称和描述-->
+<widget name="service">
+    <php>$service=ApiService::category($widget['vars']['serviceId']);</php>
+    <section class="section section-service">
+        <div class="container">
+            <div class="section-head mb-30">
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                        <div class="head-desc text-center">
+                            <h2>{$widget.vars.title|default=$service.name}</h2>
+                            <div class="separator"></div>
+                            <p>
+                                {$widget.vars.sub_title|default=$service.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-body service-unit">
+                <div class="row">
+                    <portal:articles limit="3" order="post.published_time DESC"
+                                     categoryIds="$widget.vars.serviceId">
+
+                        <div class="col-12 col-sm-4">
+                            <div class="service-item  mb-30">
+                                <div class="overlay-container">
+                                    <present name="vo.more.thumbnail">
+                                        <empty name="vo.more.thumbnail">
+                                            <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                                 class="img-fluid"
+                                                 alt="{$vo.post_title}">
+                                            <else/>
+                                            <img src="{:cmf_get_image_url($vo.more.thumbnail)}"
+                                                 class="img-fluid" alt="{$vo.post_title}">
+                                        </empty>
+                                        <else/>
+                                        <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                             class="img-fluid"
+                                             alt="{$vo.post_title}">
+                                    </present>
+
+                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo.id,'cid'=>$vo.category_id))}"
+                                       class="overlay-link"><i class="fa fa-link"></i></a>
+                                    <div class="overlay-bottom">
+                                        <div class="service-title text-center">
+                                            <p class="">{$vo.post_title}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="service-desc text-center">
+                                    <p>{$vo.post_excerpt}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </portal:articles>
+                </div>
+            </div>
+        </div>
+    </section>
+</widget>
+<!--service end-->
+
+<!--about start-->
+<widget name="about">
+    <php>
+        $about=ApiService::page($widget['vars']['aboutId']);
+    </php>
+
+    <section class="section section-about style-gray">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="about-unit mb-30">
+                        <h2>{$widget.vars.title|default=$about.post_title}</h2>
+                        <div class="separator-2"></div>
+                        <div class="about-desc mb-20">
+                            {$widget.vars.about_desc|default=$about.post_content}
+                        </div>
+                        <a href="{:cmf_url('portal/page/index',array('id'=>$widget['vars']['aboutId']))}"
+                           class="btn btn-animated btn-outline-gray btn-about">查看更多 <i
+                                class="pl-10 fa fa-angle-double-right"></i></a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="about-img overlay-container">
+                        <notempty name="widget.vars.about_thumb">
+                            <img src="{:cmf_get_image_url($widget.vars.about_thumb)}"
+                                 class="img-fluid"
+                                 alt="{$about.post_title}_about_thumb">
+                            <else/>
+                            <img src="{:cmf_get_image_url($about.more.thumbnail)}"
+                                 class="img-fluid" alt="{$about.post_title}_thumbnail">
+                        </notempty>
+                        <a href="{:cmf_url('portal/page/index',array('id'=>$widget['vars']['aboutId']))}"
+                           class="overlay-link"><i class="fa fa-link"></i></a>
+                        <div class="overlay-bottom">
+                            <div class="service-title text-center">
+                                <p class="">{$widget.vars.title|default=$about.post_title}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</widget>
+<!--about end-->
+
+<!--project start-->
+<widget name="project">
+
+    <php>
+        $project=ApiService::category($widget['vars']['projectId']);
+        $subCats = ApiService::subCategories($widget['vars']['projectId']);
+        $allsubCats = ApiService::allsubCategories($widget['vars']['projectId']);
+        $ids = "";
+        foreach ($allsubCats as $t) {
+        $ids = $ids . "," . $t['id'];
+        }
+        $cids = $widget['vars']['projectId'] . $ids;
+    </php>
+
+    <section class="section section-project">
+        <div class="container">
+            <div class="section-head mb-30">
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                        <div class="head-desc text-center">
+                            <h2>{$widget.vars.title|default=$project.name}</h2>
+                            <div class="separator"></div>
+                            <p>
+                                {$widget.vars.sub_title|default=$project.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="nav-category text-center">
+                <div class="row  ">
+                    <div class="col-12">
+                        <ul class="nav nav-pills mb-30 justify-content-center" id="pills-tab" role="tablist">
+                            <li class="nav-item"><a class="nav-link active" href="#pill-1" role="tab"
+                                                    data-toggle="tab" title="全部" aria-controls="pills-1"
+                                                    aria-expanded="true">全部</a></li>
+                            <!--将对应分类名称展现在标签中-->
+                            <foreach name="subCats" item="vo">
+                                <li class="nav-item"><a class="nav-link" href="#pill-{$key+2}" role="tab"
+                                                        data-toggle="tab" aria-controls="pills-{$key+2}"
+                                                        aria-expanded="true">
+                                    {$vo.name}
+                                </a></li>
+                            </foreach>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="section-body" id="section-project">
+            <div class="container-fluid">
+                <div class="tab-content" id="pills-tab-content">
+                    <!--将第一个标签中当前栏目及其自然中所有文章展现-->
+                    <div class="tab-pane fade show active" id="pill-1" role="tabpanel" aria-labelledby="pill-1-tab">
+                        <div class="row masonry-grid-fitrows">
+                            <!--用articles获取出对应分类下文章-->
+                            <portal:articles item="vo" order="post.post_hits DESC"
+                                             relation="categories"
+                                             categoryIds="$cids"
+                                             limit="8"
+                                             returnVarName="articles_data">
+
+                                <div class="col-12 col-sm-6 col-lg-3 masonry-grid-item project-item">
+                                    <div class="image-box text-center">
+                                        <div class="overlay-container">
+                                            <present name="vo.more.thumbnail">
+                                                <empty name="vo.more.thumbnail">
+                                                    <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                                         class="img-fluid"
+                                                         alt="{$vo.post_title}">
+                                                    <else/>
+                                                    <img src="{:cmf_get_image_url($vo.more.thumbnail)}"
+                                                         class="img-fluid" alt="{$vo.post_title}">
+                                                </empty>
+                                                <else/>
+                                                <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                                     class="img-fluid"
+                                                     alt="{$vo.post_title}">
+                                            </present>
+                                            <div class="overlay-top">
+                                                <div class="text">
+                                                    <h3>
+                                                        <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}">{$vo.post_title}</a>
+                                                    </h3>
+                                                    <p class="small">{$vo.post_excerpt}</p>
+                                                </div>
+                                            </div>
+                                            <div class="overlay-bottom">
+                                                <div class="links">
+                                                    <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"
+                                                       class="btn btn-outline-white btn-animated">详细介绍 <i
+                                                            class="pl-10 fa fa-angle-double-right"></i></a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </portal:articles>
+                        </div>
+                    </div>
+                    <!--循环分类来获取每个子分类，再将子分类通过文章标签获取出文章-->
+                    <foreach name="subCats" item="id">
+                        <div class="tab-pane fade" id="pill-{$key+2}" data-cid="{$id.id}" role="tabpanel"
+                             aria-labelledby="pill-{$key+2}-tab">
+                            <div class="row masonry-grid-fitrows">
+                                <!--用articles获取出对应分类下文章-->
+                                <portal:articles item="vo" order="post.create_time DESC"
+                                                 relation="categories"
+                                                 categoryIds="$id.id"
+                                                 limit="8"
+                                                 returnVarName="articles_data">
+                                    <div class="col-12 col-sm-6 col-lg-3 masonry-grid-item project-item">
+                                        <div class="image-box text-center">
+                                            <div class="overlay-container">
+                                                <present name="vo.more.thumbnail">
+                                                    <empty name="vo.more.thumbnail">
+                                                        <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                                             class="img-fluid"
+                                                             alt="{$vo.post_title}">
+                                                        <else/>
+                                                        <img src="{:cmf_get_image_url($vo.more.thumbnail)}"
+                                                             class="img-fluid" alt="{$vo.post_title}">
+                                                    </empty>
+                                                    <else/>
+                                                    <img src="__TMPL__/assets/images/default-thumbnail.png"
+                                                         class="img-fluid"
+                                                         alt="{$vo.post_title}">
+                                                </present>
+                                                <div class="overlay-top">
+                                                    <div class="text">
+                                                        <h3>
+                                                            <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}">{$vo.post_title}</a>
+                                                        </h3>
+                                                        <p class="small">{$vo.post_excerpt}</p>
+                                                    </div>
+                                                </div>
+                                                <div class="overlay-bottom">
+                                                    <div class="links">
+                                                        <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}"
+                                                           class="btn btn-outline-white btn-animated">详细介绍 <i
+                                                                class="pl-10 fa fa-angle-double-right"></i></a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </portal:articles>
+                            </div>
+                        </div>
+                    </foreach>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</widget>
+<!--project end-->
+<!--news start-->
+<widget name="news">
+    <php>
+        $news=ApiService::category($widget['vars']['newsId']);
+        $allnewsId = ApiService::allsubCategories($widget['vars']['newsId']);
+        $ids = "";
+        foreach ($allnewsId as $t) {
+        $ids = $ids . "," . $t['id'];
+        }
+        $allnewsIds = $widget['vars']['newsId'] . $ids;
+    </php>
+    <section class="section section-news">
+        <div class="container">
+            <div class="section-head mb-30">
+                <div class="row justify-content-center">
+                    <div class="col-8">
+                        <div class="head-desc text-center">
+                            <h2>{$widget.vars.title|default=$news.name}</h2>
+                            <div class="separator"></div>
+                            <p>
+                                {$widget.vars.sub_title|default=$news.description}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="row">
+                    <portal:articles item="vo" order="post.post_hits DESC"
+                                     relation="categories"
+                                     categoryIds="$allnewsIds"
+                                     limit="3"
+                                     returnVarName="articles_data">
+                        <div class="col-12 col-sm-4 col-md-4 mb-30">
+                            <div class="news-item light-shadow">
+                                <div class="news-img mb-2">
+                                    <img src="{:cmf_get_image_url($vo['more']['thumbnail'])}"
+                                         alt="{$vo.post_title}" class="img-fluid"></div>
+                                <h2> <a href="{:cmf_url('portal/Article/index',array('id'=>$vo['id'],'cid'=>$vo['category_id']))}">{$vo.post_title}</a></h2>
+                                <p class="news-date">{:date('n/j,Y',$vo.published_time)}</p>
+                                <p class="news-desc">
+                                    {$vo.post_excerpt}
+                                </p>
+                            </div>
+
+                        </div>
+                    </portal:articles>
+                </div>
+            </div>
+        </div>
+    </section>
+</widget>
+<!--news end-->
+
+<!--client start-->
+<section class="section section-client pb-0">
+    <div class="jarallax" data-jarallax='{"speed": 0.2}'>
+        <widget name="client">
+            <php>
+                $client=ApiService::category($widget['vars']['clientId']);
+                $allclientId = ApiService::allsubCategories($widget['vars']['clientId']);
+                $ids = "";
+                foreach ($allclientId as $t) {
+                $ids = $ids . "," . $t['id'];
+                }
+                $allclientIds = $widget['vars']['clientId'] . $ids;
+            </php>
+            <img class="jarallax-img"
+                 src="{:cmf_get_image_url($widget.vars.client_bg)}"
+                 alt="client-bg">
+            <div class="container">
+                <div class="section-head mb-30">
+                    <div class="row justify-content-center">
+                        <div class="col-8">
+                            <div class="head-desc text-center mt-40 ">
+                                <h2 class="text-shadow">{$widget.vars.title|default=$client.name}</h2>
+                                <div class="separator"></div>
+                                <p class="font-white">
+                                    {$widget.vars.sub_title|default=$client.description}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="section-body mb-30">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="owl-carousel owl-theme">
+                                <portal:articles item="vo" order="post.post_hits DESC"
+                                                 relation="categories"
+                                                 categoryIds="$allclientIds"
+                                                 limit="12"
+                                                 returnVarName="articles_data">
+                                    <div class="client-item">
+                                        <img src="{:cmf_get_image_url($vo['more']['thumbnail'])}"
+                                             alt="{$vo.post_title}" class="img-fluid">
+                                    </div>
+                                </portal:articles>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+        <widget name="feedback">
+            <div class="section-foot dark-translucent-bg animated-text">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-sm-8  ">
+                            <div class="text-wrap text-center">
+                                <h2>{$widget.vars.title}</h2>
+                                <h2>{$widget.vars.sub_title}</h2>
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-4 text-center feed-btn-wrap img-middle">
+                            <noempty name="widget.vars.feedbackId">
+                                <a class="btn btn-animated btn-lg btn-outline-white"
+                                   href="{:cmf_url('portal/Page/index',array('id'=>$widget['vars']['feedbackId']))}">
+                                    联系我们 <i class="fa fa-commenting"></i>
+                                </a>
+                            </noempty>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </widget>
+    </div>
+</section>
+
+<include file="public@footer"/>
+<include file="public@scripts"/>
+<!-- JS Swiper Plugins -->
+<script src="__TMPL__/assets/static/swiper/3.4.2/js/swiper.jquery.min.js"></script>
+<script src="__TMPL__/assets/static/swiper/3.4.2/js/swiper.animate1.0.2.min.js"></script>
+<script>
+    var mySwiper = new Swiper('.swiper-container', {
+        pagination: '.swiper-pagination',
+        paginationClickable: true,
+        prevButton: '.swiper-button-prev',
+        nextButton: '.swiper-button-next',
+        autoplay: 6000,
+        loop: true,
+        lazyLoading: true,
+        onInit: function (swiper) {
+            swiperAnimateCache(swiper);
+            swiperAnimate(swiper);
+        },
+        onSlideChangeEnd: function (swiper) {
+            swiperAnimate(swiper);
+        }
+    })
+</script>
+<!-- JS Owl.Carousel Plugins -->
+<script src="__TMPL__/assets/static/owl-carousel/owl.carousel.min.js"></script>
+<script>
+    $('.owl-carousel').owlCarousel({
+        loop: true,
+        margin: 10,
+        autoplay: true,
+        responsiveClass: true,
+        nav: true,
+        navText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
+        dots: true,
+        responsive: {
+            0: {
+                items: 2
+            },
+            768: {
+                items: 3
+            },
+            1000: {
+                items: 6
+            }
+        }
+    })
+</script>
+<hook name="before_body_end"/>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''}">
+    <meta name="author" content="Crazy">
+    <link rel="shortcut icon" href="__TMPL__/public/assets/images/favicon.png">
+    <title>用户登录</title>
+    <include file="public@head"/>
+</head>
+<body>
+<include file="public@header"/>
+
+<!--breadcrumbs start-->
+<!--<div class="breadcrumbs">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 col-sm-4">
+                <h1>用户登录</h1>
+            </div>
+            <div class="col-lg-8 col-sm-8">
+                <ol class="breadcrumb pull-right">
+                    <li><a href="__ROOT__/">首页</a></li>
+                    <li class="active">用户登录</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>-->
+<!--breadcrumbs end-->
+
+<!--container start-->
+<div class="login-bg" style='background-image: url("//www.hongmengyishu.com/upload/portal/login_background.jpg"); background-size: cover;'>
+    <div class="container">
+        <div class="form-wrapper">
+            <!--<form class="form-signin wow fadeInUp js-ajax-form" action="{:url('user/login/doLogin')}" method="post">-->
+            <div class="form-signin wow fadeInUp" method="post">
+                <h2 class="form-signin-heading">现在登录</h2>
+                <div class="login-wrap">
+                    <form
+                        id="login-form"
+                        action="{:url('user/login/doLogin')}"
+                        method="post"
+                    >
+                        <input
+                            type="text"
+                            name="username"
+                            class="form-control"
+                            placeholder="手机号/邮箱/用户名"
+                            autocomplete="username"
+                            autofocus
+                        >
+                    
+                        <input
+                            type="password"
+                            name="password"
+                            class="form-control"
+                            placeholder="密码"
+                            autocomplete="current-password"
+                        >
+                    
+                        <div id="captcha-element"></div>
+                    
+                        <p
+                            id="login-message"
+                            role="alert"
+                            style="color: #c00;"
+                        ></p>
+                    
+                        <button
+                            id="verifybutton"
+                            class="btn btn-lg btn-login btn-block"
+                            type="button"
+                        >
+                            确定
+                        </button>
+                    </form>
+                    <label class="checkbox">
+                        <input type="checkbox" value="remember-me"> 记住我
+                        
+                    </label>
+                    <input type="hidden" name="redirect" value="">
+					<button class="btn btn-lg btn-wx-login btn-block js-ajax-submit" onclick="location.href='/plugin/third_login/login/auth/type/wechat.html'" >微信登陆</button>
+                    <div class="registration">
+<!--                        还没有账号？-->
+                        <a href="{:cmf_url('user/Register/index')}">立即注册</a>
+                        <span class="pull-right"><a data-toggle="modal" href="{:cmf_url('user/Login/findPassword')}"> 忘记密码</a></span>
+                    </div>
+                    <div class="SignContainer-tip">未注册手机验证后自动登录，注册即代表同意<a href="/term/term/user">《用户协议》</a><a href="/term/term/privacy">《隐私保护指引》</a></div>
+                </div>
+                
+            </div>
+            
+        </div>
+        
+        
+<!--         <div id="space-semantic">
+            <div id="embed-wrapper">
+                <div class="embed-wrapper">
+                    <div id="captcha-element"></div>
+                    <button id="verifybutton" class="login-btn">验证码</button>
+                </div>
+            </div>
+        </div>   -->               
+                   
+        
+        
+    </div>
+</div>
+<!--container end-->
+<include file="public@scripts"/>
+<script src="__STATIC__/js/frontend.js"></script>
+<script>
+window.AliyunCaptchaConfig = {
+    region: 'cn',
+    prefix: '9pvdp9'
+};
+</script>
+
+<script src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script>
+
+<script>
+const loginForm = document.getElementById('login-form');
+const loginButton = document.getElementById('verifybutton');
+const loginMessage = document.getElementById('login-message');
+
+let captcha;
+let loginPending = false;
+let loginResponse = null;
+
+// 阻止普通表单提交，登录统一经过滑块回调。
+loginForm.addEventListener('submit', function (event) {
+    event.preventDefault();
+});
+
+// 回车也走滑块验证。
+loginForm.addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.isComposing) {
+        event.preventDefault();
+
+        if (!loginPending) {
+            loginButton.click();
+        }
+    }
+});
+
+// 在验证码按钮处理之前检查必填项和重复提交。
+loginButton.addEventListener('click', function (event) {
+    const username = loginForm.elements.username.value;
+    const password = loginForm.elements.password.value;
+
+    if (
+        loginPending
+        || username.trim() === ''
+        || password === ''
+    ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        if (!loginPending) {
+            loginMessage.textContent = '请输入用户名和密码';
+        }
+    }
+}, true);
+
+initAliyunCaptcha({
+    SceneId: '1doig5bf',
+    prefix: '9pvdp9',
+    region: 'cn',
+    mode: 'popup',
+    element: '#captcha-element',
+    button: '#verifybutton',
+
+    captchaVerifyCallback: captchaVerifyCallback,
+    onBizResultCallback: onBizResultCallback,
+
+    getInstance: function (instance) {
+        captcha = instance;
+    },
+
+    slideStyle: {
+        width: 360,
+        height: 40
+    },
+
+    language: 'cn',
+    autoRefresh: true
+});
+
+// 同一次业务请求提交账号、密码和阿里云验证参数。
+async function captchaVerifyCallback(captchaVerifyParam) {
+    if (loginPending) {
+        return {
+            captchaResult: false,
+            bizResult: false
+        };
+    }
+
+    loginPending = true;
+    loginButton.disabled = true;
+    loginResponse = null;
+    loginMessage.textContent = '';
+
+    try {
+        const response = await fetch(loginForm.action, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type':
+                    'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({
+                username: loginForm.elements.username.value,
+                password: loginForm.elements.password.value,
+                captchaVerifyParam: captchaVerifyParam
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('登录服务暂时不可用，请重试');
+        }
+
+        const result = await response.json();
+
+        if (
+            !result.data
+            || typeof result.data.captchaResult !== 'boolean'
+            || typeof result.data.bizResult !== 'boolean'
+        ) {
+            throw new Error(
+                '登录接口返回格式错误，请检查后端更新'
+            );
+        }
+
+        loginResponse = result;
+
+        const captchaPassed =
+            result.data.captchaResult === true;
+
+        const loginPassed =
+            captchaPassed
+            && result.code === 1
+            && result.data.bizResult === true;
+
+        if (!loginPassed) {
+            loginMessage.textContent =
+                result.msg || '登录失败，请重试';
+        }
+
+        return {
+            captchaResult: captchaPassed,
+            bizResult: loginPassed
+        };
+    } catch (error) {
+        loginMessage.textContent =
+            error.message || '登录失败，请重试';
+
+        return {
+            captchaResult: false,
+            bizResult: false
+        };
+    } finally {
+        loginPending = false;
+        loginButton.disabled = false;
+    }
+}
+
+// 登录已经在上一个请求中完成，这里只负责跳转。
+function onBizResultCallback(bizResult) {
+    if (
+        bizResult === true
+        && loginResponse
+        && loginResponse.code === 1
+        && loginResponse.data.captchaResult === true
+        && loginResponse.data.bizResult === true
+    ) {
+        let target = new URL('/', window.location.origin);
+
+        try {
+            const candidate = new URL(
+                loginResponse.url || '/',
+                window.location.origin
+            );
+
+            if (candidate.origin === window.location.origin) {
+                target = candidate;
+            }
+        } catch (error) {
+            // 地址无效时使用首页。
+        }
+
+        window.location.assign(target.href);
+    }
+}
+</script>
+</body>
+</html>

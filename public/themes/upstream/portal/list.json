@@ -1,0 +1,8 @@
+{
+  "name": "默认文章列表页（文字列表）",
+  "action": "portal/list/index",
+  "description": "默认文章列表页（文字列表）",
+  "order": 1.0,
+  "more": {
+  }
+}

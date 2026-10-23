@@ -1,0 +1,58 @@
+<php>
+    function makeDateUrl($url,$startTime,$endTime){
+        //今日
+        $todayTime = time();
+        $today = date('Y-m-d',$todayTime);
+        $todayString = "<a href='$url?start_time=$today&end_time=$today' class='btn  btn-link'>今日</a>";
+        $todayClass = '';
+        if($startTime==$today&&$endTime==$today){
+            $todayClass = 'disabled';
+        }
+        $todayString = "<a href='$url?start_time=$today&end_time=$today' class='btn  btn-link $todayClass'>今日</a>";
+        //昨日
+        $yesterday = date('Y-m-d',$todayTime-86400);
+        $yesterdayString = "<a href='$url?start_time=$yesterday&end_time=$yesterday' class='btn  btn-link'>昨日</a>";
+        $yesterdayClass = '';
+        if($startTime==$yesterday&&$endTime==$yesterday){
+            $yesterdayClass = 'disabled';
+        }
+        $yesterdayString = "<a href='$url?start_time=$yesterday&end_time=$yesterday' class='btn  btn-link $yesterdayClass'>昨日</a>";
+        //上一日
+        $prevStartDay = date('Y-m-d',strtotime($startTime)-86400);
+        $prevEndDay = date('Y-m-d',strtotime($endTime)-86400);
+        $prevDayString = "<a href='$url?start_time=$prevStartDay&end_time=$prevEndDay' class='btn  btn-link'>上一日</a>";
+        //下一日
+        $nextStartDay = date('Y-m-d',strtotime($startTime)+86400);
+        $nextEndDay = date('Y-m-d',strtotime($endTime)+86400);
+        $nextClass = '';
+        if(strtotime($nextStartDay)>strtotime($today)||strtotime($nextEndDay)>strtotime($today)){
+            $nextClass = 'disabled';
+        }
+        $nextDayString = "<a href='$url?start_time=$nextStartDay&end_time=$nextEndDay' class='btn btn-link $nextClass'>下一日</a>";
+        //当月
+        $monthStartDay = date("Y-m-01",$todayTime);
+        $monthEndDay = $today;
+        //$monthDayString = "<a href='$url?start_time=$monthStartDay&end_time=$monthEndDay' class='btn  btn-link'>当月</a>";
+        $monthClass = '';
+        if($monthStartDay==$startTime&&$monthEndDay==$endTime){
+            $monthClass = 'disabled';
+        }
+        $monthDayString = "<a href='$url?start_time=$monthStartDay&end_time=$monthEndDay' class='btn  btn-link $monthClass'>当月</a>";
+        //上一月
+        $prevMonthStart = date('Y-m-01',strtotime("-1 month",strtotime($startTime)));
+        $prevMonthEnd = date('Y-m-t',strtotime("-1 month",strtotime($startTime)));
+        $prevMonthString = "<a href='$url?start_time=$prevMonthStart&end_time=$prevMonthEnd' class='btn  btn-link'>上一月</a>";
+        //下一月
+        $nextMonthStart = date('Y-m-01',strtotime("+1 month",strtotime($startTime)));
+        $nextMonthEnd = date('Y-m-t',strtotime("+1 month",strtotime($startTime)));
+        if(date('m',strtotime($nextMonthEnd))==date('m')){
+            $nextMonthEnd = $today;
+        }
+        $nextMonthClass = '';
+        if(strtotime($nextMonthStart)>strtotime($monthStartDay)){
+            $nextMonthClass = 'disabled';
+        }
+        $nextMonthString = "<a href='$url?start_time=$nextMonthStart&end_time=$nextMonthEnd' class='btn  btn-link $nextMonthClass'>下一月</a>";
+        return sprintf('%s%s%s%s%s%s%s',$prevMonthString,$prevDayString,$monthDayString,$yesterdayString,$todayString,$nextDayString,$nextMonthString);
+    }
+</php>

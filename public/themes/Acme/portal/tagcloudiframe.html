@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>jQCloud Example with Floating Effect</title>
+    <style type="text/css">
+      /* 添加飘动动画效果 */
+      @keyframes float {
+        0% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-10px) rotate(2deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
+      }
+      
+      div.jqcloud span {
+        animation: float 5s ease-in-out infinite;
+        display: inline-block;
+      }
+      
+      /* 为不同位置的词添加不同的动画延迟 */
+      div.jqcloud span:nth-child(odd) {
+        animation-delay: 0.5s;
+      }
+      div.jqcloud span:nth-child(3n) {
+        animation-delay: 1s;
+      }
+      div.jqcloud span:nth-child(5n) {
+        animation-delay: 1.5s;
+      }
+      
+      /* 自定义链接样式 */
+      div.jqcloud a {
+        text-decoration: none;
+      }
+      
+      /* 确保容器填满 */
+     #my_favorite_latin_words {
+        width: 1000px;
+        height: 600px;
+        border: 1px solid #ccc;
+        overflow: hidden;
+        margin: 0 auto; /* 水平居中 */
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="https://static.hongmengyishu.com/acme/public/assets/css/jqcloud.css" />
+    <script type="text/javascript" src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://static.hongmengyishu.com/acme/public/assets/js/jqcloud-1.0.4.js"></script>
+    <script type="text/javascript">
+      var word_list = [
+                    
+               {text: "乾隆", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/乾隆.html", weight: 4.22},
+              {text: "南宋", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/南宋.html", weight: 3.13},
+              {text: "青花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青花.html", weight: 3.03},
+              {text: "花卉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花卉.html", weight: 2.93},
+              {text: "人物", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/人物.html", weight: 2.92},
+              {text: "行书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/行书.html", weight: 2.33},
+              {text: "楷书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/楷书.html", weight: 2.18},
+              {text: "瓷碗", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/瓷碗.html", weight: 2.15},
+              {text: "口沿", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/口沿.html", weight: 2.04},
+              {text: "款识", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/款识.html", weight: 1.91},
+              {text: "北宋", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/北宋.html", weight: 1.86},
+              {text: "青白", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青白.html", weight: 1.78},
+              {text: "青玉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青玉.html", weight: 1.77},
+              {text: "白描", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白描.html", weight: 1.77},
+              {text: "拓片", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/拓片.html", weight: 1.72},
+              {text: "宝笈", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/宝笈.html", weight: 1.64},
+              {text: "白釉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白釉.html", weight: 1.63},
+              {text: "设色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/设色.html", weight: 1.59},
+              {text: "花鸟", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花鸟.html", weight: 1.58},
+              {text: "水彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/水彩.html", weight: 1.57},
+              {text: "铜镜", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/铜镜.html", weight: 1.56},
+              {text: "康熙", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/康熙.html", weight: 1.55},
+              {text: "浮雕", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/浮雕.html", weight: 1.55},
+              {text: "新石器时代", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/新石器时代.html", weight: 1.53},
+              {text: "粉彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/粉彩.html", weight: 1.51},
+              {text: "花纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花纹.html", weight: 1.51},
+              {text: "吉州窑", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/吉州窑.html", weight: 1.49},
+              {text: "花瓶", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花瓶.html", weight: 1.48},
+              {text: "白玉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白玉.html", weight: 1.46},
+              {text: "牡丹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/牡丹.html", weight: 1.46},
+              {text: "珊瑚", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/珊瑚.html", weight: 1.45},
+              {text: "彩绘", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/彩绘.html", weight: 1.44},
+              {text: "剔红", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/剔红.html", weight: 1.44},
+              {text: "龙纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/龙纹.html", weight: 1.44},
+              {text: "图案", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/图案.html", weight: 1.39},
+              {text: "刻划", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/刻划.html", weight: 1.39},
+              {text: "色彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/色彩.html", weight: 1.39},
+              {text: "雍正", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/雍正.html", weight: 1.37},
+              {text: "如意", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/如意.html", weight: 1.35},
+              {text: "草书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/草书.html", weight: 1.35},
+              {text: "篆书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/篆书.html", weight: 1.35},
+              {text: "青瓷", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青瓷.html", weight: 1.34},
+              {text: "纹饰", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/纹饰.html", weight: 1.34},
+              {text: "珐琅", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/珐琅.html", weight: 1.33},
+              {text: "墓志", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/墓志.html", weight: 1.33},
+              {text: "粉盒", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/粉盒.html", weight: 1.32},
+              {text: "元宝", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/元宝.html", weight: 1.31},
+              {text: "建筑", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/建筑.html", weight: 1.31},
+              {text: "王羲之", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/王羲之.html", weight: 1.3},
+              {text: "战国", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/战国.html", weight: 1.29},
+              {text: "印花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/印花.html", weight: 1.29},
+              {text: "釉瓷", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/釉瓷.html", weight: 1.28},
+              {text: "圆钱", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/圆钱.html", weight: 1.27},
+              {text: "釉面", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/釉面.html", weight: 1.26},
+              {text: "云纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/云纹.html", weight: 1.26},
+              {text: "鎏金", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/鎏金.html", weight: 1.24},
+              {text: "扇面", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/扇面.html", weight: 1.23},
+              {text: "双耳", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/双耳.html", weight: 1.23},
+              {text: "莲花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/莲花.html", weight: 1.22},
+              {text: "隶书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/隶书.html", weight: 1.21},
+              {text: "掐丝珐琅", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/掐丝珐琅.html", weight: 1.21},
+              {text: "西汉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/西汉.html", weight: 1.2},
+              {text: "腹部", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/腹部.html", weight: 1.2},
+              {text: "镀金", link: "https://www.hongmengyish极简主义u.com/portal/tagpostlist/index/tag/镀金.html", weight: 1.2},
+              {text: "蓝色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/蓝色.html", weight: 1.19},
+              {text: "木雕", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/木雕.html", weight: 1.19},
+              {text: "陶罐", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/陶罐.html", weight: 1.19},
+              {text: "拓本", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/拓本.html", weight: 1.19},
+              {text: "黄色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/黄色.html", weight: 1.19},
+              {text: "蝴蝶", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/蝴蝶.html", weight: 1.19},
+              {text: "器用", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/器用.html", weight: 1.19},
+              {text: "特展", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/特展.html", weight: 1.18},
+              {text: "梅花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/梅花.html", weight: 1.18},
+              {text: "硬币", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/硬币.html", weight: 1.18},
+              {text: "西班牙", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/西班牙.html", weight: 1.18},
+              {text: "齐白石", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/齐白石.html", weight: 1.18},
+              {text: "光绪", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/光绪.html", weight: 1.18},
+              {text: "日本", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/日本.html", weight: 1.17},
+              {text: "嘉庆", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/嘉庆.html", weight: 1.17},
+              {text: "书法作品", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/书法作品.html", weight: 1.17},
+              {text: "红色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/红色.html", weight: 1.17},
+              {text: "图录", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/图录.html", weight: 1.17},
+              {text: "长方形", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/长方形.html", weight: 1.17},
+              {text: "造型", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/造型.html", weight: 1.17},
+              {text: "风景", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/风景.html", weight: 1.16},
+              {text: "通体", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/通体.html", weight: 1.16},
+              {text: "瓷器", link: "https://www.hongmengyishu.com/portal极简主义/tagpostlist/index/tag/瓷器.html", weight: 1.16},
+              {text: "云龙纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/云龙纹.html", weight: 1.16},
+              {text: "片段", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/片段.html", weight: 1.16},
+              {text: "三希堂法帖", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/三希堂法帖.html", weight: 1.16},
+              {text: "笔筒", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/笔筒.html", weight: 1.16},
+              
+             {text: "乾隆", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/乾隆.html", weight: 4.22},
+              {text: "南宋", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/南宋.html", weight: 3.13},
+              {text: "青花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青花.html", weight: 3.03},
+              {text: "花卉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花卉.html", weight: 2.93},
+              {text: "人物", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/人物.html", weight: 2.92},
+              {text: "行书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/行书.html", weight: 2.33},
+              {text: "楷书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/楷书.html", weight: 2.18},
+              {text: "瓷碗", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/瓷碗.html", weight: 2.15},
+              {text: "口沿", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/口沿.html", weight: 2.04},
+              {text: "款识", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/款识.html", weight: 1.91},
+              {text: "北宋", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/北宋.html", weight: 1.86},
+              {text: "青白", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青白.html", weight: 1.78},
+              {text: "青玉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青玉.html", weight: 1.77},
+              {text: "白描", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白描.html", weight: 1.77},
+              {text: "拓片", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/拓片.html", weight: 1.72},
+              {text: "宝笈", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/宝笈.html", weight: 1.64},
+              {text: "白釉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白釉.html", weight: 1.63},
+              {text: "设色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/设色.html", weight: 1.59},
+              {text: "花鸟", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花鸟.html", weight: 1.58},
+              {text: "水彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/水彩.html", weight: 1.57},
+              {text: "铜镜", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/铜镜.html", weight: 1.56},
+              {text: "康熙", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/康熙.html", weight: 1.55},
+              {text: "浮雕", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/浮雕.html", weight: 1.55},
+              {text: "新石器时代", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/新石器时代.html", weight: 1.53},
+              {text: "粉彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/粉彩.html", weight: 1.51},
+              {text: "花纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花纹.html", weight: 1.51},
+              {text: "吉州窑", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/吉州窑.html", weight: 1.49},
+              {text: "花瓶", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/花瓶.html", weight: 1.48},
+              {text: "白玉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/白玉.html", weight: 1.46},
+              {text: "牡丹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/牡丹.html", weight: 1.46},
+              {text: "珊瑚", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/珊瑚.html", weight: 1.45},
+              {text: "彩绘", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/彩绘.html", weight: 1.44},
+              {text: "剔红", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/剔红.html", weight: 1.44},
+              {text: "龙纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/龙纹.html", weight: 1.44},
+              {text: "图案", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/图案.html", weight: 1.39},
+              {text: "刻划", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/刻划.html", weight: 1.39},
+              {text: "色彩", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/色彩.html", weight: 1.39},
+              {text: "雍正", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/雍正.html", weight: 1.37},
+              {text: "如意", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/如意.html", weight: 1.35},
+              {text: "草书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/草书.html", weight: 1.35},
+              {text: "篆书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/篆书.html", weight: 1.35},
+              {text: "青瓷", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/青瓷.html", weight: 1.34},
+              {text: "纹饰", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/纹饰.html", weight: 1.34},
+              {text: "珐琅", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/珐琅.html", weight: 1.33},
+              {text: "墓志", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/墓志.html", weight: 1.33},
+              {text: "粉盒", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/粉盒.html", weight: 1.32},
+              {text: "元宝", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/元宝.html", weight: 1.31},
+              {text: "建筑", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/建筑.html", weight: 1.31},
+              {text: "王羲之", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/王羲之.html", weight: 1.3},
+              {text: "战国", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/战国.html", weight: 1.29},
+              {text: "印花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/印花.html", weight: 1.29},
+              {text: "釉瓷", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/釉瓷.html", weight: 1.28},
+              {text: "圆钱", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/圆钱.html", weight: 1.27},
+              {text: "釉面", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/釉面.html", weight: 1.26},
+              {text: "云纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/云纹.html", weight: 1.26},
+              {text: "鎏金", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/鎏金.html", weight: 1.24},
+              {text: "扇面", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/扇面.html", weight: 1.23},
+              {text: "双耳", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/双耳.html", weight: 1.23},
+              {text: "莲花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/莲花.html", weight: 1.22},
+              {text: "隶书", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/隶书.html", weight: 1.21},
+              {text: "掐丝珐琅", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/掐丝珐琅.html", weight: 1.21},
+              {text: "西汉", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/西汉.html", weight: 1.2},
+              {text: "腹部", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/腹部.html", weight: 1.2},
+              {text: "镀金", link: "https://www.hongmengyish极简主义u.com/portal/tagpostlist/index/tag/镀金.html", weight: 1.2},
+              {text: "蓝色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/蓝色.html", weight: 1.19},
+              {text: "木雕", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/木雕.html", weight: 1.19},
+              {text: "陶罐", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/陶罐.html", weight: 1.19},
+              {text: "拓本", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/拓本.html", weight: 1.19},
+              {text: "黄色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/黄色.html", weight: 1.19},
+              {text: "蝴蝶", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/蝴蝶.html", weight: 1.19},
+              {text: "器用", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/器用.html", weight: 1.19},
+              {text: "特展", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/特展.html", weight: 1.18},
+              {text: "梅花", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/梅花.html", weight: 1.18},
+              {text: "硬币", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/硬币.html", weight: 1.18},
+              {text: "西班牙", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/西班牙.html", weight: 1.18},
+              {text: "齐白石", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/齐白石.html", weight: 1.18},
+              {text: "光绪", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/光绪.html", weight: 1.18},
+              {text: "日本", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/日本.html", weight: 1.17},
+              {text: "嘉庆", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/嘉庆.html", weight: 1.17},
+              {text: "书法作品", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/书法作品.html", weight: 1.17},
+              {text: "红色", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/红色.html", weight: 1.17},
+              {text: "图录", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/图录.html", weight: 1.17},
+              {text: "长方形", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/长方形.html", weight: 1.17},
+              {text: "造型", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/造型.html", weight: 1.17},
+              {text: "风景", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/风景.html", weight: 1.16},
+              {text: "通体", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/通体.html", weight: 1.16},
+              {text: "瓷器", link: "https://www.hongmengyishu.com/portal极简主义/tagpostlist/index/tag/瓷器.html", weight: 1.16},
+              {text: "云龙纹", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/云龙纹.html", weight: 1.16},
+              {text: "片段", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/片段.html", weight: 1.16},
+              {text: "三希堂法帖", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/三希堂法帖.html", weight: 1.16},
+              {text: "笔筒", link: "https://www.hongmengyishu.com/portal/tagpostlist/index/tag/笔筒.html", weight: 1.16}              
+              
+                    
+      ];
+      $(function() {
+        $("#my_favorite_latin_words").jQCloud(word_list, {
+          autoResize: true,  // 自动调整大小以填充容器
+          shape: "elliptical",  // 使用椭圆形布局更好地填充空间
+          width: 1000,  // 明确设置宽度
+          height: 600   // 明确设置高度
+        });
+      });
+    </script>
+  </head>
+  <body>
+
+    <div id="my_favorite_latin_words"></div>
+  </body>
+</html>

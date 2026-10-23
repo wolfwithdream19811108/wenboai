@@ -1,0 +1,16 @@
+{
+    "name": "标签页面",
+    "action": "portal/Tag/index",
+    "description": "标签模板文件",
+    "order": 40.0,
+    "more": {
+        "vars": {
+            "page_count": {
+                "title": "每页文章数量",
+                "value": 8,
+                "type": "number",
+                "tip": "列表页每页显示文章的数量"
+            }
+        }
+    }
+}

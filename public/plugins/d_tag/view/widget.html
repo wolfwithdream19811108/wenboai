@@ -1,0 +1,15 @@
+<div class="col-md-3">
+    <div class="tc-box first-box">
+        <div class="headtitle">
+            <h2>热门标签</h2>
+        </div>
+        <div class="d-tag">
+            <volist name="list" id="vo">
+                <span class="label label-warning"><a title="{$vo.name}"
+                       href="{:cmf_url('portal/tag/index',array('id'=>$vo.name))}">
+                        {$vo.name}({$vo.num})
+                    </a></span>
+            </volist>
+        </div>
+    </div>
+</div>

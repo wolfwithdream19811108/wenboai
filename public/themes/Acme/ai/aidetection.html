@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>图片电子存证平台</title>
+    <meta name="keywords" content="图片电子存证"/>
+    <meta name="description" content="图片电子存证">
+    <include file="public@head"/>
+    <hook name="before_head_end"/>
+    
+ <style>
+
+      /* content */
+      .content {
+        display: flex;
+        width: 100%;
+        height: 600px;
+        margin: 0 auto;
+        background: #a7ddf1;
+        padding: 20px 120px;
+        box-sizing: border-box;
+        justify-content: space-between;
+      }
+      .input-container {
+        width: 48%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .input-title {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        color: #24128d;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .input-title::after {
+        content: "";
+        position: absolute;
+        bottom: -40px;
+        left: 50px;
+        border-left: 16px solid transparent;
+        border-right: 16px solid transparent;
+        border-top: 20px solid white;
+        border-bottom: 20px solid transparent;
+      }
+      .picture-container {
+        width: 500px;
+        height: 500px;
+        background: white;
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .img-container {
+          display: flex;
+          justify-content: center; /* 水平居中 */
+          align-items: center; /* 垂直居中 */
+          width: 100%;
+          height: 100%;
+          position: relative;
+          cursor: default;
+      }
+      
+        .img-container:hover {
+          /* 鼠标移入时改变鼠标样式为手指型 */
+          cursor: pointer;
+        }
+      .input-btn {
+        width: 160px;
+        height: 40px;
+        background: #03c1fc;
+        color: white;
+        font-size: 20px;
+        border-radius: 20px;
+        margin-top: 20px;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+      }
+
+      /* 结果 */
+      .result-container {
+        width: 40%;
+        display: flex;
+        flex-direction: column;
+      }
+      .result-template {
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .result-title {
+        background: gray;
+        height: 40px;
+        position: relative;
+      }
+      .result-title-progress {
+        height: 100%;
+        position: absolute;
+        text-align: center;
+        line-height: 40px;
+        padding-left: 10px;
+        color: white;
+        background: #32C5FF;
+      }
+      .result-title-progress::after {
+        content: "";
+        border-left: 20px solid #32C5FF;
+        border-right: 20px solid transparent;
+        border-top: 20px solid transparent;
+        border-bottom: 20px solid transparent;
+        position: absolute;
+        right: 0;
+        transform: translateX(100%);
+      }
+      .result-content {
+        background: #0b103b;
+        padding: 10px 20px;
+      }
+
+      .result-content-1-line {
+        font-size: 18px;
+        color: white;
+        margin-left: 30px;
+      }
+      .result-content-1-line1 {
+        font-size: 40px;
+        text-align: right;
+      }
+      .result-content-2-line {
+        border-bottom: 1px solid white;
+        display: flex;
+        justify-content: space-between;
+        color: white;
+        height: 40px;
+        align-items: center;
+        font-size: 16px;
+      }
+      .result2-name-container {
+        display: flex;
+        align-items: center;
+      }
+      .result2-color {
+        width: 10px;
+        height: 10px;
+        background: green;
+        margin-right: 10px;
+      }
+    </style>
+</head>
+<body class="body-white">
+<include file="public@diting_header"/>
+<div class="container">
+<div class="content">
+        <div class="input-container">
+          <!--<div class="input-title">在这里上传图片并实时检测是否有AI生成</div>-->
+          <div class="picture-container" onclick="javascript:uploadOneImageCallback('图片上传','#ref_image_url','ref_image_url','encrypt',submitimage)">
+            <div class="img-container">
+                <img src="" class="ref_image_url"  width="500" height="500" name="ref_image_url" style="display: none;" id="ref_image_url">
+                <img src="https://www.hongmengyishu.com/static/js/webuploader/image-upload/image.png" class="placeholder" style="display: block;" width="100" height="100">
+            </div>
+
+          </div>
+          <div class="input-btn" onclick="javascript:uploadOneImageCallback('图片上传','#ref_image_url','ref_image_url','encrypt',submitimage)">上传检测</div>
+          
+          
+ 
+          
+          
+        </div>
+        <div class="result-container">
+          <div class="result-template" style="--color: blue">
+            <div class="result-title">
+              <div class="result-title-progress">RESULT</div>
+            </div>
+            <div class="result-content">
+              <div class="result-content-1-line">
+                检测结果：<span style="color: rgb(50, 197, 255)"
+                  >AI生成可能性</span
+                >
+              </div>
+              <div
+                id="result1"
+                class="result-content-1-line1"
+                style="color: rgb(50, 197, 255)"
+              ></div>
+            </div>
+          </div>
+          <div
+            class="result-template"
+            style="--color: green; margin-top: 50px; flex: 1"
+          >
+            <div class="result-title">
+              <div class="result-title-progress">各个类别可能性</div>
+            </div>
+            <div
+              class="result-content"
+              id="result2"
+              style="flex: 1; overflow: auto"
+            >
+              <div class="result-content-2-line">
+                <div>类别</div>
+                <div>可能性</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<include file="public@footer"/>
+</div>
+
+</body>
+
+<include file="public@scripts"/>
+
+
+
+<script type="text/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+    
+  function checkImageSrc() {
+    var refImg = document.querySelector('.ref_image_url');
+    var placeholder = document.querySelector('.placeholder');
+
+    if (refImg.src === '' || refImg.src === undefined) {
+      placeholder.style.display = 'block';
+      refImg.style.display = 'none';
+    } else {
+      placeholder.style.display = 'none';
+      refImg.style.display = 'block';
+    }
+  }
+
+
+  // 监听ref_image_url的src属性变化，以更新占位符的显示状态
+  var refImg = document.querySelector('.ref_image_url');
+  refImg.addEventListener('load', function() {
+    checkImageSrc();
+  });
+
+  refImg.addEventListener('error', function() {
+    checkImageSrc();
+  });
+});
+ 
+async function submitimage(imageUrl){
+    imageUrl = "https://www.hongmengyishu.com"+imageUrl
+    console.log(imageUrl)
+    layer.load();
+    const data = await fetchData(imageUrl);
+    layer.msg("图片检测完成", {time: 1000}, function() {
+        // 消息框关闭后执行的回调函数
+        layer.closeAll();
+    });
+    
+    handleResult(data);
+
+}  
+
+  
+    
+       const inputBtn = document.querySelector(".input-btn");
+      const result1 = document.getElementById("result1");
+
+      const result2 = document.getElementById("result2");
+      const defaultStr = `<div class="result-content-2-line">
+                <div>类别</div>
+                <div>可能性</div>
+              </div>`;
+      
+    const colors = [
+      '#FF6347', // 番茄红
+      '#4682B4', // 钢蓝色
+      '#32CD32', // 酸橙绿
+      '#FFD700', // 金色
+      '#8A2BE2', // 蓝紫色
+      '#FF4500', // 橙红色
+      '#00FA9A', // 芥末绿
+      '#00BFFF', // 深天蓝
+      '#FF8C00', // 暗橙色
+      '#000080', // 海军蓝
+      // ...可以根据需要添加更多颜色
+    ];      
+      
+              
+              
+     const handleResult2 = (list) => {
+      let str = "";
+      list.forEach((item, index) => {
+        const { key, text } = item;
+        // 通过取余操作确保颜色索引不会超出颜色数组的范围
+        const colorIndex = index % colors.length;
+        const color = colors[colorIndex];
+        const s = `<div class="result-content-2-line">
+        <div class="result2-name-container">
+          <div class="result2-color" style="background-color: ${color};"></div>
+          <div class="result2-name">${key}</div>
+        </div>
+        <div>${text}</div></div>`;
+        str += s;
+      });
+      const res = defaultStr + str;
+      result2.innerHTML = res;
+    };
+      
+      
+      const handleResult = (data) => {
+        if (!data.report) return;
+        const { report = {} } = data || {};
+        const { generator = {}, ai = {} } = report;
+        result1.innerHTML = `${(ai.confidence * 100).toFixed(2)}%`;
+        const res = Object.entries(generator)
+          .slice(0, 5)
+          .map((item) => {
+            const [key, value] = item;
+            return {
+              key,
+              text: `${(value.confidence * 100).toFixed(2)}%`,
+            };
+          });
+        handleResult2(res);
+      };
+
+
+const fetchData = (imageUrl) => {
+  
+  return new Promise((r, j) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open(
+      "GET",
+      `https://www.hongmengyishu.com/ai/aidetection/submitimage?image=${encodeURIComponent(imageUrl)}`, 
+      true,
+    );
+    xhr.onload = function () {
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText.split("<div")[0]);
+        console.log(data);
+        r(data);
+      } else {
+        console.error("Request failed with status code: " + xhr.status);
+      }
+    };
+    xhr.send();
+  });
+};   
+    
+    
+    
+</script>
+<script type="text/html" id="photos-item-tpl">
+    <li id="saved-image{id}">
+        <input id="photo-{id}" type="hidden" name="photo_urls[]" value="{filepath}">
+        <input class="form-control" id="photo-{id}-name" type="text" name="photo_names[]" value="{name}"
+               style="width: 200px;" title="图片名称">
+        <img id="photo-{id}-preview" src="{url}" style="height:34px;width: 44px;"
+             onclick="imagePreviewDialog(this.src);">
+        <a class="btn btn-default" href="javascript:uploadOneImage('图片上传','#photo-{id}');"><i class="fa fa-upload fa-fw"></i></a>
+        <a class="btn btn-danger" href="javascript:(function(){$('#saved-image{id}').remove();})();"><i class="fa fa-trash fa-fw"></i></a>
+        <a class="btn btn-success" href="javascript:(function(){$('#saved-image{id}').before($('#saved-image{id}').next());})();"><i class="fa fa-arrow-down fa-fw"></i></a>
+    </li>
+</script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有用户登录记录</a></li>
+        <li><a href="{:url('AdminUserLoginLog/add')}">添加用户登录记录</a></li>
+    </ul>
+    <form class="well form-inline" method="post" action="{:url('AdminUserLoginLog/index')}">
+        {//列表页顶部查询字段}
+        		&nbsp;每页行数:
+		<input type="text" name="page_num" class="form-control" value="{$page_num|default='10'}" style="width: 50px">
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:url('AdminUserLoginLog/index')}">重置</a>
+        &nbsp;
+        <a class="btn btn-success" href="{:url('AdminUserLoginLog/export')}">导出</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            {//批量设置字段值}
+            
+            {//批量删除}
+            
+        </div>
+
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all"
+                               data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="100">ID</th>
+				<th width="100">USERNAME</th>
+				<th width="100">PWD</th>
+				<th width="100">SUCCEED</th>
+				<th width="100">TIME</th>
+				<th width="100">IP</th>
+				<th width="100">DATETIME</th>
+
+                <th  class="text-center">操作</th>
+            </tr>
+            </thead>
+            <notempty name="list">
+                <foreach name="list" item="vo">
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y"
+                                   data-xid="js-check-x" name="ids[]" value="{$vo.id}">
+                        </td>
+                        <td>{$vo.id}</td>
+						<td>{$vo.username}</td>
+						<td>{$vo.pwd}</td>
+						<td>{$vo.succeed}</td>
+						<td>{$vo.time}</td>
+						<td>{$vo.ip}</td>
+						<td>{$vo.datetime}</td>
+
+                        <td class="text-center">
+                            <a title="编辑" class="btn btn-xs btn-primary"
+                               href="{:url('AdminUserLoginLog/edit',array('id'=>$vo['id']))}">编辑</a>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+        </table>
+        <div class="well well-sm text-danger"  style="margin-bottom: 0">
+            合计:{$total|default='0'}
+            
+        </div>
+        <div class="text-center">
+            <ul class="pagination" style="margin-bottom: 0;margin-top: 10px">{$page|default=''}</ul>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    function reloadPage(win) {
+        win.location.reload();
+    };
+    $(function () {
+        setCookie("refersh_time", 0);
+    });
+</script>
+</body>
+</html>

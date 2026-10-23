@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+<style>
+    .required {
+        color: #ff2222;
+    }
+</style>
+<head>
+    <include file="public/head"/>
+    <title>表单代码生成器</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a>数据表</a></li>
+    </ul>
+
+    <form class="well form-inline margin-top-10"
+          method="post" action="{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableIndex')}">
+        数据表名称:
+        <input class="form-control" type="text" name="keyword"
+               value="{$keyword|default=''}" style="width: 200px" placeholder="数据表名关键字查找">
+        &nbsp;&nbsp;&nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        &nbsp;
+        <a class="btn btn-default" href="{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableIndex',['reset'=>1])}">重置</a>
+        &nbsp;&nbsp;
+        <a class="btn btn-warning" href="javascript:appSetting();">配置应用</a>
+        &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;
+        <label class="text-muted"></label>
+        <span class="text-muted">数量:{$total|default=0}</span>
+    </form>
+    <form class="well form-inline margin-top-10 js-ajax-form" method="post" action="">
+    <table class="table table-hover table-bordered table-list">
+        <thead>
+        <tr>
+            <th width="70">序号</th>
+            <th  >数据表名称</th>
+            <th width="100" class="text-center">表标识</th>
+            <th width="100" class="text-center">主键字段</th>
+            <th width="80" class="text-center">应用名称</th>
+            <th title="列表页可以导出数据为EXCEL" width="80" class="text-center text-info">数据导出</th>
+            <th title="列表页可以自定义每页显示的行数" width="100" class="text-center text-info">自定义分页</th>
+            <th title="可以批量删除数据行" width="80" class="text-center text-info">批量删除</th>
+            <th title="可以批量对某个字段置0或置1" width="80" class="text-center text-info">置值字段</th>
+
+            <th width="80" class="text-center">配置表</th>
+            <th width="80" class="text-center">配置字段</th>
+            <th width="50" class="text-center">重置</th>
+        </tr>
+        </thead>
+        <notempty name="tables">
+            <foreach name="tables" item="vo">
+                <tr>
+                    <td>
+                        {$key+1}
+                    </td>
+                    <td class="text-primary">
+                        <span style="font-weight: bolder">{$vo.name|default=''}</span>
+                    </td>
+                    <td class="text-center">
+                        {$vo.link.table_tag}
+                    </td>
+                    <td class="text-center text-danger ">
+                        {$vo.link.key_name}
+                    </td>
+                    <td class="text-center">
+                        {$vo.link.appname|default=''}
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.link.export_flag">
+                            <i title="已启用" class="fa fa-check text-success" aria-hidden="true"></i>
+                            <else/>
+                            <i class="fa fa-times text-muted" aria-hidden="true"></i>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.link.page_flag">
+                            <i title="已启用" class="fa fa-check text-success" aria-hidden="true"></i>
+                            <else/>
+                            <i class="fa fa-times text-muted" aria-hidden="true"></i>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.link.batch_delete">
+                            <i title="已启用" class="fa fa-check text-success" aria-hidden="true"></i>
+                            <else/>
+                            <i class="fa fa-times text-muted" aria-hidden="true"></i>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.link.batch_setfield">
+                            <span class="text-primary">{$vo.link.batch_setfield}</span>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.name">
+                            <a class="btn btn-sm btn-primary"
+                               href="javascript:tableEdit('{$vo.name}');">配置表</a>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.name">
+                            <a class="btn btn-xs btn-success"
+                               href="{:cmf_plugin_url('DiyAdminForm://AdminFields/fieldIndex',
+                               ['tablename'=>$vo.name,'keyword'=>$keyword])}">配置字段</a>
+                        </notempty>
+                    </td>
+                    <td class="text-center">
+                        <notempty name="vo.name">
+                            <button class="btn btn-sm btn-danger js-ajax-submit"
+                                    data-action="{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableReset',
+                                    ['tablename'=>$vo.name])}"
+                                    data-msg="重置表单设置吗?"
+                            >重置</button>
+                        </notempty>
+                    </td>
+                </tr>
+            </foreach>
+        </notempty>
+    </table>
+</form>
+</div>
+<include file="public/scripts"/>
+<script>
+    //编辑表信息
+    function tableEdit(tableName) {
+        var editurl  = "{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableEdit')}";
+        var posturl  = "{:cmf_plugin_url('DiyAdminForm://AdminIndex/tableEditPost')}";
+        var edittxt  = "表单设置";
+        openIframeLayer(editurl + "?tableName=" + tableName, edittxt, {
+            area: ['800px', '600px'],
+            btn: ['确定'],//, '取消'
+            yes: function (index, layero) {
+                //reloadPage(window);//刷新主页面
+                var iframeWin = window[layero.find('iframe')[0]['name']];
+                var rs = iframeWin.confirm();
+                //异步执行
+                $.ajax({
+                    url: posturl, type: "post", cache: false, dataType: "json",async:false,
+                    data: {id:rs.id,export: rs.export,page:rs.page,
+                        tag:rs.tag,appid:rs.appid,key:rs.key,btdel:rs.btdel,
+                        btfield:rs.btfield,menu_name:rs.menu_name,menu_parent:rs.menu_parent,
+                        menu_order:rs.menu_order,menu_icon:rs.menu_icon,menu_parent_url:rs.menu_parent_url},
+                    success: function (data) {
+                        if(data.code === 1){
+                            //alert(data.msg);
+                            reloadPage(window);
+                        }else{
+                            alert(data.msg);
+                        }
+                    },
+                    error: function () {
+                        alert("出现错误,保存失败!");
+                        //reloadPage(window);
+                    }
+                });
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            }
+        });
+    }
+
+    //编辑应用配置信息
+    function appSetting() {
+        var url  = "{:cmf_plugin_url('DiyAdminForm://AdminApp/Index')}";
+        var txt  = "配置应用";
+        openIframeLayer(url, txt, {
+            area: ['800px', '500px'],
+            btn: ['确定'],//, '取消'
+            yes: function (index, layero) {
+                reloadPage(window);//刷新主页面
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            }
+        });
+    }
+</script>
+</body>
+</html>

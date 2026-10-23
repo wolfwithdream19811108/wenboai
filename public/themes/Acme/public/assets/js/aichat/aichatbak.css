@@ -1,0 +1,241 @@
+      .chat-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+        
+        .chat-header {
+            background-color: #1890ff;
+            color: white;
+            padding: 5px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        .chat-messages {
+            height: 500px;
+            padding: 15px;
+            overflow-y: auto;
+            background-color: #fafafa;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            max-width: 80%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            line-height: 1.4;
+            position: relative;
+        }
+        
+        .user-message {
+            background-color: #1890ff;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .bot-message {
+            background-color: #e6e6e6;
+            color: #333;
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+        }
+        .bot-message a {
+            color: #1890ff;          /* 链接颜色 */
+            text-decoration: none;   /* 移除下划线 */
+            font-weight: bold;       /* 加粗 */
+            transition: color 0.3s;  /* 悬停动画 */
+        }
+        
+        .bot-message a:hover {
+            color: #004499;         /* 悬停颜色 */
+            text-decoration: underline; /* 悬停下划线 */
+        }        
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        #message-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+            font-size: 16px;
+        }
+        #analysisImage,
+        #send-button {
+            margin-left: 10px;
+            padding: 10px 20px;
+            background-color: #48cfad;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #analysisImage:hover,
+        #send-button:hover {
+            background-color: #39b797;
+        }
+        #analysisImage:disabled,
+        #send-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .typing-indicator {
+            display: none;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 15px;
+        }
+        
+        .cancel-button {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background: transparent;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .message-loading {
+            opacity: 0.7;
+        }
+        
+        
+ /* Deep Analysis Button Style */
+.btn-deep-analysis {
+    transition: all 0.3s ease;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    background-color: #48cfad; /* Use the same color as in your original button */
+    color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgba(72, 207, 173, 0.3);
+    cursor: pointer;
+}
+
+.btn-deep-analysis:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(72, 207, 173, 0.4);
+    background-color: #39b797; /* Slightly darker shade for hover effect */
+}
+
+.btn-deep-analysis i {
+    margin-right: 5px;
+}
+       
+/* 预设按钮容器样式 */
+.preset-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    flex-wrap: wrap;
+}
+
+/* 预设按钮样式 */
+.preset-buttons button {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #48cfad;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 按钮悬停效果 */
+.preset-buttons button:hover {
+    background-color: #39b797;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+/* 按钮活动效果 */
+.preset-buttons button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .preset-buttons {
+        flex-direction: column;
+    }
+    .preset-buttons button {
+        width: 100%;
+        min-width: auto;
+    }
+}
+        
+        
+    /* 新增header按钮样式 */
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    #interpret-btn {
+        font-size: 14px;
+        padding: 6px 15px;
+        border-radius: 15px;
+        background: #48cfad; /* 改为橙色，与蓝色标题形成对比 */
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    
+    #interpret-btn:hover {
+        background: #39b797; /* 悬停时颜色加深 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    
+    /* 加载动画样式保持不变 */
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .loading {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border: 2px solid white;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: rotate 1s linear infinite;
+    }  
+        
+        
+     /* 禁用按钮样式 */
+    button:disabled {
+        background-color: #ccc;  /* 灰色背景 */
+        cursor: not-allowed;     /* 禁用鼠标点击效果 */
+        opacity: 0.6;            /* 透明度设置为 0.6 */
+    }       
+        

@@ -1,0 +1,63 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+<div class="container">
+
+	<!--<div class="col-lg-9">-->
+	<div class="col-lg-12">
+		<div class="row">
+
+		
+
+			<div class="" id="my-gallery-container">
+				<foreach name="articles" item="vo">
+					<div class="item">
+
+    						<notempty name="$vo.more.thumbnail">
+    							<div  align="left" class="blog-img img">
+ 
+        								<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+                                        	<if condition="$vo['firstpic_width'] gt $vo['firstpic_height']*8 ">
+                                              <img class="img002" src="<?php echo cmf_get_image_url($vo['more']['thumbnail'],'!longimg'); ?>" />
+                                           <elseif condition="$vo['firstpic_height'] gt $vo['firstpic_width']*2" />
+                                              <img class="img002" src="<?php echo cmf_get_image_url($vo['more']['thumbnail'],'!shuimg'); ?>" />
+                                            <else />
+        									  <img class="img002" src="<?php echo cmf_get_image_url($vo['more']['thumbnail'],'!300X'); ?>" />
+                                            </if>
+        								</a>
+    
+    							</div>
+    						</notempty>
+  
+
+					</div>
+				</foreach>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+</block>
+
+<block name="scripts">
+<script type="text/javascript">
+
+
+</script>
+
+</block>

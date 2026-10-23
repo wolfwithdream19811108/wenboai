@@ -1,0 +1,709 @@
+<include file="public@header"/>
+<style type="text/css">
+    .pic-list li {
+        margin-bottom: 5px;
+    }
+</style>
+<script type="text/html" id="photos-item-tpl">
+    <li id="saved-image{id}">
+        <input id="photo-{id}" type="hidden" name="photo_urls[]" value="{filepath}">
+        <input class="form-control" id="photo-{id}-name" type="text" name="photo_names[]" value="{name}"
+               style="width: 200px;" title="图片名称">
+        <img id="photo-{id}-preview" src="{url}" style="height:36px;width: 36px;"
+             onclick="imagePreviewDialog(this.src);">
+        <a href="javascript:uploadOneImage('图片上传','#photo-{id}');">替换</a>
+        <a href="javascript:(function(){$('#saved-image{id}').remove();})();">移除</a>
+    </li>
+</script>
+<script type="text/html" id="files-item-tpl">
+    <li id="saved-file{id}">
+        <input id="file-{id}" type="hidden" name="file_urls[]" value="{filepath}">
+        <input class="form-control" id="file-{id}-name" type="text" name="file_names[]" value="{name}"
+               style="width: 200px;" title="文件名称">
+        <a id="file-{id}-preview" href="{preview_url}" target="_blank">下载</a>
+        <a href="javascript:uploadOne('文件上传','#file-{id}','file');">替换</a>
+        <a href="javascript:(function(){$('#saved-file{id}').remove();})();">移除</a>
+    </li>
+</script>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminArticle/index')}">作品管理</a></li>
+        <li>
+            <a href="{:url('AdminArticle/add')}">添加作品</a>
+        </li>
+        <li class="active"><a href="#">编辑作品</a></li>
+    </ul>
+    <form action="{:url('AdminArticle/editPost')}" method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-9">
+                <table class="table table-bordered">
+                  
+                    <tr >
+                        <th width="100">分类<span class="form-required">*</span></th>
+                        <td>
+						<!--
+                            <input class="form-control" type="text" style="width:200px;" required
+                                   value="{:implode(' ',$post_categories)}"
+                                   placeholder="请选择分类" onclick="doSelectCategory();" id="js-categories-name-input"
+                                   readonly/>
+                            <input class="form-control" type="hidden" value="{$post_category_ids}"
+                                   name="post[categories]"
+                                   id="js-categories-id-input"/>
+						-->
+							<select id="categorylist" class="form-control" name="post[categories]" style="width: 140px;">
+								<foreach name="categories" item="vo">
+								<option value="{$vo.id}">{$vo.name}</option>
+								</foreach>
+							</select>
+
+                        </td>
+                    </tr>
+                  
+                  
+        <!--          
+ 					 <tr>
+                        <th width="100">分类2<span class="form-required">*</span></th>
+                        
+                        <td>
+							<select id="keywordlist" class="form-control valid" name="post[post_keywords]" style="width: 140px;" aria-invalid="false">
+																		<option value="国画">国画</option>
+																<option value="书法">书法</option>
+																<option value="玉器">玉器</option>
+                              									<option value="石器">石器</option>
+																<option value="金银器">金银器</option>
+																<option value="青铜器">青铜器</option>
+																<option value="碑帖拓本">碑帖拓本</option>
+																<option value="文玩">文玩</option>
+																<option value="文房用品">文房用品</option>
+																<option value="珠宝饰品">珠宝饰品</option>
+																<option value="钱币">钱币</option>
+																<option value="竹木牙角">竹木牙角</option>
+																<option value="篆刻">篆刻</option>
+																<option value="玻璃器">玻璃器</option>
+																<option value="家具">家具</option>
+																<option value="陶瓷">陶瓷</option>
+																<option value="雕刻">雕刻</option>
+																<option value="雕塑">雕塑</option>
+																<option value="珐琅器">珐琅器</option>
+																<option value="古籍">古籍</option>
+																<option value="金属器">金属器</option>
+																<option value="景泰蓝">景泰蓝</option>
+																<option value="武备仪仗">武备仪仗</option>
+																<option value="印章">印章</option>
+																<option value="武器">武器</option>
+																<option value="版画">版画</option>
+																<option value="纺织刺绣">纺织刺绣</option>
+																<option value="帝后玺册">帝后玺册</option>
+																<option value="服装">服装</option>
+																<option value="音乐戏曲">音乐戏曲</option>
+																<option value="漆器">漆器</option>
+																<option value="器物">器物</option>
+																<option value="生活用具">生活用具</option>
+																<option value="钟表仪器">钟表仪器</option>
+																<option value="宗教文物">宗教文物</option>
+																<option value="铭刻">铭刻</option>
+																<option value="工具">工具</option>
+																<option value="连环画">连环画</option>
+																<option value="碑志">碑志</option>
+																<option value="插图">插图</option>
+																<option value="年画">年画</option>
+																<option value="革命文物">革命文物</option>
+																<option value="古建">古建</option>
+																<option value="剪纸">剪纸</option>
+																<option value="考古">考古</option>
+																<option value="面具">面具</option>
+																<option value="墓葬">墓葬</option>
+																<option value="皮影">皮影</option>
+																<option value="漆画">漆画</option>
+																<option value="外国文物">外国文物</option>
+																<option value="玩具">玩具</option>
+																<option value="照片">照片</option>
+																<option value="油画">油画</option>
+																<option value="综合艺术">综合艺术</option>
+																<option value="其他">其他</option>
+																<option value="壁画">壁画</option>
+                              									<option value="素描">素描</option>
+																<option value="未分类">未分类</option>
+															</select>
+
+                        </td>
+                    </tr>                
+                  
+                  -->
+                  
+                  
+                  
+                  
+                  
+                  
+                  <!--
+                    <tr>
+                        <th width="100">年代<span class="form-required">*</span></th>
+                        <td>
+							<select id="agelist" class="form-control" name="post[post_age]" style="width: 140px;">
+								<foreach name="ages" item="vo">
+								<option value="{$vo.name}">{$vo.name}</option>
+								</foreach>
+							</select>
+                        </td>
+                    </tr>
+	
+                     <tr>
+                        <th>馆藏</th>
+                        <td>
+							<select id="museumlist" class="form-control" name="post[post_museum]" style="width: 140px;">
+								<foreach name="museums" item="vo">
+								<option value="{$vo.museum_name}">{$vo.museum_name}</option>
+								</foreach>
+							</select>
+                        </td>
+
+                    </tr>
+			-->
+
+                    <tr>
+                        <th>标题<span class="form-required">*</span></th>
+                        <td>
+                            <input id="post-id" type="hidden" name="post[id]" value="{$post.id}">
+                            <input class="form-control" type="text" name="post[post_title]"
+                                   required value="{$post.post_title}" placeholder="请输入标题"/>
+                        </td>
+                    </tr>
+                   
+                    <tr>
+                        <th>关键词</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_keywords]" value="{$post['post_keywords']}" placeholder="请输入关键字">
+                            <p class="help-block">多关键词之间用英文逗号隔开</p>
+                        </td>
+                    </tr>
+					
+                    <tr>
+					<!--
+                        <th>文章来源</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_source]"
+                                   value="{$post['post_source']}" placeholder="请输入文章来源">
+                        </td>
+					-->
+                    </tr>
+					<tr>
+                        <th>作者</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_author]"
+                                   value="{$post['post_author']}" placeholder="请输入作品作者">
+                        </td>
+                    </tr>
+                    <tr style="display:none">
+                        <th>摘要</th>
+                        <td>
+                            <textarea class="form-control" name="post[post_excerpt]" style="height: 30px;"
+                                      placeholder="请填写摘要">{$post.post_excerpt}</textarea>
+                        </td>
+					
+                    </tr>
+                    <tr>
+                        <th>内容</th>
+                        <td>
+                            <script type="text/plain" id="content" name="post[post_content]">{$post.post_content}</script>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>相册</th>
+                        <td>
+                            <ul id="photos" class="pic-list list-unstyled form-inline">
+                                <notempty name="post.more.photos">
+                                    <foreach name="post.more.photos" item="vo">
+                                        <php>$img_url=cmf_get_image_preview_url($vo['url']);</php>
+                                        <li id="saved-image{$key}">
+                                            <input id="photo-{$key}" type="hidden" name="photo_urls[]"
+                                                   value="{$vo.url}">
+                                            <input class="form-control" id="photo-{$key}-name" type="text"
+                                                   name="photo_names[]"
+                                                   value="{$vo.name|default=''}" style="width: 200px;" title="图片名称">
+                                            <img id="photo-{$key}-preview"
+                                                 src="{:cmf_get_image_preview_url($vo['url'])}"
+                                                 style="height:36px;width: 36px;"
+                                                 onclick="parent.imagePreviewDialog(this.src);">
+                                            <a href="javascript:uploadOneImage('图片上传','#photo-{$key}');">替换</a>
+                                            <a href="javascript:(function(){$('#saved-image{$key}').remove();})();">移除</a>
+                                        </li>
+                                    </foreach>
+                                </notempty>
+                            </ul>
+                            <a href="javascript:uploadMultiImage('图片上传','#photos','photos-item-tpl');"
+                               class="btn btn-sm btn-default">选择图片</a>
+                        </td>
+                    </tr>
+					<!--
+                    <tr>
+                        <th>附件</th>
+                        <td>
+                            <ul id="files" class="pic-list list-unstyled form-inline">
+                                <notempty name="post.more.files">
+                                    <foreach name="post.more.files" item="vo">
+                                        <php>$file_url=cmf_get_file_download_url($vo['url']);</php>
+                                        <li id="saved-file{$key}">
+                                            <input id="file-{$key}" type="hidden" name="file_urls[]"
+                                                   value="{$vo.url}">
+                                            <input class="form-control" id="file-{$key}-name" type="text"
+                                                   name="file_names[]"
+                                                   value="{$vo.name}" style="width: 200px;" title="图片名称">
+                                            <a id="file-{$key}-preview" href="{$file_url}" target="_blank">下载</a>
+                                            <a href="javascript:uploadOne('文件上传','#file-{$key}','file');">替换</a>
+                                            <a href="javascript:(function(){$('#saved-file{$key}').remove();})();">移除</a>
+                                        </li>
+                                    </foreach>
+                                </notempty>
+                            </ul>
+                            <a href="javascript:uploadMultiFile('附件上传','#files','files-item-tpl','file');"
+                               class="btn btn-sm btn-default">选择文件</a>
+                        </td>
+                    </tr>
+					
+                    <tr>
+                        <th>音频</th>
+                        <td class="form-inline">
+                            <input id="file-audio" class="form-control" type="text" name="post[more][audio]"
+                                   value="{$post.more.audio|default=''}" placeholder="请上传音频文件" style="width: 200px;">
+                            <notempty name="post.more.audio">
+                                <a id="file-audio-preview" href="{:cmf_get_file_download_url($post.more.audio)}"
+                                   target="_blank">下载</a>
+                            </notempty>
+
+                            <a href="javascript:uploadOne('文件上传','#file-audio','audio');">上传</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>视频</th>
+                        <td class="form-inline">
+                            <input id="file-video" class="form-control" type="text" name="post[more][video]"
+                                   value="{$post.more.video|default=''}" placeholder="请上传视频文件" style="width: 200px;">
+                            <notempty name="post.more.video">
+                                <a id="file-video-preview" href="{:cmf_get_file_download_url($post.more.video)}"
+                                   target="_blank">下载</a>
+                            </notempty>
+                            <a href="javascript:uploadOne('文件上传','#file-video','video');">上传</a>
+                        </td>
+                    </tr>
+					-->
+					<!--
+					<tr>
+                        <th>style流派标签</th>
+                        <td class="form-inline">
+							<foreach name="post_tags" item="vo">
+								<if condition="$vo.type eq 1">
+									<span class="label label-default">
+										<text>"{$vo.name}"</text>
+									</span>&nbsp;
+								</if>
+							</foreach>         
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>genres类型标签</th>
+                        <td class="form-inline">
+							<foreach name="post_tags" item="vo">
+								<if condition="$vo.type eq 2">
+									<span class="label label-default">
+										<text>"{$vo.name}"</text>
+									</span>&nbsp;
+								</if>
+							</foreach>         
+                        </td>
+                    </tr>	
+                    <tr>
+                        <th>media材质标签</th>
+                        <td class="form-inline">
+							<foreach name="post_tags" item="vo">
+								<if condition="$vo.type eq 3">
+									<span class="label label-default">
+										<text>"{$vo.name}"</text>
+									</span>&nbsp;
+								</if>
+							</foreach>         
+                        </td>
+                    </tr>
+					-->
+                    <tr>
+                        <th>材质</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_material]"
+                                   value="{$post['post_material']}" placeholder="请输入作品材质">
+                        </td>
+                    </tr>	
+                    <tr>
+                        <th>规格</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_size]"
+                                   value="{$post['post_size']}" placeholder="请输入作品规格">
+                        </td>
+                    </tr>
+	
+                    <tr>
+                        <th>形式</th>
+                        <td>
+                            <input class="form-control" type="text" name="post[post_shape]"
+                                   value="{$post['post_shape']}" placeholder="请输入作品形式">
+                        </td>
+                    </tr>					
+                </table>
+
+                <hook name="portal_admin_article_edit_view_main"/>
+            </div>
+            <div class="col-md-3">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>缩略图</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="text-align: center;">
+                                <input type="hidden" name="post[more][thumbnail]" id="thumbnail"
+                                       value="{$post.more.thumbnail|default=''}">
+                                <a href="javascript:uploadOneImage('图片上传','#thumbnail');">
+                                    <if condition="empty($post.more.thumbnail)">
+                                        <img src="__TMPL__/public/assets/images/default-thumbnail.png"
+                                             id="thumbnail-preview"
+                                             width="135" style="cursor: pointer"/>
+                                        <else/>
+                                        <img src="{:cmf_get_image_preview_url($post.more.thumbnail)}"
+                                             id="thumbnail-preview"
+                                             width="135" style="cursor: pointer"/>
+                                    </if>
+                                </a>
+                                <input type="button" class="btn btn-sm btn-cancel-thumbnail" value="取消图片">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>发布时间</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input class="form-control js-bootstrap-datetime" type="text" name="post[published_time]"
+                                   value="{:date('Y-m-d H:i',$post['published_time'])}">
+                        </td>
+                    </tr>
+                    <!--
+                    <tr>
+                        <th>评论</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label style="width: 88px"><a
+                                    href="javascript:openIframeDialog('{:url('comment/commentadmin/index',array('post_id'=>$post['id']))}','评论列表')">查看评论</a></label>
+                        </td>
+                    </tr>
+                    -->
+                    <tr>
+                        <th>状态</th>
+                        <php>
+                            $status_yes=$post['post_status']==1?"checked":"";
+                            $is_top_yes=$post['is_top']==1?"checked":"";
+                            $recommended_yes=$post['recommended']==1?"checked":"";
+                        </php>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="post-status-checkbox" name="post[post_status]" value="1"
+                                           {$status_yes}>发布
+                                    <span id="post-status-error" style="color: red;display: none"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="is-top-checkbox" name="post[is_top]" value="1"
+                                              {$is_top_yes}>置顶</label>
+                                <span id="is-top-error" style="color: red;display: none"></span>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" id="recommended-checkbox" name="post[recommended]" value="1"
+                                           {$recommended_yes}>推荐
+                                    <span id="recommended-error" style="color: red;display: none"></span>
+                                </label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>作品模板</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select class="form-control" name="post[more][template]" id="more-template-select">
+                                <option value="">请选择模板</option>
+                                <foreach name="article_theme_files" item="vo">
+                                    <php>$value=preg_replace('/^portal\//','',$vo['file']);</php>
+                                    <option value="{$value}">{$vo.name} {$vo.file}.html</option>
+                                </foreach>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+                <hook name="portal_admin_article_edit_view_right_sidebar"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script type="text/javascript">
+    //编辑器路径定义
+    var editorURL = GV.WEB_ROOT;
+</script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+
+        editorcontent = new baidu.editor.ui.Editor();
+        editorcontent.render('content');
+        try {
+            editorcontent.sync();
+        } catch (err) {
+        }
+
+        $('.btn-cancel-thumbnail').click(function () {
+            $('#thumbnail-preview').attr('src', '__TMPL__/public/assets/images/default-thumbnail.png');
+            $('#thumbnail').val('');
+        });
+
+        $('#more-template-select').val("{$post.more.template|default=''}");
+    });
+
+    function doSelectCategory() {
+        var selectedCategoriesId = $('#js-categories-id-input').val();
+        openIframeLayer("{:url('AdminCategory/select')}?ids=" + selectedCategoriesId, '请选择分类', {
+            area: ['700px', '400px'],
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+                //do something
+
+                var iframeWin          = window[layero.find('iframe')[0]['name']];
+                var selectedCategories = iframeWin.confirm();
+                if (selectedCategories.selectedCategoriesId.length == 0) {
+                    layer.msg('请选择分类');
+                    return;
+                }
+                $('#js-categories-id-input').val(selectedCategories.selectedCategoriesId.join(','));
+                $('#js-categories-name-input').val(selectedCategories.selectedCategoriesName.join(' '));
+                //console.log(layer.getFrameIndex(index));
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            }
+        });
+    }
+
+   function doSelectAge() {
+        var selectedAgesId = $('#js-ages-id-input').val();
+        openIframeLayer("{:url('AdminCategory/select')}?ids=" + selectedAgesId, '请选择年代', {
+            area: ['700px', '400px'],
+            btn: ['确定', '取消'],
+            yes: function (index, layero) {
+                //do something
+
+                var iframeWin          = window[layero.find('iframe')[0]['name']];
+                var selectedAges = iframeWin.confirm();
+                if (selectedAges.selectedAgesId.length == 0) {
+                    layer.msg('请选择年代');
+                    return;
+                }
+                $('#js-ages-id-input').val(selectedAges.selectedAgesId.join(','));
+                $('#js-ages-name-input').val(selectedAges.selectedAgesName.join(' '));
+                //console.log(layer.getFrameIndex(index));
+                layer.close(index); //如果设定了yes回调，需进行手工关闭
+            }
+        });
+    }
+
+
+</script>
+
+<script>
+
+    var publishYesUrl   = "{:url('AdminArticle/publish',array('yes'=>1))}";
+    var publishNoUrl    = "{:url('AdminArticle/publish',array('no'=>1))}";
+    var topYesUrl       = "{:url('AdminArticle/top',array('yes'=>1))}";
+    var topNoUrl        = "{:url('AdminArticle/top',array('no'=>1))}";
+    var recommendYesUrl = "{:url('AdminArticle/recommend',array('yes'=>1))}";
+    var recommendNoUrl  = "{:url('AdminArticle/recommend',array('no'=>1))}";
+
+    var postId = $('#post-id').val();
+
+    //发布操作
+    $("#post-status-checkbox").change(function () {
+        if ($('#post-status-checkbox').is(':checked')) {
+            //发布
+            $.ajax({
+                url: publishYesUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#post-status-checkbox').removeAttr("checked");
+                        $('#post-status-error').html(data.msg).show();
+
+                    } else {
+                        $('#post-status-error').hide();
+                    }
+                }
+            });
+        } else {
+            //取消发布
+            $.ajax({
+                url: publishNoUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#post-status-checkbox').prop("checked", 'true');
+                        $('#post-status-error').html(data.msg).show();
+                    } else {
+                        $('#post-status-error').hide();
+                    }
+                }
+            });
+        }
+    });
+
+    //置顶操作
+    $("#is-top-checkbox").change(function () {
+        if ($('#is-top-checkbox').is(':checked')) {
+            //置顶
+            $.ajax({
+                url: topYesUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#is-top-checkbox').removeAttr("checked");
+                        $('#is-top-error').html(data.msg).show();
+
+                    } else {
+                        $('#is-top-error').hide();
+                    }
+                }
+            });
+        } else {
+            //取消置顶
+            $.ajax({
+                url: topNoUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#is-top-checkbox').prop("checked", 'true');
+                        $('#is-top-error').html(data.msg).show();
+                    } else {
+                        $('#is-top-error').hide();
+                    }
+                }
+            });
+        }
+    });
+    //推荐操作
+    $("#recommended-checkbox").change(function () {
+        if ($('#recommended-checkbox').is(':checked')) {
+            //推荐
+            $.ajax({
+                url: recommendYesUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#recommended-checkbox').removeAttr("checked");
+                        $('#recommended-error').html(data.msg).show();
+
+                    } else {
+                        $('#recommended-error').hide();
+                    }
+                }
+            });
+        } else {
+            //取消推荐
+            $.ajax({
+                url: recommendNoUrl, type: "post", dataType: "json", data: {ids: postId}, success: function (data) {
+                    if (data.code != 1) {
+                        $('#recommended-checkbox').prop("checked", 'true');
+                        $('#recommended-error').html(data.msg).show();
+                    } else {
+                        $('#recommended-error').hide();
+                    }
+                }
+            });
+        }
+    });
+
+
+$(document).ready(function() {
+	var ages_json = '<?php echo $ages_json; ?>'
+	var museums_json = '<?php echo $museums_json; ?>'
+	var categories_json = '<?php echo $categories_json; ?>'
+	var post_age = '<?php echo $post_age; ?>'
+	var post_museum = '<?php echo $post_museum; ?>'
+	var post_category_id = '<?php echo $post_category_id; ?>'
+    var post_keyword = '<?php echo $post_keyword; ?>'
+    var keywords = new Array("国画","书法","玉器","石器","金银器","青铜器","碑帖拓本","文玩","文房用品","珠宝饰品","钱币","竹木牙角","篆刻","玻璃器","家具","陶瓷","雕刻","雕塑","珐琅器","古籍","金属器","景泰蓝","武备仪仗","印章","武器","版画","纺织刺绣","帝后玺册","服装","音乐戏曲","漆器","器物","生活用具","钟表仪器","宗教文物","铭刻","工具","连环画","碑志","插图","年画","革命文物","古建","剪纸","考古","面具","墓葬","皮影","漆画","外国文物","玩具","照片","油画","综合艺术","其他","壁画","素描","未分类")
+	
+
+	
+	ages = JSON.parse(ages_json)
+	var ageIndex = 23;
+	for(var i=0; i <ages.length; i++){
+		if (post_age == ages[i]['name'])
+		{
+			ageIndex = i;
+			break;
+		}
+	}
+
+	museums = JSON.parse(museums_json)
+	var museumIndex = 54;
+	for(var i=0; i <museums.length; i++){
+		if (post_museum == museums[i]['museum_name'])
+		{
+			museumIndex = i;
+			break;
+		}
+	}
+
+	
+	categories = JSON.parse(categories_json)
+	var categoryIndex = 0;
+	for(var i=0; i <categories.length; i++){
+		if (post_category_id == categories[i]['id'])
+		{
+			categoryIndex = i;
+			break;
+		}
+	}
+
+	var keywordIndex = 0;
+    
+	for(var i=0; i <keywords.length; i++){
+        
+		if (post_keyword == keywords[i])
+		{
+			keywordIndex = i;
+			break;
+		}
+	}
+  
+  
+	 document.getElementById("museumlist")[museumIndex].selected=true; 
+	 document.getElementById("agelist")[ageIndex].selected=true; 
+	 document.getElementById("categorylist")[categoryIndex].selected=true; 
+     document.getElementById("keywordlist")[keywordIndex].selected=true;
+ 
+  });
+
+
+
+
+</script>
+
+
+</body>
+</html>

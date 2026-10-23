@@ -1,0 +1,181 @@
+
+
+<!DOCTYPE html>
+<html lang="zh">
+<meta charset="UTF-8"> 
+<script src="https://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script src="__TMPL__/public/assets/js/bootstrap.js"></script>
+<script src="__TMPL__/public/assets/js/md5.js"></script>
+<script src="__TMPL__/public/assets/js/common-scripts.js"></script>
+<script src="__TMPL__/public/assets/js/jquerylightslider/js/jquery.lightSlider.js"></script> 
+<script src="__TMPL__/public/assets/js/lightgallery/js/lightgallery.js"></script>
+<script src="__TMPL__/public/assets/js/lightgallery/js/lg-zoom.js"></script>
+<script src="__TMPL__/public/assets/js/lightgallery/js/lg-thumbnail.js"></script>
+<script src="__STATIC__/js/frontend.js"></script>
+<script type="text/javascript" src="__TMPL__/public/assets/js/current.js"></script>
+<script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+
+<script src="__TMPL__/public/assets/js/openseadragon-bin-2.4.0/openseadragon.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
+<link rel="stylesheet" href="__TMPL__/public/assets/js/lightgallery/css/lightgallery.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />
+ <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/base.css" type="text/css" media="screen" />
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+
+
+
+<block name="head">
+	<meta charset="'UTF-8'">
+	<title>艺术云库高清大图</title>
+	<meta charset="UTF-8">
+	<meta name="keywords" content="{$site_info.site_seo_keywords|default=''}"/>
+	<meta name="description" content="{$site_info.site_seo_description|default=''}">
+	<meta name="author" content="Crazy">
+	<link rel="shortcut icon" href="__TMPL__/public/assets/imgs/favicon.png">
+	   
+	<include file="public@scripts"/>
+	 
+ <style>
+ 
+    .imagestyle {
+      text-align: center;
+      background: transparent;
+    }
+   .btn-style-change {
+        display: inline-block;
+        margin-bottom: 0;
+        font-weight: normal;
+        text-align: center;
+        vertical-align: middle;
+        cursor: pointer;
+        background-image: none;
+        border: 1px solid transparent;
+        white-space: nowrap;
+        padding: 1px 8px;
+        font-size: 13px;
+        line-height: 1.428571429;
+        border-radius: 3px;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        user-select: none;
+        
+       
+    }
+  </style>
+
+
+
+
+</block>
+
+
+
+<body style="background:transparent">
+  
+
+    
+    <div class="imagestyle">
+ 
+        <img id="stylepic" class="img002" src="{$imagebase64}"/>
+    </div>
+     <div class="imagestyle">
+    	
+         
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('cartoon')">卡通</button>
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('pencil')">铅笔</button>   
+<!--        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('color_pencil')">彩铅</button>-->
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('warm')">糖块</button>                      
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('wave')">浮世绘</button>
+<!--        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('lavender')">薰衣草</button>   -->
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('mononoke')">奇异</button>
+  <!--      <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('scream')">呐喊</button>-->                     
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn-style-change"  style="margin-top:10px;" type="button" onclick="changestyle('gothic')">哥特</button>  
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn btn-success btn-style-change"  style="margin-top:10px;" type="button" onclick="closestyle()">关闭</button>
+        
+    </div>
+    
+    <!-- <div class="imagestyle">
+    	
+         
+        <button defaultImage="__TMPL__/public/assets/images/default-thumbnail.png" class="btn btn-success btn-style-change"  style="margin-top:10px;" type="button" onclick="close('cartoon')">关闭</button>
+        
+    </div>  -->
+
+<script>
+
+
+function changestyle(shifttype)
+{
+    
+   var index = layer.load()   
+    
+    
+    
+        imageUrl = '<?php echo $imageUrl; ?>'
+     
+          $.ajax({
+        type: "POST",
+        //data: formatjsons(key_md5),
+        url: "https://www.hongmengyishu.com/portal/searchimage/getStyleShift?shifttype="+shifttype+"&image_url="+imageUrl,
+        success: function(ret) {
+            layer.close(index)
+            var obj = JSON.parse(ret)
+            
+                   
+            document.getElementsByTagName("img")[0].setAttribute("src",obj.image)
+           
+       
+        },
+        error:function(){
+            layer.close(index)
+            alert("失败");
+        }
+    });      
+  
+}
+
+function closestyle()
+{
+    var index = parent.layer.getFrameIndex(window.name)
+    parent.layer.close(index)
+    //parent.layer.closeAll()
+  
+}
+
+
+
+
+$(document).ready(function() {
+    
+    var obj = document.getElementById("stylepic");
+    var base64 = '<?php echo $imagebase64; ?>';
+    var img = new Image();
+    img.src = base64;
+    img.onload = function(){
+      //  alert('width:'+img.width+',height:'+img.height);
+        if(img.width>=img.height){
+            obj.setAttribute("width", "95%");
+        }else{
+            obj.setAttribute("height", "95%");
+        }
+  
+    };    
+    
+    
+    
+ 
+    
+
+});
+
+
+
+
+
+
+ </script>
+
+</body>
+</html>

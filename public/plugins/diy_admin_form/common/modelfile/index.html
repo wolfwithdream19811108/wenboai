@@ -1,0 +1,74 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">{ITEM_ALL}</a></li>
+        <li><a href="{ADMIN_ADD}">{ITEM_ADD}</a></li>
+    </ul>
+    <form class="well form-inline" method="post" action="{ADMIN_INDEX}">
+        {//列表页顶部查询字段}
+        {INDEX_QUERY}
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{ADMIN_INDEX}">重置</a>
+        &nbsp;
+        <a class="btn btn-success" href="{ADMIN_EXPORT}">导出</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            {//批量设置字段值}
+            {BATCH_SETFIELD}
+            {//批量删除}
+            {BATCH_DELETE}
+        </div>
+
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all"
+                               data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                {//INDEX_LIST_HEAD}
+                <th  class="text-center">操作</th>
+            </tr>
+            </thead>
+            <notempty name="list">
+                <foreach name="list" item="vo">
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y"
+                                   data-xid="js-check-x" name="ids[]" value="{ROW_ID}">
+                        </td>
+                        {//INDEX_LIST_DATA}
+                        <td class="text-center">
+                            <a title="编辑" class="btn btn-xs btn-primary"
+                               href="{ADMIN_EDIT}">编辑</a>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+        </table>
+        <div class="well well-sm text-danger"  style="margin-bottom: 0">
+            合计:{$total|default='0'}
+            {//INDEX_COUNT}
+        </div>
+        <div class="text-center">
+            <ul class="pagination" style="margin-bottom: 0;margin-top: 10px">{$page|default=''}</ul>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    function reloadPage(win) {
+        win.location.reload();
+    };
+    $(function () {
+        setCookie("refersh_time", 0);
+    });
+</script>
+</body>
+</html>

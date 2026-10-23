@@ -1,0 +1,251 @@
+<head>
+
+    
+</head>
+
+<extend name="public@base"/>
+
+<block name="head">
+    <title>{$site_info.site_name|default=''}:{$article.post_title}</title>
+    <meta name="keywords" content="{$site_info.site_seo_keywords|default=''},{$article.post_title},{$article.post_category},{$article.post_author},{$article.post_museum},{$article.post_age}"/>
+    <meta name="description" content="{$site_info.site_seo_description|default=''},{$article.post_title},{$article.post_category},{$article.post_author},{$article.post_museum},{$article.post_age}:{$description}"/>
+    <meta name="author" content="{$article.post_author}"> 
+</block>
+
+<block name="body">
+    <include file="public@breadcrumb"/>
+
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <!--blog start-->
+            <div class="col-lg-8">
+                      
+   						<ul id="imageGallery" >
+							<foreach name="$article['more']['photos']" item="vo">
+								<li data-thumb="<?php echo cmf_get_image_url_with_token($vo['url'],'!w300'); ?>" data-src="">
+								  <if condition="cmf_is_mobile()">  
+                                      <if condition="$article['bigimg'] eq 0 ">
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" />  
+                                      <else />
+    										<img src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w400'); ?>" onclick="bigimg('/portal/image/index?image=<?php echo ($vo['url']); ?>')"/>
+    								  </if> 								  
+								  <else />
+                                      <if condition="$article['bigimg'] eq 0 ">
+                                            <img  data-original="<?php echo cmf_get_image_url_with_token($vo['url']); ?>" src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" />  
+                                      <else />
+    										<img src="<?php echo cmf_get_image_url_with_token($vo['url'],'!w1000'); ?>" onclick="bigimg('/portal/image/index?image=<?php echo ($vo['url']); ?>')"/>
+    								  </if>  
+								  </if> 
+								</li>
+							</foreach>
+						</ul>                   
+                      
+					
+
+						<hook name="before_content" />
+							<div class="mar-b-30">{$article.post_content}</div>
+							<notempty name="$article.page">
+								<ul class="pagination">
+									{$article.page}
+								</ul>
+							</notempty>
+
+			</div>
+			
+			
+			
+
+            <!--右侧栏目-->
+            <div class="col-lg-3 mar-b-30">
+                <ul class="artwork">
+	
+				    <span style="font-weight:bold;font-size:25px">{$article.post_title}</span>
+					<li>作者： <a target="_blank" href="{:cmf_url('portal/artist_article_list/index',['author'=>$article.post_author])}">{$article.post_author}</a></span></li>
+                    <li>年代： <a target="_blank" href="/?times={$article.post_age}">{$article.post_age}</a></span></li>
+					<li>种类： <a target="_blank" href="/?category={$article.post_category_id}">{$article.post_category}</a></li>
+					<li>规格： {$article.post_size}</span></li>
+					<li>材质： {$article.post_material}</span></li>
+					<li>馆藏： <a target="_blank" href="/portal/museum?museum={$article.post_museum_id}">{$article.post_museum}</a></span></li>
+				<!--	<li>{$source}</li>-->
+					<!--	<a class="btn btn-primary" href="{:url('user/favorite/add',array('id'=>1))}" >收藏</a>-->
+					<a href="{:url('user/favorite/add')}" id="js-favorite-btn" class="js-favorite-btn btn btn-success" data-title="{:base64_encode($article.post_title)}"
+					   data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}"
+					   data-table="portal_post" data-id="{$article['id']}"  style="margin-top:10px;" >
+						<i class="fa fa-star-o"></i> 收藏
+					</a>
+					<a target="_blank" href="/portal/searchimage/index?image_url={:cmf_get_image_url_with_token($article['more']['photos'][0]['url'],'!300X')}" class="btn btn-success"  style="margin-top:10px;" >
+						<i class="fa fa-file-image-o"></i> 相似作品
+					</a>
+					<!--<a class="btn btn-danger" href="/portal/admin_article/index.html">清空</a>-->
+				<if condition="$userId eq 1 ">  
+					<a href="{:url('AdminArticle/delete')}" id="js-favorite-btn" class="js-favorite-btn" data-title="{:base64_encode($article.post_title)}"
+					   data-url="{:cmf_url_encode('portal/Article/index',array('id'=>$article['id']))}"
+					   data-table="portal_post" data-id="{$article['id']}">
+						<i class="fa fa-star-o"></i> 删除
+					</a>
+                 </if>
+                </ul>
+            </div>
+            <!--blog end-->
+
+
+
+        </div>
+    </div>
+    <!--container end-->
+	
+
+	
+		<!--其它相关作品-->
+	<div class="container">
+		<div class="row mar-b-50">
+			<div class="col-md-12">
+				<!--版块内容-->
+					<!--版块标题-->
+					<div class="text-center feature-head wow fadeInDown">
+						<h1 class="">猜你喜欢</h1>
+					</div>
+					<div class="feature-box">
+						<foreach name="recommend_articles" item="vo">
+							<div class="col-md-4 col-sm-4 text-center wow fadeInUp">
+								<div class="feature-box-heading">
+									<em>
+									    <figure class="effect-ruby">
+                                        <a href="{:cmf_url('portal/article/index',['id'=>$vo['id']])}">
+										<img src="{:cmf_get_image_url_with_token($vo.more.thumbnail,'!w300')}" width="400" height="400">
+                                        </a>
+                                        </figure>
+                                    </em>
+									<div style=" white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center">
+									<h5><b>{$vo.post_title}</b></h5>
+									</div>
+								</div>
+							</div>
+						</foreach>
+					</div>
+			</div>
+		</div>
+	</div>
+
+
+</block>
+
+
+<block name="scripts">
+  
+<script>
+
+<if condition="$article['bigimg'] eq 0 ">  
+	var viewer = new Viewer(document.getElementById('imageGallery'), {
+		url: 'data-original',
+		maxZoomRatio:50,
+		title:true,
+		show: function() {
+		 //  fullScreen();
+		},
+		viewed: function() {
+		   viewer.fullImage($(document).width()-100);
+		},
+		hide: function() {
+	//	   fullScreen();
+		}
+	});
+</if> 
+
+	$(document).ready(function() {
+		$('#imageGallery').lightSlider({
+		gallery:true,
+		minSlide:1,
+		maxSlide:1,
+		currentPagerPosition:'centercenter'  
+		});  
+
+	});
+
+
+function bigimg(url)
+{
+
+  articleId = '<?php echo $articleId; ?>'
+  url = url + "&"+"articleId="+articleId
+  var bigimgurl=""
+   
+  if (url.indexOf("故宫博物院M")==-1)
+  {
+    url =url.replace("压缩图","高清")  
+  }
+//	fullScreen();
+ //window.location.href=url;
+
+/*	var height = window.screen.height-250;
+	var width = window.screen.width-250;*/
+	
+	var height = window.innerHeight;
+	var width = window.innerWidth;	
+	
+	width = width + 'px'
+	height = height+'px'
+
+   var index = layer.open({
+      type: 2,
+      //title: '艺术云库高清展示',
+      title:false,
+      scrollbar:false,
+      maxmin: true,
+      shade: [0.8, '#393D49'],
+      shadeClose:true,
+      anim: 2,
+      area: [width,height],
+      content: url ,
+      end: function(){
+      //  fullScreen();
+      },
+
+    });
+  //layer.full(index)
+}
+
+
+/*
+ * 浏览器全屏
+ */
+function fullScreen() {
+
+	/*判断是否全屏*/
+   	var isFullscreen = document.fullScreenElement//W3C
+			    	||document.msFullscreenElement //IE
+			    	||document.mozFullScreenElement //火狐
+			    	||document.webkitFullscreenElement //谷歌
+			    	||false;
+   	if(!isFullscreen){
+	   	var el = document.documentElement;
+   		if (el.requestFullscreen) { 
+   			el.requestFullscreen(); 
+	    } else if (el.mozRequestFullScreen) { 
+	    	el.mozRequestFullScreen(); 
+	    } else if (el.webkitRequestFullscreen) { 
+	    	el.webkitRequestFullscreen(); 
+	    } else if (el.msRequestFullscreen) { 
+	    	el.msRequestFullscreen(); 
+	    } 
+   	}else{
+   		if (document.exitFullscreen) { 
+   			document.exitFullscreen(); 
+	    } else if (document.msExitFullscreen) { 
+	    	document.msExitFullscreen(); 
+	    } else if (document.mozCancelFullScreen) { 
+	    	document.mozCancelFullScreen(); 
+	    } else if (document.webkitCancelFullScreen) { 
+	    	document.webkitCancelFullScreen(); 
+	    } 
+   	}
+
+
+}
+
+</script>
+
+
+
+</block>

@@ -1,0 +1,66 @@
+<div class="blog-side-item">
+    <div class="search-row">
+        <input type="text" class="form-control" placeholder="搜索">
+    </div>
+    <widget name="hottest_articles">
+        <div class="category ranking">
+            <h3> {$widget.title} </h3>
+            <empty name="$widget.vars.hottest_articles_category_id">
+                没有设置文章分类，请在后台设置。
+                <else/>
+                <ul class="list-unstyled">
+                    <portal:articles limit="50" order="post.post_hits DESC" categoryIds="$widget.vars.hottest_articles_category_id">
+                        <li>
+                            <a href="{:cmf_url('portal/Article/index', ['id'=>$vo.id])}">
+                                <i class="fa fa-angle-right pr-10"></i> {$vo.post_title}
+                            </a>
+                        </li>
+                    </portal:articles>
+                </ul>
+            </empty>
+        </div>
+    </widget>
+
+    <widget name="last_articles">
+        <div class="blog-post">
+            <h3>{$widget.title}</h3>
+            <empty name="$widget.vars.last_articles_category_id">
+                没有设置文章分类，请在后台设置。
+                <else/>
+                <portal:articles limit="5" order="post.published_time DESC" categoryIds="$widget.vars.last_articles_category_id">
+                    <div class="media">
+                        <a class="pull-left" href="{:cmf_url('portal/Article/index', ['id'=>$vo.id])}">
+                            <img src="{$vo.more.thumbnail|default='__TMPL__/public/assets/img/newsicon.jpg'|cmf_get_image_url}">
+                        </a>
+                        <div class="media-body">
+                            <p>
+                                <a href="{:cmf_url('portal/Article/index', ['id'=>$vo.id])}">
+                                    {$vo.post_title}
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </portal:articles>
+            </empty>
+        </div>
+    </widget>
+
+<div class=" blog-post">
+  <h3>广告位1</h3>
+	<a href="https://promotion.aliyun.com/ntms/act/enterprise-discount.html?userCode=te28rbll" target="_blank">
+	<img style="width: 80%; height:80%;margin:auto;overflow:hidden" src="https://www.crazys.pub/upload/default/20190518/fcfa96af4c540a5c04663893b655163c.jpg"></a>
+</div>
+
+<div class="blog-post">
+  <h3>广告位2</h3>
+  <a href="#" target="_blank" rel="nofollow" title="支付宝打赏" >
+  <img style="width: 80%; height:80%;margin:auto;overflow:hidden" src="https://www.crazys.pub/upload/default/20190420/718c5609a71da471d33a74c2bc93e569.png" alt="支付宝打赏" ></a>
+</div>
+
+<div class="blog-post">
+  <h3>艺术不易 打个赏呗</h3>
+  <a href="#" target="_blank" rel="nofollow" title="支付宝打赏" >
+  <img style="width: 80%; height:80%;margin:auto;overflow:hidden" src="/upload/ad/shouqian.png" alt="支付宝打赏" ></a>
+</div>
+
+

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta   http-equiv= "Pragma"   content= "no-cache" /> 
+    <meta   http-equiv= "Cache-Control"   content= "no-cache" /> 
+    <meta   http-equiv= "Expires"   content= "0" /> 
+    <title>CART-AIGC 中国工艺美术智能内容生成平台</title>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/jquery.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/viewer/dist/viewer.js"></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/viewer/dist/viewer.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="__TMPL__/public/assets/css/aiimage.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="__TMPL__/public/assets/css/aiimagemain.css" type="text/css" media="screen" />
+    <link href="__STATIC__/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="__TMPL__/public/assets/js/layer-v3.1.1/layer/layer.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/lightbox2-2.11.4/dist/js/lightbox-plus-jquery.js"></script>
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/lightbox2-2.11.4/dist/css/lightbox.css" type="text/css" media="screen" />
+<!--    <link rel="stylesheet" href="__TMPL__/public/assets/js/jquerylightslider/css/lightSlider.css" type="text/css" media="screen" />-->
+    <link rel="stylesheet" href="__TMPL__/public/assets/js/viewer/dist/viewer.css" type="text/css" media="screen" />  
+<!--    <script src="__TMPL__/public/assets/js/jquerylightslider/js/jquery.lightSlider.js"></script> -->
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/lightgallery.umd.js"></script>
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/plugins/thumbnail/lg-thumbnail.umd.js"></script>
+    <script src="__TMPL__/public/assets/js/lightGallery-master/dist/plugins/zoom/lg-zoom.umd.js"></script>
+    <script type="text/javascript" src="__TMPL__/public/assets/js/mp.mansory.js"></script> 
+    <script type="text/javascript" src="/themes/Acme/public/assets/js/hover-dropdown.js"></script>
+    
+ <link href="__TMPL__/public/assets/css/bootstrap.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/theme.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/bootstrap-reset.css" rel="stylesheet">
+
+
+<!-- Custom styles for this template -->
+<link href="__TMPL__/public/assets/css/style.css" rel="stylesheet">
+<link href="__TMPL__/public/assets/css/hovercss/component.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/demo.css" rel="stylesheet"/>
+<link href="__TMPL__/public/assets/css/hovercss/normalize.css" rel="stylesheet"/>
+
+
+
+    <script type="text/javascript" src="__TMPL__/public/assets/js/forge.min.js"></script>
+  
+   
+
+    <script src="__STATIC__/js/frontend.js"></script>
+    
+    
+</head>
+
+
+ <style>
+ 
+.header {
+  text-align: left;
+  margin: 0 auto;
+  padding: 10px;
+  color: white;
+  height: 60px;
+  background: black;
+  font-size: 21px;
+  font-weight: bolder;
+} 
+.header a {
+  margin-right: 30px;
+  color: white;
+  text-decoration: none;
+  margin-left: 30px;
+  font-size: 16px;
+}
+.header a.active {
+    color: rgb(0, 255, 236);
+}
+.aiimge-select-main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.aiimge-select-basemodel {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.aiimge-select {
+display: flex;
+  flex-wrap: wrap;
+  width: 600px;
+  align-items: center;
+  justify-content: center;
+}
+
+.aiimge-slect-box {
+  width: 80px;
+  height: 80px;
+  margin: 5px;
+  position: relative;
+   /* 添加点击选中时的边框样式 */
+  border: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.aiimge-slect-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.aiimge-img-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aiimge-slect-box:hover .aiimge-img-mask {
+  opacity: 1;
+}
+.aiimge-slect-box.selected {
+  /* 添加选中时的边框样式 */
+  border-color: #fff;
+}
+.aiimge-slect-box span {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: #fff;
+  font-size: 14px;
+}
+
+.aiimge-hover-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 30px;
+  background-color: #fff;
+  border-radius: 50%;
+}
+
+.aiimge-hover-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.aiimge-slect-box:hover .aiimge-hover-mask {
+  opacity: 1;
+}
+
+.aiimge-slect-box .text-mask {
+  position: absolute;
+  left: 0px;
+  width: 65%;
+  height: 25%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+}
+
+.aiimge-slect-box .text-mask span {
+  position: absolute;
+  bottom: 3px;
+  left: 2px;
+}
+
+
+
+ .graph-d20-search-wrapper-camera {
+      position: absolute;
+      right: 16px;
+      width: 24px;
+      height: 24px;
+      margin-top: 8px;
+      background: url(https://mms-graph.cdn.bcebos.com/activity/pc/camera.png)
+        no-repeat;
+      background-size: contain;
+    }
+    
+    .graph-d20-search-wrapper-input {
+      width: 90%;
+      color: #222;
+      font-size: 16px;
+      height: 16px;
+      line-height: 17px;
+      padding: 12px 0;
+      text-indent: 14px;
+      border: 0;
+      outline: 0;
+      -webkit-appearance: none;
+      border-radius: 10px 0 0 10px;
+      margin-top: 5px;
+      display: none;
+    }
+    
+    .dashed-box {
+      width: 100%;
+      height: 100px;
+      border: 1px dashed #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-size: 12px;
+      flex-direction: column;
+
+    }
+    
+    .dashed-box:hover {
+      cursor: pointer;
+    }
+    
+    .upload-area-icon {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+.ref-img-container {
+  display: flex;
+  align-items: center;
+}
+
+.image-container {
+  position: relative;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.image-container:hover .overlay {
+  opacity: 1;
+}
+
+.icons {
+  display: flex;
+}
+
+.delete-icon,
+.change-icon {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.ref-img-row {
+  display: flex;
+}
+
+/* 其他样式代码 */
+
+
+.ref-img-weight {
+  border: 2px solid #242424;
+  border-radius: 10px;
+  padding: 10px;
+  display: none;
+  margin-left: 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* 其他样式代码 */
+
+
+.slider-container {
+  position: relative;
+  width: 150px;
+  margin-top: 20px;
+  font-size:14px;
+}
+.slider-description {
+  font-size:11px;
+  display: inline-block;
+}
+#slider {
+  width: 100%;
+  background-image: linear-gradient(to right, rgb(0, 255, 236) 0%, rgb(0, 255, 236) calc((var(--value) - 1) * 10%), transparent calc((var(--value) - 1) * 10%), transparent 100%);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  border-radius: 10px;
+  height: 5px;
+}
+
+.slider-value {
+  position: absolute;
+  top: -20px;
+  left: calc((var(--value) - 1) * 10% + 10px);
+  transform: translateX(-50%);
+  text-align: center;
+  color: rgb(0, 255, 236);
+}
+.baseModels {
+    display: flex;
+    color: white;
+}
+#min-value {
+  color: rgb(0, 255, 236);
+  position: absolute;
+  top: -20px;
+}
+#max-value {
+  color: rgb(0, 255, 236);
+  position: absolute;
+  top: -20px;
+  right:-10px;
+}
+
+
+.myskin{
+        background-color: transparent;/*背景透明*/
+        box-shadow: 0 0 0 rgba(0,0,0,0);/*前景无阴影*/
+    }
+
+/* 移除默认的Webkit样式 */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+/* 清除Firefox和IE的内边距 */
+select::-ms-expand {
+    display: none;
+}
+/* 样式化下拉框 */
+.baseModels {
+    position: relative;
+    display: inline-block;
+    display: flex;
+    color: white;
+    align-items: center;
+}
+.baseModels select {
+    display: inline-block;
+    padding: 2px 15px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #000;
+    color: #fff;
+    font-size: 14px;
+    outline: none;
+}
+.baseModels select:focus {
+    border-color: #999;
+}
+/* 隐藏弹出层 */
+  .listoverlay{
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 1;
+  }
+
+  /* 显示弹出层 */
+  .listoverlay.active {
+    display: block;
+  }
+
+/* 弹出表单样式 */
+.table-container {
+    width: 100%;
+    max-width: 1000px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: '楷体', 'KaiTi', 'STKaiti', serif;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid black;
+  font-size:20px;
+/*  padding: 8px;*/
+}
+
+.tablebody {
+  display: block;
+  height: 400px; /* 设置表格的高度 */
+  overflow-y: scroll; /* 添加垂直滚动条 */
+}
+
+thead{
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* 固定表格布局 */
+}
+.tabletr {
+  display: table;
+  width: 100%;
+  table-layout: fixed; /* 固定表格布局 */
+}
+
+
+.tabletr.highlight {
+  background-color: rgba(0, 255, 236, 0.71); /* 设置高亮背景颜色 */
+  outline: none; /* 去除默认的焦点边框 */
+}
+
+
+/*自动chatdesign设计遮罩层*/
+#chat-design-loading {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  flex-direction: column;
+}
+
+.loader {
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid rgba(0, 255, 236, 0.71);
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.message {
+  color: #fff;
+  font-size: 24px;
+  margin-top: 20px;
+}
+
+#gptInput{
+  display: flex;
+  height: 30px;
+  margin: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+  align-items: center;
+  font-size: 22px;
+}
+.gptBtn {
+  margin-left: 10px;
+  margin-right: 10px;
+  width: 120px;
+  height: 30px;
+  background: rgb(0, 255, 236);
+  border-radius: 10px;
+  font-size: 20px;
+  line-height: 30px;
+  text-align: center;
+  color: black;
+  align-items: center;
+  border-radius: 10px;
+  justify-content: center;
+  background-color: rgb(0, 255, 236);
+  font-weight: border;
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  display: flex;  
+  
+}
+.gptBtn:hover {
+    background: rgba(0, 255, 236, 0.5);
+}
+
+
+
+/* 弹出表单样式 */
+.everything2art {
+    width: 100%;
+    height: 80%;
+    max-width: 1200px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    font-family: '楷体', 'KaiTi', 'STKaiti', serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.my-gallery-container {
+    overflow-y: auto;
+}
+
+
+.lg-toolbar-next:before {
+  content: "\e094";
+}
+.lg-toolbar-prev:before {
+  content: "\e095";
+}
+
+/** Below CSS is completely optional **/
+
+.gallery-item {
+  width: 200px;
+  padding: 5px;
+}
+.item {
+/*  border: #2e7ca2 2px solid;*/
+  width: 100%;
+  background-color: white;
+  min-height: 100px;
+  max-height: 500px;
+/*  padding: 5px;*/
+  margin: 10px 0px;
+/*  box-shadow: rgba(0, 0, 0, 0.5) 0px 2px 2px;*/
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: bold;
+}
+.item.selected {
+  border: rgba(0, 255, 236, 0.5) 2px solid;
+}
+
+#user-points {
+  font-size:16px;
+  margin-top: 10px;
+}
+.user-charge{
+  font-size:16px;
+  margin-top: 10px;
+}
+
+ </style>
+
+<body>
+     <div class="header" id="main-menu" style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="display: inline-block;">CART-AIGC 中国工艺美术智能内容生成平台</div>
+         <a href="https://www.hongmengyishu.com/ai">AI创艺</a>
+        <div style="display: inline-block; text-align: right; font-size:16px">
+            <php>$user=cmf_get_current_user();</php>
+            <if condition="empty($user['id'])">
+                <a href="{:cmf_url('user/Login/index')}" style="display: inline-block; vertical-align: top;"><i class="fa fa-sign-in"></i> &nbsp;登录</a>
+                <a href="{:cmf_url('user/Register/index')}" style="display: inline-block; vertical-align: top;"><i class="fa fa-user"></i> &nbsp;注册</a>
+            <else/>
+                
+                <notempty name="points">
+                    作品记录数：{$total} 积分：{$points}
+                </notempty>
+                
+  <!--               <if condition="$isLogin eq 1 ">
+                        <a onclick="javascript:charge_mobile()" style="font-size: 16px;margin-left: 5px;margin-right: 5px;cursor: pointer;color:rgb(0, 255, 236)">充值</a>  
+                </if> -->             
+                
+                <if condition="empty($user['avatar'])">
+                    <img src="__TMPL__/public/assets/img/headicon.png" class="headicon" style="display: inline-block; vertical-align: top;">
+                <else/>
+                    <img src="{:cmf_get_user_avatar_url($user['avatar'])}" class="headicon" width="30" style="display: inline-block; vertical-align: top;">
+                </if>
+                <span class="user-nickname">{$user['user_nickname']}</span><b class="caret"></b>
+                
+                <a href="{:cmf_url('user/Index/logout')}" style="display: inline-block; vertical-align: top;"><i class="fa fa-sign-out"></i> &nbsp;退出</a>  
+                
+                       
+                 
+            </if>            
+        </div>
+     </div>  
+    
+    
+    
+
+    <div class="col-lg-12">
+        
+        <div class="row">
+            	
+             <div class="my-gallery-container" id="my-gallery-container">
+            	<foreach name="worksArray" item="vo">
+            		<div class="item" onclick="activeItem(this)">
+            
+            			<div  align="left" class="blog-img img">
+            			    <figure class="effect-ruby">
+                                      <img class="img002" src="{$vo.picture_url}" />
+                                      <!--<img class="img002" src="{$vo.picture_url}" onclick="everythingDesign(this)"/>-->
+            				</figure>
+            			</div>
+            			<p>创作时间：{$vo.create_date}</p>
+            			<p>作品描述语：{$vo.prompt}</p>
+                        
+            		</div>
+            	</foreach>
+ 
+            </div> 	
+            	
+            
+           
+        </div>              
+
+  
+ 		<div class="text-center">
+			<ul class="pagination">{$page|default=''}</ul>
+		</div>       
+
+                   
+        
+    </div>    
+
+
+    
+ 
+    
+    <script>    
+       
+
+
+    //全局变量
+    var GV = {
+        ROOT: "__ROOT__/",
+        WEB_ROOT: "__WEB_ROOT__/",
+        JS_ROOT: "static/js/"
+    };
+    
+
+	
+      
+
+$(document).ready(function() {
+
+            	$("#my-gallery-container").mpmansory(
+				{
+					childrenClass: 'item', // default is a div
+					columnClasses: 'padding', //add classes to items
+					breakpoints:{
+						lg: 2, //一行4个
+						md: 4, 
+						sm: 6,
+						xs: 12
+					},
+					onload: function (items) {
+						//make somthing with items
+					} 
+				});
+
+
+ 
+  });
+  
+
+
+
+
+        
+    </script>
+    <script src="__STATIC__/js/wind.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,326 @@
+/* General Styles */
+.chat-container {
+  max-width: 800px;
+  margin: 0 auto;
+
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  height: 95%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.chat-header {
+    background-color: #1890ff;
+    color: white;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ai-disclaimer {
+    font-size: 9px;
+    color: #fff;
+    margin-left: 10px;
+}
+.chat-messages {
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #fafafa;
+  flex: 1;
+  min-height: 100px;
+}
+
+.message {
+    margin-bottom: 15px;
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+    position: relative;
+}
+
+.user-message {
+    background-color: #1890ff;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 5px;
+}
+
+.bot-message {
+    background-color: #e6e6e6;
+    color: #333;
+    margin-right: auto;
+    border-bottom-left-radius: 5px;
+}
+
+.bot-message a {
+    color: #1890ff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.bot-message a:hover {
+    color: #004499;
+    text-decoration: underline;
+}
+
+.chat-input {
+    display: flex;
+    padding: 15px;
+    border-top: 1px solid #eee;
+    background-color: #fff;
+}
+
+#message-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    font-size: 16px;
+}
+
+#analysisImage,
+#send-button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    background-color: #48cfad;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#analysisImage:hover,
+#send-button:hover {
+    background-color: #39b797;
+}
+
+#analysisImage:disabled,
+#send-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.typing-indicator {
+    display: none;
+    color: #666;
+    font-style: italic;
+    margin-bottom: 15px;
+}
+
+.cancel-button {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+    background: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #999;
+}
+
+.message-loading {
+    opacity: 0.7;
+}
+
+/* Deep Analysis Button Style */
+.btn-deep-analysis {
+    transition: all 0.3s ease;
+    padding: 8px 20px;
+    font-size: 16px;
+    border-radius: 30px;
+    background-color: #48cfad;
+    color: white;
+    border: none;
+    box-shadow: 0 2px 10px rgba(72, 207, 173, 0.3);
+    cursor: pointer;
+}
+
+.btn-deep-analysis:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(72, 207, 173, 0.4);
+    background-color: #39b797;
+}
+
+.btn-deep-analysis i {
+    margin-right: 5px;
+}
+
+/* Preset Button Container Style */
+.preset-buttons {
+    display: flex;
+    gap: 10px;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    flex-wrap: wrap;
+}
+
+/* Preset Button Style */
+.preset-buttons button {
+    flex: 1;
+    min-width: 200px;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 25px;
+    background-color: #48cfad;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+/* Hover Effect for Buttons */
+.preset-buttons button:hover {
+    background-color: #39b797;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Active Effect for Buttons */
+.preset-buttons button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .preset-buttons {
+        flex-direction: column;
+    }
+    
+    .preset-buttons button {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .chat-container {
+        max-width: 100%;
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    
+    .chat-header {
+        font-size: 16px;
+        padding: 10px;
+    }
+    
+    .chat-input {
+        padding: 10px;
+    }
+
+    #message-input {
+        font-size: 14px;
+    }
+
+    .message {
+        max-width: 100%;
+    }
+}
+
+/* For Small Screens (Mobile) */
+@media (max-width: 600px) {
+    .chat-header {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .chat-input {
+        padding: 8px;
+    }
+
+    #message-input {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .preset-buttons button {
+        width: 100%;
+        min-width: auto;
+        font-size: 14px;
+    }
+
+    .message {
+        padding: 8px 12px;
+    }
+    
+    /* Make Buttons Full Width on Small Screens */
+    #analysisImage,
+    #send-button {
+        width: 100%;
+        padding: 12px;
+    }
+
+    /* Adjust chat container for mobile */
+    .chat-container {
+        max-width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+    }
+
+    .typing-indicator {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+
+    .cancel-button {
+        font-size: 14px;
+    }
+}
+
+/* New Header Button Style */
+#interpret-btn {
+    font-size: 14px;
+    padding: 6px 15px;
+    border-radius: 15px;
+    background: #48cfad;
+    color: white;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#interpret-btn:hover {
+    background: #39b797;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Keyframe for Loading Animation */
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.loading {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid white;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: rotate 1s linear infinite;
+}
+
+/* Disabled Button Style */
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}

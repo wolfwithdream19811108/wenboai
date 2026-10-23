@@ -1,0 +1,84 @@
+services:
+  web:
+    image: nginx:1.26-alpine
+    ports:
+      - "${APP_PORT:-8088}:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      php:
+        condition: service_healthy
+    restart: unless-stopped
+
+  php:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    environment:
+      CMF_ENV: local
+      CMF_DATABASE_MODE: ${DB_MODE:-local}
+      CMF_AUTHCODE: local-auth-code
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: ${MYSQL_DATABASE:-wenboai_local}
+      DB_USERNAME: ${MYSQL_USER:-wenboai}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-wenboai_local}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      MOONSHOT_API_KEY: ${MOONSHOT_API_KEY:-}
+      AIORNOT_API_TOKEN: ${AIORNOT_API_TOKEN:-}
+      TENCENT_COS_SECRET_ID: ${TENCENT_COS_SECRET_ID:-}
+      TENCENT_COS_SECRET_KEY: ${TENCENT_COS_SECRET_KEY:-}
+      QINIU_ACCESS_KEY: ${QINIU_ACCESS_KEY:-}
+      QINIU_SECRET_KEY: ${QINIU_SECRET_KEY:-}
+      ALIYUN_CAPTCHA_ACCESS_KEY_ID: ${ALIYUN_CAPTCHA_ACCESS_KEY_ID:-}
+      ALIYUN_CAPTCHA_ACCESS_KEY_SECRET: ${ALIYUN_CAPTCHA_ACCESS_KEY_SECRET:-}
+      YIDUN_SECRET_KEY: ${YIDUN_SECRET_KEY:-}
+      YIDUN_SECRET_ID: ${YIDUN_SECRET_ID:-}
+      YIDUN_AUDIT_BUSINESS_ID: ${YIDUN_AUDIT_BUSINESS_ID:-}
+      YIDUN_NON_AUDIT_BUSINESS_ID: ${YIDUN_NON_AUDIT_BUSINESS_ID:-}
+      YIDUN_BUSINESS_ID: ${YIDUN_BUSINESS_ID:-}
+      JIANYUAN_CLIENT_KEYS: ${JIANYUAN_CLIENT_KEYS:-}
+      NEO4J_URI: ${NEO4J_URI:-}
+      NEO4J_HTTP_URI: ${NEO4J_HTTP_URI:-}
+      NEO4J_USERNAME: ${NEO4J_USERNAME:-}
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-}
+      NEO4J_ENCRYPTION_KEY: ${NEO4J_ENCRYPTION_KEY:-}
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "php-fpm -t 2>/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  db:
+    image: mysql:5.7
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --sql-mode=NO_ENGINE_SUBSTITUTION
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-wenboai_local}
+      MYSQL_USER: ${MYSQL_USER:-wenboai}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-wenboai_local}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root_local_only}
+      TZ: Asia/Shanghai
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./app/install/data/thinkcmf.sql:/docker-entrypoint-initdb.d/00-thinkcmf.sql:ro
+      - ./docker/mysql/init/10-local.sql:/docker-entrypoint-initdb.d/10-local.sql:ro
+      - ./docker/mysql/import:/docker-entrypoint-initdb.d/import:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

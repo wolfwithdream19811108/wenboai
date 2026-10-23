@@ -1,0 +1,8 @@
+{
+    "name": "默认文章页",
+    "action": "portal/Article/index",
+    "description": "默认文章页",
+    "order": 10.0,
+    "more": {
+    }
+}

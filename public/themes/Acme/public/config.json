@@ -1,0 +1,78 @@
+{
+    "name": "模板全局配置",
+    "action": "public/Config",
+    "description": "模板全局配置文件",
+    "is_public": "1",
+    "order": 0.0,
+    "more": {
+        "vars": {
+            "enable_mobile": {
+                "title": "手机注册",
+                "name": "ThinkCMF",
+                "type": "select",
+                "value": 1,
+                "options": {
+                    "1": "开启",
+                    "0": "关闭"
+                },
+                "tip": ""
+            },
+            "gl_address": {
+                "title": "公司地址",
+                "value": "",
+                "type": "text",
+                "tip": "请输入公司地址",
+                "rule": []
+            },
+            "gl_mobile": {
+                "title": "手机号码",
+                "value": [],
+                "type": "array",
+                "item": {
+                    "mobile": {
+                        "title": "手机号码",
+                        "type": "text",
+                        "value": ""
+                    }
+                },
+                "tip": "请输入联系手机号码"
+            },
+            "gl_tel": {
+                "title": "联系电话",
+                "value": [],
+                "type": "array",
+                "item": {
+                    "tel": {
+                        "title": "电话号码",
+                        "type": "text",
+                        "value": ""
+                    }
+                },
+                "tip": "请输入固定电话号码",
+                "rule": []
+            },
+            "gl_email": {
+                "title": "电子邮箱",
+                "value": "",
+                "type": "text",
+                "tip": "请输入电子邮箱",
+                "rule": []
+            },
+            "gl_qq": {
+                "title": "联系QQ",
+                "value": "478519726",
+                "type": "text",
+                "tip": "多个 QQ以英文逗号隔开",
+                "rule": {
+                    "require": false
+                }
+            },
+            "gl_qrcode": {
+                "title": "二维码图片",
+                "value": "",
+                "type": "image",
+                "tip": "请选择图片，注意尺寸不要过大"
+            }
+        }
+    }
+}

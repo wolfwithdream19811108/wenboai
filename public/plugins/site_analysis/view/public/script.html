@@ -1,0 +1,17 @@
+<script src="__PLUGIN_TMPL__/js/bootstrap.min.js"></script>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    // bootstrap日期选择器日期+时间选择器
+    var bootstrapDateInput = $("input.js-bootstrap-date");
+    if (bootstrapDateInput.length) {
+        Wind.css('bootstrapDatetimePicker');
+        Wind.use('bootstrapDatetimePicker', function () {
+            bootstrapDateInput.datetimepicker({
+                language: 'zh-CN',
+                format: 'yyyy-mm-dd',
+                todayBtn: 1,
+                autoclose: true
+            });
+        });
+    }
+</script>

@@ -1,0 +1,196 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li><a href="{:url('AdminPortalCurrentArtists/index')}">所有人才表</a></li>
+        <li class="active"><a href="#">添加人才表</a></li>
+    </ul>
+    <form action="{:url('AdminPortalCurrentArtists/addPost')}"
+          method="post" class="form-horizontal js-ajax-form margin-top-20">
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table table-bordered">
+                    <tr>
+						<th width="150">ID<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="id"
+                                   required value="" 
+                                   placeholder="请输入ID"/>
+						</td>
+					</tr>
+					<tr>
+						<th>NAME<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="name"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入NAME"/>
+						</td>
+					</tr>
+					<tr>
+						<th>ARTISTID<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="artistid"
+                                   required value="" 
+                                   placeholder="请输入ARTISTID"/>
+						</td>
+					</tr>
+					<tr>
+						<th>AVATAR<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="avatar"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入AVATAR"/>
+						</td>
+					</tr>
+					<tr>
+						<th>WORKS_NUM<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="works_num"
+                                   required value="" 
+                                   placeholder="请输入WORKS_NUM"/>
+						</td>
+					</tr>
+					<tr>
+						<th>HASAVATAR<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="hasavatar"
+                                   required value="" 
+                                   placeholder="请输入HASAVATAR"/>
+						</td>
+					</tr>
+					<tr>
+						<th>ETHNICITY<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="ethnicity"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入ETHNICITY"/>
+						</td>
+					</tr>
+					<tr>
+						<th>CATEGORY<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="category"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入CATEGORY"/>
+						</td>
+					</tr>
+					<tr>
+						<th>WORKS_NAME<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="works_name"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入WORKS_NAME"/>
+						</td>
+					</tr>
+					<tr>
+						<th>TITLE<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="title"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入TITLE"/>
+						</td>
+					</tr>
+					<tr>
+						<th>HONOR<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="honor"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入HONOR"/>
+						</td>
+					</tr>
+					<tr>
+						<th>HONOR2<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="honor2"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入HONOR2"/>
+						</td>
+					</tr>
+					<tr>
+						<th>BIRTH_DATE<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="birth_date"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入BIRTH_DATE"/>
+						</td>
+					</tr>
+					<tr>
+						<th>BIRTH_PLACE<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="birth_place"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入BIRTH_PLACE"/>
+						</td>
+					</tr>
+					<tr>
+						<th>PROVINCE<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="province"
+                                   required value=""  maxlength="255"
+                                   placeholder="请输入PROVINCE"/>
+						</td>
+					</tr>
+					<tr>
+						<th>DESC<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="desc"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入DESC"/>
+						</td>
+					</tr>
+					<tr>
+						<th>LIFE<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="life"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入LIFE"/>
+						</td>
+					</tr>
+					<tr>
+						<th>CHARACTER<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="character"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入CHARACTER"/>
+						</td>
+					</tr>
+					<tr>
+						<th>ACHIEVEMENT<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="achievement"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入ACHIEVEMENT"/>
+						</td>
+					</tr>
+					<tr>
+						<th>COMMENTS<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="comments"
+                                   required value=""  maxlength="65535"
+                                   placeholder="请输入COMMENTS"/>
+						</td>
+					</tr>
+					<tr>
+						<th>WEIGHT<span class="form-required">*</span></th>
+						<td>
+							<input class="form-control" type="text" name="weight"
+                                   required value="" 
+                                   placeholder="请输入WEIGHT"/>
+						</td>
+					</tr>
+
+                </table>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary js-ajax-submit">{:lang('SAVE')}</button>
+                <a class="btn btn-default" href="javascript:history.back(-1);">{:lang('BACK')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+</body>
+</html>

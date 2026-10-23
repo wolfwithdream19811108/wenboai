@@ -1,0 +1,8 @@
+{
+  "name": "图片列表页（带右侧导航）",
+  "action": "portal/list/index",
+  "description": "图片列表页（带右侧导航）",
+  "order": 1.0,
+  "more": {
+  }
+}

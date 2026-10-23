@@ -1,0 +1,11 @@
+.git
+.idea
+.env
+data/runtime
+docker/mysql/import
+node_modules
+simplewind/vendor
+simplewind/新建文件夹
+*.log
+*.tar.gz
+*.zip

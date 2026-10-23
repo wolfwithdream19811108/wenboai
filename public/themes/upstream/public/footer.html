@@ -1,0 +1,80 @@
+<section class="section section-footer pb-0">
+    <widget name="footer">
+        <php>
+            $footerAbout=ApiService::page($widget['vars']['footAbouttId']);
+            $footerContact=ApiService::page($widget['vars']['footContactId']);
+        </php>
+        <div class="section-footer-nav mb-40">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-md-6 col-lg-4 mb-30">
+                        <div class="footer-about">
+                            <notempty name="widget.vars.footer_logo">
+                                <img src="{:cmf_get_image_url($widget.vars.footer_logo)}"
+                                     alt="{$footerAbout.post_title}" class="img-footer-about mb-20">
+                                <else/>
+                                <h2 class="footer-title mb-20">
+                                    {$widget.vars.footAboutTitle|default=$about.post_title}</h2>
+                                <div class="separator-2"></div>
+                            </notempty>
+
+                            <p>{$footerAbout.post_excerpt}</p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-2 mb-30">
+                        <div class="footer-quick-nav">
+                            <h2 class="footer-title mb-20">{$widget.vars.footNavTitle}</h2>
+                            <div class="separator-2"></div>
+                            <navigation nav-id="$widget['vars']['footNavId']" root="ul" id="footer-quick-nav" class=""
+                                        max-level="1">
+                                <navigationMenu root="li" class="footer-nav-item footer-nav-level-{$level}">
+                                    <a href="{$menu.href|default=''}" target="{$menu.target|default=''}">{$menu.name|default=''}</a>
+                                </navigationMenu>
+                            </navigation>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-30">
+                        <div class="footer-contact">
+                            <h2 class="footer-title mb-20">{$widget.vars.footContactTitle}</h2>
+                            <div class="separator-2"></div>
+                            <div class="contact-body">
+                                {$footerContact.post_content}
+                            </div>
+                            <notempty name="widget.vars.qcode">
+                                <div class="contact-qcode">
+                                    <img src="{:cmf_get_image_url($widget.vars.qcode)}"
+                                         alt="{$widget.vars.footContactTitle}" class="img-fluid">
+                                </div>
+                            </notempty>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-3 mb-30">
+                        <h2 class="footer-title mb-20">友情链接</h2>
+                        <div class="separator-2"></div>
+                        <links>
+                            <a href="{$vo.url|default=''}" target="{$vo.target|default=''}">{$vo.name|default=''}</a>&nbsp;
+                        </links>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </widget>
+    <div class="section-copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <p>{$theme_vars.site_copyright}
+                        备案号:
+                        <notempty name="site_info.site_icp">
+                            <a href="http://www.miitbeian.gov.cn/" target="_blank">{$site_info.site_icp}</a>
+                            <else/>
+                            请在后台设置"网站信息"设置"备案信息"
+                        </notempty>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<include file="public@online"/>
+<div class="scrollToTop circle fadeToTop"><i class="fa fa-angle-up"></i></div>

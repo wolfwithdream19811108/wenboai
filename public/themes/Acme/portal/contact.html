@@ -1,0 +1,153 @@
+<extend name="public@base"/>
+<block name="head">
+    <title>联系我们</title>
+    <script src="//api.map.baidu.com/api?v=1.3"></script>
+</block>
+<block name="body">
+    <include file="public@breadcrumb_page"/>
+
+    <div class="contact-map" style="margin-top: -40px;">
+        <div id="mapCanvas" style="width: 100%; height: 400px">
+            <php>
+                $company_location=empty($theme_vars['company_location'])?'121.449222,31.193348':$theme_vars['company_location'];
+                $company_location=explode(',',$company_location);
+                $company_location_lng=$company_location[0];
+                $company_location_lat=$company_location[1];
+            </php>
+            <script type="text/javascript">
+                var map = new BMap.Map("mapCanvas"); // 创建Map实例
+                var point = new BMap.Point("{$company_location_lng}", "{$company_location_lat}"); // 创建点坐标
+                map.centerAndZoom(point, 15); // 初始化地图,设置中心点坐标和地图级别。
+                //map.enableScrollWheelZoom(); //启用滚轮放大缩小
+                //添加缩放控件
+                map.addControl(new BMap.NavigationControl());
+                map.addControl(new BMap.ScaleControl());
+                map.addControl(new BMap.OverviewMapControl());
+
+                var marker = new BMap.Marker(point); // 创建标注
+                map.addOverlay(marker); // 将标注添加到地图中
+                var infoWindow = new BMap.InfoWindow("{$theme_vars.baidu_map_info_window_text|htmlspecialchars_decode|default=''}"); // 创建信息窗口对象
+                marker.openInfoWindow(infoWindow);
+            </script>
+        </div>
+    </div>
+
+    <!--container start-->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5 col-sm-5 address">
+                <notempty name="$theme_vars.gl_address">
+                    <section class="contact-infos">
+                        <h4 class="title custom-font text-black">地址：</h4>
+                        <address><i class="fa fa-home pr-10"></i> {$theme_vars.gl_address}</address>
+                    </section>
+                </notempty>
+                <notempty name="$theme_vars.gl_email">
+                    <section class="contact-infos">
+                        <h4 class="title custom-font text-black">邮箱</h4>
+                        <p><i class="fa fa-envelope pr-10"></i> {$theme_vars.gl_email|default=''} </p>
+                    </section>
+                </notempty>
+                <notempty name="$theme_vars.gl_tel">
+                    <section class="contact-infos">
+                        <h4>电话：</h4>
+                        <foreach name="$theme_vars.gl_tel" item="vo">
+                            <p>
+                                <i class="fa fa-phone pr-10"></i> {$vo.tel}
+                            </p>
+                        </foreach>
+                    </section>
+                </notempty>
+                <notempty name="$theme_vars.gl_mobile">
+                    <section class="contact-infos">
+                        <h4>手机：</h4>
+                        <foreach name="$theme_vars.gl_mobile" item="vo">
+                            <p>
+                                <i class="fa fa-mobile pr-10"></i> {$vo.mobile}
+                            </p>
+                        </foreach>
+                    </section>
+                </notempty>
+                <notempty name="$theme_vars.gl_qq">
+                    <section class="contact-infos">
+                        <h4>联系QQ：</h4>
+                        <p><i class="fa fa-qq pr-10"></i> {$theme_vars.gl_qq} </p>
+                    </section>
+                </notempty>
+            </div>
+            <div class="col-lg-7 col-sm-7 address">
+                <php>$guestbook=hook_one('guestbook');</php>
+                <if condition="empty($guestbook) && cmf_get_current_admin_id()">
+                    <div style="border: 1px dashed #ddd;min-height: 300px;padding-top: 100px;">
+                        <div class="alert alert-warning" role="alert">
+                            此区域这为留言区，请安装留言插件！<br>
+                            <em>注：普通用户不会看到此提示！</em>
+                        </div>
+                    </div>
+                </if>
+                {$guestbook}
+            </div>
+        </div>
+    </div>
+    <!--container end-->
+    <widget name="bottom">
+        <notempty name="$widget.vars.category_id">
+            <div class="container">
+                <div class="row">
+                    <div class='col-md-offset-2 col-md-8 text-center'>
+                        <h2>{$widget.vars.section_name}</h2>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-offset-2 col-md-8 mar-b-30">
+                        <div class="carousel slide" data-ride="carousel" id="quote-carousel">
+                            <!-- Bottom Carousel Indicators -->
+                            <ol class="carousel-indicators">
+                                <portal:articles limit="5" order="post.create_time DESC" field="post.id" categoryIds="$widget.vars.category_id">
+                                    <li data-target="#quote-carousel" data-slide-to="{$i-1}" {$i==1?='class="active"'}></li>
+                                </portal:articles>
+                            </ol>
+
+                            <!-- Carousel Slides / Quotes -->
+                            <div class="carousel-inner">
+                                <portal:articles limit="5" order="post.create_time DESC" categoryIds="$widget.vars.category_id">
+                                    <!-- Quote 1 -->
+                                    <div class="item {$i==1?='active'}">
+                                        <blockquote>
+                                            <div class="row">
+                                                <div class="col-sm-3 text-center">
+                                                    <img class="img-circle" src="{$vo.more.thumbnail|default='__TMPL__/public/assets/img/person_1.png'|cmf_get_image_url}"
+                                                         style="width: 100px;height:100px;" alt="">
+                                                </div>
+                                                <div class="col-sm-9">
+                                                    <p>{$vo.post_excerpt}</p>
+                                                    <small>{$vo.post_source}</small>
+                                                </div>
+                                            </div>
+                                        </blockquote>
+                                    </div>
+                                </portal:articles>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </notempty>
+    </widget>
+</block>
+<block name="scripts">
+    <script>
+        $(document).ready(function () {
+                //Set the carousel options
+                $('#quote-carousel').carousel({
+                        pause: true,
+                        interval: 4000,
+                    }
+                );
+            }
+        );
+    </script>
+</block>

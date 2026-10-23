@@ -1,0 +1,192 @@
+<in name="config_switch" value="1,2,3">
+	<link rel="stylesheet" href="__PLUGIN_TMPL__/assets/css/aside-nav.css" />
+	<style>
+		.bg-color{background: {$config_bgcolor|default='#0075c2'};color: {$config_bgcolor|default='#0075c2'};}
+		.nav-bottom-width{width:<php>echo 100/$config_mobile_switch.'%'</php>;}
+	</style>
+	<php>
+		if(isset($_GET['tel'])&&isset($_GET['name'])){
+			$adName = $_GET['name'];
+			$adTel = $_GET['tel'];
+		}else{
+			$adName = "";
+			$adTel = "";
+		}
+	</php>
+</in>
+<in name="config_switch" value="1,2">
+	<neq name="isMobile" value="true">
+		<!-- 右侧导航 -->
+		<in name="config_msg_switch" value="1,2">
+			<div id="iframe_box_bg" class="iframe_box_bg" onclick="closeIframe()">
+				<div class="iframe_box">
+					<div class="iframe_title">在线留言<a href="javascript:;" onclick="closeIframe()">关闭</a></div>
+					<div class="iframe_viwe">
+						<iframe name="IframeViwe" src="" frameborder="0" 'allowfullscreen'=""> </iframe><span>加载中...</span></div>
+				</div>
+			</div>
+		</in>
+		<aside class="aside-nav">
+			<div class="aside-nav-in">
+				<in name="config_home_switch" value="1,2">
+					<div class="nav-right more-width bg-color"><a href="/">
+							<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/zhuye.png" alt=""></div>
+							<div class="nav-right-desc bg-color">返回首页</div>
+						</a></div>
+				</in>
+				<in name="config_msg_switch" value="1,2">
+					<div class="nav-right more-width bg-color"><a href="{:cmf_plugin_url('MessageBoard://Index/index')}?cid=1" target="IframeViwe"
+						 onclick="openIframe()">
+							<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/liuyan.png" alt=""></div>
+							<div class="nav-right-desc bg-color">在线留言</div>
+						</a></div>
+				</in>
+				<in name="config_QQ_switch" value="1,2">
+					<notempty name="config_QQ">
+						<div class="nav-right more-width bg-color"><a href="tencent://message/?uin={$config_QQ}">
+								<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/QQ.png" alt=""></div>
+								<div class="nav-right-desc bg-color">客服QQ</div>
+							</a></div>
+					</notempty>
+				</in>
+				<in name="config_TEL_switch" value="1,2">
+					<notempty name="config_TEL">
+						<div class="nav-right more-width more-width-call bg-color"><a href="javascript:;">
+								<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/dianhua.png" alt=""></div>
+								<div class="nav-right-desc bg-color">{$config_TEL}</div>
+							</a></div>
+					</notempty>
+				</in>
+				<in name="config_contact_switch" value="1,2">
+					<notempty name="config_contact">
+						<div class="nav-right more-width bg-color"><a href="{$config_contact}">
+								<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/lianxi.png" alt=""></div>
+								<div class="nav-right-desc bg-color">联系我们</div>
+							</a></div>
+					</notempty>
+				</in>
+				<in name="config_QR_switch" value="1,2">
+					<notempty name="config_QR">
+						<div class="nav-right bg-color"><a href="javascript:;">
+								<div class="nav-right-img "><img src="__PLUGIN_TMPL__/assets/images/weixin.png" alt=""></div>
+								<div class="nav-right-qrcode bg-color"><img src="{:cmf_get_image_url($config_QR)}" alt="">
+									<p>扫码使用小程序</p>
+								</div>
+							</a></div>
+					</notempty>
+				</in>
+				<in name="config_webQR_switch" value="1,2">
+					<div class="nav-right bg-color"><a href="javascript:;">
+							<div class="nav-right-img "><img src="__PLUGIN_TMPL__/assets/images/erweima.png" alt=""></div>
+							<div class="nav-right-qrcode bg-color"><img src="{$config_webQR}" />
+								<p>带宽服务器都是钱</p>
+								<p>坚持免费开放</p>
+								<p>大家打个赏吧^_^</p>
+							</div>
+						</a></div>
+				</in>
+				<div class="nav-right more-width bg-color" onclick="backTop()"><a href="javascript:;">
+						<div class="nav-right-img"><img src="__PLUGIN_TMPL__/assets/images/top.png" alt=""></div>
+						<div class="nav-right-desc bg-color">返回顶部</div>
+					</a></div>
+			</div>
+		</aside>
+		<!-- 右侧导航end -->
+		<script type="text/javascript">
+			function closeIframe() {document.getElementById('iframe_box_bg').style.display = 'none';}
+			function openIframe() {document.getElementById('iframe_box_bg').style.display = 'block';}
+			function backTop() {$('body,html').animate({scrollTop: 0}, 600);}
+		</script>
+	</neq>
+</in>
+<in name="config_switch" value="1,3">
+	<eq name="isMobile" value="true">
+		<notempty name="adTel"><a href="tel:{$adTel}">
+				<div class="telbox">
+					<div class="telpic" style="background:url('__PLUGIN_TMPL__/assets/images/man.gif') no-repeat center/auto 40px;"></div>
+					<div class="telname">{$adName}<p>{$adTel}</p>
+					</div>
+					<div class="telico" style="background:url('__PLUGIN_TMPL__/assets/images/tel.gif') no-repeat center/auto 40px;"></div>
+				</div>
+			</a>
+		</notempty>
+		<!-- 底部导航end -->
+		<aside class="aside-bottom bg-color">
+			<in name="config_home_switch" value="1,3">
+				<div class="nav-bottom nav-bottom-width"><a href="/">
+						<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/zhuye.png" alt=""></div>
+						<div class="nav-bottom-text">首页</div>
+					</a>
+				</div>
+			</in>
+			<in name="config_msg_switch" value="1,3">
+				<div class="nav-bottom nav-bottom-width"><a href="/portal/museums">
+						<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/shouhou.png" alt=""></div>
+						<div class="nav-bottom-text">博物</div>
+					</a>
+				</div>
+			</in>
+			<in name="config_QQ_switch" value="1,3">
+					<div class="nav-bottom nav-bottom-width"><a href="/portal/artists">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/lianxi.png" alt=""></div>
+							<div class="nav-bottom-text">大家</div>
+						</a>
+					</div>
+			</in>
+			
+			<in name="config_webQR_switch" value="1,3">
+					<div class="nav-bottom nav-bottom-width"><a href="/portal/searchimage">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/erweima.png" alt=""></div>
+							<div class="nav-bottom-text">识物</div>
+						</a>
+					</div>
+			</in>	
+			<in name="config_webQR_switch" value="1,3">
+					<div class="nav-bottom nav-bottom-width"><a href="weixin://dl/business/?appid=wx18cda18a1accdf79&path=pages/tabbar/home/home">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/weixin.png" alt=""></div>
+							<div class="nav-bottom-text">小程序</div>
+						</a>
+					</div>
+			</in>
+			<in name="config_QR_switch" value="1,3">
+				<notempty name="config_QR">
+					<div class="nav-bottom nav-bottom-width"><a href="javascript:;">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/weixin.png" alt=""></div>
+							<div class="nav-right-qrcode"><img src="{:cmf_get_image_url($config_QR)}" alt=""></div>
+							<div class="nav-bottom-text">小程序:艺术云库</div>
+						</a>
+					</div>
+				</notempty>
+			</in>
+			<in name="config_webQR_switch" value="1,3">
+				<notempty name="config_webQR">
+					<div class="nav-bottom nav-bottom-width"><a href="javascript:;">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/erweima.png" alt=""></div>
+							<div class="nav-right-qrcode"><img src="{$config_webQR}{:request()->url(true)}" alt=""></div>
+							<div class="nav-bottom-text">分享页面</div>
+						</a>
+					</div>
+				</notempty>
+			</in>
+			<in name="config_contact_switch" value="1,3">
+				<notempty name="config_contact">
+					<div class="nav-bottom nav-bottom-width"><a href="{$config_contact}">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/lianxi.png" alt=""></div>
+							<div class="nav-bottom-text">联系我们</div>
+						</a>
+					</div>
+				</notempty>
+			</in>
+			<in name="config_TEL_switch" value="1,3">
+				<notempty name="config_TEL">
+					<div class="nav-bottom nav-bottom-width"><a href="tel:{$config_TEL}">
+							<div class="nav-bottom-img"><img src="__PLUGIN_TMPL__/assets/images/dianhua.png" alt=""></div>
+							<div class="nav-bottom-text">客服热线</div>
+						</a>
+					</div>
+				</notempty>
+			</in>
+		</aside>
+		<!-- 底部导航end -->
+	</eq>
+</in>

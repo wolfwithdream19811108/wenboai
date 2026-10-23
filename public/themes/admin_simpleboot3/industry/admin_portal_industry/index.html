@@ -1,0 +1,110 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap js-check-wrap">
+    <ul class="nav nav-tabs">
+        <li class="active"><a href="javascript:;">所有产业数据表</a></li>
+        <li><a href="{:url('AdminPortalIndustry/add')}">添加产业数据表</a></li>
+    </ul>
+    <form class="well form-inline" method="post" action="{:url('AdminPortalIndustry/index')}">
+        {//列表页顶部查询字段}
+        		&nbsp;公司名:
+		<input type="text" class="form-control" name="company" value="{$company|default=''}" placeholder="请输入公司名">
+		&nbsp;城市:
+		<input type="text" class="form-control" name="city" value="{$city|default=''}" placeholder="请输入城市">
+		&nbsp;每页行数:
+		<input type="text" name="page_num" class="form-control" value="{$page_num|default='10'}" style="width: 50px">
+        &nbsp;&nbsp;
+        <input type="submit" class="btn btn-primary" value="搜索"/>
+        <a class="btn btn-danger" href="{:url('AdminPortalIndustry/index')}">重置</a>
+        &nbsp;
+        <a class="btn btn-success" href="{:url('AdminPortalIndustry/export')}">导出</a>
+    </form>
+    <form class="js-ajax-form" action="" method="post">
+        <div class="table-actions">
+            {//批量设置字段值}
+            
+            {//批量删除}
+            <button class="btn btn-danger btn-xs js-ajax-submit" type="submit"
+                    data-action="{:url('AdminPortalIndustry/deleteRows')}" data-subcheck="true"
+                    data-msg="确定删除吗？">删除
+            </button>
+        </div>
+
+        <table class="table table-hover table-bordered table-list">
+            <thead>
+            <tr>
+                <th width="15">
+                    <label>
+                        <input type="checkbox" class="js-check-all"
+                               data-direction="x" data-checklist="js-check-x">
+                    </label>
+                </th>
+                <th width="100">公司名</th>
+				<th width="100">年份</th>
+				<th width="100">收入</th>
+				<th width="100">成本</th>
+				<th width="100">利润</th>
+				<th width="100">税收</th>
+				<th width="100">负债</th>
+				<th width="100">城市</th>
+
+                <th  class="text-center">操作</th>
+            </tr>
+            </thead>
+            <notempty name="list">
+                <foreach name="list" item="vo">
+                    <tr>
+                        <td>
+                            <input type="checkbox" class="js-check" data-yid="js-check-y"
+                                   data-xid="js-check-x" name="ids[]" value="{$vo.id}">
+                        </td>
+                        <td>{$vo.company}</td>
+						<td>{$vo.year}</td>
+						<td>{$vo.income}</td>
+						<td>{$vo.cost}</td>
+						<td>{$vo.net}</td>
+						<td>{$vo.tax}</td>
+						<td>{$vo.debt}</td>
+						<td>{$vo.city}</td>
+
+                        <td class="text-center">
+                            <a title="编辑" class="btn btn-xs btn-primary"
+                               href="{:url('AdminPortalIndustry/edit',array('id'=>$vo['id']))}">编辑</a>
+                        </td>
+                    </tr>
+                </foreach>
+            </notempty>
+        </table>
+        <div class="well well-sm text-danger"  style="margin-bottom: 0">
+            合计:{$total|default='0'}
+            收入合计数:{$sum_income|default='0'}
+			&nbsp;&nbsp;收入平均数:{$avg_income|default='0'}
+			&nbsp;&nbsp;收入最大值:{$max_income|default='0'}
+			&nbsp;&nbsp;收入最小值:{$min_income|default='0'}
+			&nbsp;&nbsp;成本合计数:{$sum_cost|default='0'}
+			&nbsp;&nbsp;成本平均数:{$avg_cost|default='0'}
+			&nbsp;&nbsp;成本最大值:{$max_cost|default='0'}
+			&nbsp;&nbsp;成本最小值:{$min_cost|default='0'}
+			&nbsp;&nbsp;利润合计数:{$sum_net|default='0'}
+			&nbsp;&nbsp;利润平均数:{$avg_net|default='0'}
+			&nbsp;&nbsp;利润最大值:{$max_net|default='0'}
+			&nbsp;&nbsp;利润最小值:{$min_net|default='0'}
+
+        </div>
+        <div class="text-center">
+            <ul class="pagination" style="margin-bottom: 0;margin-top: 10px">{$page|default=''}</ul>
+        </div>
+    </form>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>
+    function reloadPage(win) {
+        win.location.reload();
+    };
+    $(function () {
+        setCookie("refersh_time", 0);
+    });
+</script>
+</body>
+</html>

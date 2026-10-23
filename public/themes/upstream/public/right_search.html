@@ -1,0 +1,19 @@
+<div class="right-nav-v2">
+    <div class="head">
+        <h3>
+            <span>搜索</span>
+        </h3>
+        <div class="separator-2"></div>
+    </div>
+    <div class="body">
+        <div class="right-search-v1">
+            <form class="form-inline my-2 my-md-0" method="post" action="{:cmf_url('portal/Search/index')}">
+                <div class="form-group search-wrap">
+                    <input type="text" class="form-control" name="keyword" placeholder="Search"
+                           value="{:input('param.keyword','')}"><span class="input-group-btn"> <button
+                        class="btn-u" type="submit"><i class="fa fa-search"></i></button> </span>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

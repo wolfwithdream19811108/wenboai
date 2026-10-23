@@ -1,0 +1,188 @@
+<extend name="public@base" />
+<block name="body">
+	<include file="public@breadcrumb_page" />
+	<!--container start-->
+	<div class="container">
+		<div class="row">
+			<notempty name="$page.more.photos">
+				<div class="col-lg-5">
+					<div class="about-carousel wow fadeInLeft">
+						<div id="myCarousel" class="carousel slide">
+							<!-- Carousel items -->
+							<div class="carousel-inner">
+								<volist name="$page.more.photos" id="vo" empty="">
+									<div class="item {$i==1?'active':''}">
+										<img src="{$vo.url|cmf_get_image_url}" alt="{$vo.name}">
+										<div class="carousel-caption">
+											<p>{$vo.name}</p>
+										</div>
+									</div>
+								</volist>
+							</div>
+							<!-- Carousel nav -->
+							<a class="carousel-control left" href="#myCarousel" data-slide="prev">
+								<i class="fa fa-angle-left"></i>
+							</a>
+							<a class="carousel-control right" href="#myCarousel" data-slide="next">
+								<i class="fa fa-angle-right"></i>
+							</a>
+						</div>
+					</div>
+				</div>
+			</notempty>
+			<div class="col-lg-7 about wow fadeInRight">
+				{$page.post_content}
+			</div>
+		</div>
+		<widget name="second">
+			<notempty name="$widget.vars.category_id">
+				<div class="row">
+					<div class="hiring">
+						<h2 class="wow flipInX">{$widget.vars.section_name}</h2>
+						<portal:articles limit="$widget.vars.count" field="post.id,post_title,post_excerpt" order="post.published_time DESC"
+						 categoryIds="$widget.vars.category_id">
+							{$i%2==1?='<div class="row">'}
+								<div class="col-lg-6 col-sm-6 about-hiring">
+									<div class="icon-wrap ico-bg round-five wow zoomIn" data-wow-duration="1s" data-wow-delay=".1s">
+										<i class="fa fa-user"></i>
+									</div>
+									<div class="content">
+										<a href="{:cmf_url('portal/Article/index',['id'=>$vo.id,'cid'=>$widget.vars.category_id])}">
+											<h3 class="title wow flipInX">{$vo.post_title}</h3>
+										</a>
+										<p>{$vo.post_excerpt}</p>
+									</div>
+								</div>
+								{$i%2==0?='</div>'}
+						</portal:articles>
+					</div>
+				</div>
+			</notempty>
+		</widget>
+	</div>
+	<widget name="third">
+		<div class="gray-box">
+			<div class="container">
+				<div class="row">
+					<notempty name="$widget.vars.category_id">
+						<div class="col-lg-5">
+							<!--testimonial start-->
+							<div class="about-testimonial boxed-style about-flexslider ">
+								<section class="slider wow fadeInRight">
+									<div class="flexslider">
+										<ul class="slides about-flex-slides">
+											<portal:articles field="post.id,post_title,post_keywords,post_excerpt,more" order="post.published_time DESC"
+											 categoryIds="$widget.vars.category_id">
+												<li>
+													<div class="about-testimonial-image ">
+														<a href="{:cmf_url('portal/Article/index',['id'=>$vo.id,'cid'=>$widget.vars.category_id])}">
+															<img alt="" src="{$vo.more.thumbnail|cmf_get_image_url}">
+														</a>
+													</div>
+													<a class="about-testimonial-author" href="{:cmf_url('portal/Article/index',['id'=>$vo.id,'cid'=>$widget.vars.category_id])}">
+														{$vo.post_title}
+													</a>
+													<php>$kw=explode(',',$vo['post_keywords']);</php>
+													<span class="about-testimonial-company">
+														<foreach name="kw" id="v">{$v}&emsp;</foreach>
+													</span>
+													<div class="about-testimonial-content">
+														<p class="about-testimonial-quote">{$vo.post_excerpt}</p>
+													</div>
+												</li>
+											</portal:articles>
+										</ul>
+									</div>
+								</section>
+							</div>
+							<!--testimonial end-->
+						</div>
+					</notempty>
+					<div class="col-lg-7" id="skillz">
+						<h3 class="skills">{$widget.vars.section_name}</h3>
+						<foreach name="$widget.vars.skill_item" item="vo">
+							<div class="skill_bar">
+								<div class="skill_bar_progress skill_{$key}">
+									<p>{$vo.skill_text}</p>
+								</div>
+							</div>
+						</foreach>
+					</div>
+				</div>
+			</div>
+		</div>
+	</widget>
+	<widget name="fourth">
+		<div class="container" id="tourpackages-carousel">
+			<div class="row">
+				<div class="profile">
+					<php>
+						$cid = $widget['vars']['category_id'] ?: 0;
+						$category_data = \app\portal\service\ApiService::category($cid);
+					</php>
+					<h2>{$category_data.name|default=''}</h2>
+					<portal:articles limit="4" field="post.id,post_title,post_excerpt,more" order="post.published_time DESC"
+					 categoryIds="$widget.vars.category_id">
+						<div class="col-xs-12 col-sm-6 col-md-3">
+							<div class="thumbnail wow fadeInUp" data-wow-delay=".{$i*2+1}s">
+								<a href="{:cmf_url('portal/Article/index',['id'=>$vo.id,'cid'=>$widget.vars.category_id])}">
+									<img src="{$vo.more.thumbnail|cmf_get_image_url}" alt="{$vo.post_title}">
+								</a>
+								<div class="caption">
+									<a href="{:cmf_url('portal/Article/index',['id'=>$vo.id,'cid'=>$widget.vars.category_id])}">
+										<h4>{$vo.post_title}</h4>
+									</a>
+									<p>{$vo.post_excerpt}</p>
+								</div>
+							</div>
+						</div>
+					</portal:articles>
+				</div>
+				<!-- End row -->
+
+			</div>
+			<!-- End container -->
+		</div>
+	</widget>
+</block>
+<block name="scripts">
+	{__block__}
+	<script>
+		$(window).load(function() {
+			$('.flexslider').flexslider({
+				animation: "slide",
+				start: function(slider) {
+					$('body').removeClass('loading');
+				}
+			});
+		});
+
+
+		$(window).scroll(function() {
+			$('#skillz').each(function() {
+				var imagePos = $(this).offset().top;
+				var viewportheight = window.innerHeight;
+
+				var topOfWindow = $(window).scrollTop();
+				if (imagePos < topOfWindow + viewportheight) {
+					$('.skill_bar').fadeIn('slow'); <
+					widget name = "third" >
+						<
+						notempty name = "$widget.vars.skill_item" >
+						<
+						foreach name = "$widget.vars.skill_item"
+					item = "vo" >
+						$('.skill_{$key}').animate({
+							width: '{$vo.skill_per}%'
+						}, 2000); <
+					/foreach> <
+					/notempty> <
+					/widget>
+					$('.skill_bar_progress p').fadeIn('slow', function() {
+
+					});
+				}
+			});
+		});
+	</script>
+</block>

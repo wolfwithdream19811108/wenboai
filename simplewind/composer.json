@@ -1,0 +1,23 @@
+{
+ 
+    "require": {
+        "qcloud/cos-sdk-v5": ">=2.0",
+        "electrolinux/phpquery": "^0.9.7",
+        "elasticsearch/elasticsearch": "^7.17",
+        "laudis/neo4j-php-client": "2.8.3",
+        "alibabacloud/sdk": "^1.8",
+        "nyholm/psr7": "1.8.2",
+        "php-http/curl-client": "^2.3",
+        "topthink/think-captcha": "1.0.8",
+        "alibabacloud/captcha-20230305": "^1.1"
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": true,
+            "topthink/think-installer": false
+        }
+    },
+    "require-dev": {
+        "composer/semver": "3.0.0"
+    }
+}

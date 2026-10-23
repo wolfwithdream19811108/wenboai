@@ -1,0 +1,66 @@
+<extend name="public@base"/>
+<block name="head">
+    {__block__}
+    <style>
+        .ranking {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .blog-post img {
+            width: 50px;
+            height: 50px;
+        }
+    </style>
+</block>
+<block name="body">
+    
+
+	<!--Test -->
+	  <div id="test">
+	    <div class="user">
+
+	    </div>
+	    <div class="list-group">
+			<portal:museums order="id ASC">
+				  <a href="{:cmf_url('portal/museum_list/index',['id'=>$vo['id']])}" class="list-group-item">{$vo.museum_name}</a>
+			  </portal:museums>
+			</div>
+
+	  </div>
+	  <!--/Test -->
+
+
+    <!--container start-->
+	<div class="container">
+		<div class="" id="my-gallery-container">
+			<portal:museumarticles order="cmf_portal_post.create_time DESC" page="10"  museum_id="1022">
+				<div class="item">
+					<notempty name="$vo.more.thumbnail">
+						<div  align="center" class="blog-img img">
+							<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+								<img  src="{$vo.more.thumbnail|cmf_get_image_url}"/>
+							</a>
+						</div>
+					</notempty>
+						<a href="{:cmf_url('portal/Article/index',['id'=>$vo['id']])}">
+							{$vo.post_title}
+						</a>
+				</div>
+				
+			</portal:museumarticles>
+		</div>
+	</div>
+	
+    <!--container end-->
+
+	<!--分页-->
+	<div class="text-center">
+		<ul class="pagination">
+		<page/>
+		</ul>
+	</div>
+
+</block>
+
