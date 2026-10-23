@@ -1290,6 +1290,44 @@ function cmf_captcha_check($value, $id = "", $reset = true)
     $captcha->reset = $reset;
     return $captcha->check($value, $id);
 }
+
+/**
+ * Read a private service setting from data/conf/services.php.
+ *
+ * The local file is deliberately ignored by Git. Environment variables remain
+ * a fallback so existing Docker and PHP-FPM deployments keep working.
+ *
+ * @param string $name
+ * @param mixed  $default
+ * @return mixed
+ */
+function cmf_service_config($name, $default = '')
+{
+    static $services = null;
+
+    if ($services === null) {
+        $services = [];
+        $configFile = CMF_ROOT . 'data/conf/services.php';
+        if (is_file($configFile)) {
+            $loaded = include $configFile;
+            if (is_array($loaded)) {
+                $services = $loaded;
+            }
+        }
+    }
+
+    if (array_key_exists($name, $services) && $services[$name] !== '') {
+        return $services[$name];
+    }
+
+    $value = getenv($name);
+    if ($value === false || $value === '') {
+        $value = getenv('PHP_' . $name);
+    }
+
+    return ($value === false || $value === '') ? $default : $value;
+}
+
 function cmf_verify_aliyun_captcha($captchaVerifyParam)
 {
     $failed = [
@@ -1304,8 +1342,8 @@ function cmf_verify_aliyun_captcha($captchaVerifyParam)
     try {
         $config = new \Darabonba\OpenApi\Models\Config([]);
 
-        $accessKeyId = getenv('ALIYUN_CAPTCHA_ACCESS_KEY_ID') ?: getenv('PHP_ALIYUN_CAPTCHA_ACCESS_KEY_ID');
-        $accessKeySecret = getenv('ALIYUN_CAPTCHA_ACCESS_KEY_SECRET') ?: getenv('PHP_ALIYUN_CAPTCHA_ACCESS_KEY_SECRET');
+        $accessKeyId = cmf_service_config('ALIYUN_CAPTCHA_ACCESS_KEY_ID');
+        $accessKeySecret = cmf_service_config('ALIYUN_CAPTCHA_ACCESS_KEY_SECRET');
         if (!$accessKeyId || !$accessKeySecret) {
             return $failed;
         }

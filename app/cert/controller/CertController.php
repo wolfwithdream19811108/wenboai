@@ -228,12 +228,7 @@ class CertController extends HomeBaseController
 
     private function envValue($name, $default = '')
     {
-        $value = getenv($name);
-        if ($value === false || $value === '') {
-            $value = getenv('PHP_' . $name);
-        }
-
-        return ($value === false || $value === '') ? $default : $value;
+        return cmf_service_config($name, $default);
     }
     public function uploadCertfile(){
    

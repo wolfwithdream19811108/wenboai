@@ -5,3 +5,4 @@
 conf/*
 !conf/database.local.php
 !conf/config.local.php
+!conf/services.example.php

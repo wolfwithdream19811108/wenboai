@@ -26,12 +26,7 @@ class VisualController extends HomeBaseController
 {
     private function envValue($name, $default = '')
     {
-        $value = getenv($name);
-        if ($value === false || $value === '') {
-            $value = getenv('PHP_' . $name);
-        }
-
-        return ($value === false || $value === '') ? $default : $value;
+        return cmf_service_config($name, $default);
     }
 
     public function index()
@@ -327,8 +322,8 @@ class VisualController extends HomeBaseController
     
     public function getinfo(){
         $secretKey = $this->envValue('NEO4J_ENCRYPTION_KEY');
-        $neouser = $this->envValue('NEO4J_USERNAME');
-        $neopassword = $this->envValue('NEO4J_PASSWORD');
+        $neouser = $this->envValue('NEO4J_INFO_USERNAME', $this->envValue('NEO4J_USERNAME'));
+        $neopassword = $this->envValue('NEO4J_INFO_PASSWORD', $this->envValue('NEO4J_PASSWORD'));
         $neopasswordEncryed =  $this->encryptData($neopassword, $secretKey);
         $neouserEncryed =  $this->encryptData($neouser, $secretKey);
         $response = [
