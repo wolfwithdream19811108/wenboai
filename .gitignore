@@ -24,6 +24,7 @@ public/notify*.log
 # Generated/user content and server-side backups
 /upload/
 /public/uploads/
+/public/upload/aigc/
 /public/certpdf/
 /public/sitemap*.xml
 /public/sitemap/

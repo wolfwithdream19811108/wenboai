@@ -11,6 +11,7 @@
 namespace app\admin\controller;
 
 use app\admin\model\RouteModel;
+use app\ai\service\ImageGenerationConfig;
 use cmf\controller\AdminBaseController;
 
 use think\Db;
@@ -60,6 +61,8 @@ class SettingController extends AdminBaseController
         $cmfSettings    = cmf_get_option('cmf_settings');
         $adminSettings  = cmf_get_option('admin_settings');
         $functionSettings  = cmf_get_option('function_settings');
+        $functionKeys = ImageGenerationConfig::keys();
+        $imageGenerationSettings = ImageGenerationConfig::settings();
 
         $this->assign('site_info', cmf_get_option('site_info'));
         $this->assign("admin_styles", $adminStyles);
@@ -67,6 +70,8 @@ class SettingController extends AdminBaseController
         $this->assign("cdn_settings", $cdnSettings);
         $this->assign("admin_settings", $adminSettings);
         $this->assign("function_settings", $functionSettings);
+        $this->assign('function_key_status', ImageGenerationConfig::keyStatus($functionKeys));
+        $this->assign('image_generation_settings', $imageGenerationSettings);
         $this->assign("cmf_settings", $cmfSettings);
 
         return $this->fetch();
@@ -93,6 +98,20 @@ class SettingController extends AdminBaseController
                 $this->error($result);
             }
 
+            $currentFunctionKeys = ImageGenerationConfig::keys();
+            $submittedFunctionKeys = $this->request->param('function_keys/a');
+            $clearFunctionKeys = $this->request->param('function_keys_clear/a');
+            $functionKeys = $this->mergeImageFunctionKeys(
+                $currentFunctionKeys,
+                is_array($submittedFunctionKeys) ? $submittedFunctionKeys : [],
+                is_array($clearFunctionKeys) ? $clearFunctionKeys : []
+            );
+
+            $submittedImageSettings = $this->request->param('image_generation_settings/a');
+            $imageGenerationSettings = is_array($submittedImageSettings)
+                ? $this->normalizeImageGenerationSettings($submittedImageSettings, $functionKeys)
+                : ImageGenerationConfig::settings();
+
             $options = $this->request->param('options/a');
             cmf_set_option('site_info', $options);
 
@@ -104,7 +123,7 @@ class SettingController extends AdminBaseController
 
             $cdnSettings = $this->request->param('cdn_settings/a');
             cmf_set_option('cdn_settings', $cdnSettings);
-            
+
             $funSettings = $this->request->param('function_settings/a');
             $funSettings = [
                 'analysis_object' => (int)$funSettings['analysis_object'],
@@ -112,6 +131,8 @@ class SettingController extends AdminBaseController
                 'need_login' => (int)$funSettings['need_login']
             ];
             cmf_set_option('function_settings', $funSettings);
+            cmf_set_option(ImageGenerationConfig::KEYS_OPTION, $functionKeys, true);
+            cmf_set_option(ImageGenerationConfig::SETTINGS_OPTION, $imageGenerationSettings, true);
 
             $adminSettings = $this->request->param('admin_settings/a');
 
@@ -128,6 +149,186 @@ class SettingController extends AdminBaseController
             $this->success("保存成功！", '');
 
         }
+    }
+
+    private function mergeImageFunctionKeys(array $current, array $submitted, array $clear)
+    {
+        $scalarKeys = [
+            'volc_access_key_id',
+            'volc_secret_access_key',
+            'image_classify_api_key',
+            'upyun_service',
+            'upyun_operator',
+            'upyun_password',
+            'wujie_appid',
+            'wujie_signkey',
+            'yidun_secret_id',
+            'yidun_secret_key',
+            'yidun_business_id',
+        ];
+        foreach ($scalarKeys as $name) {
+            if (!empty($clear[$name])) {
+                unset($current[$name]);
+                continue;
+            }
+            if (isset($submitted[$name]) && trim((string)$submitted[$name]) !== '') {
+                $current[$name] = trim((string)$submitted[$name]);
+            }
+        }
+
+        if (!empty($clear['image_test_api_keys'])) {
+            unset($current['image_test_api_keys']);
+        } elseif (isset($submitted['image_test_api_keys']) && trim((string)$submitted['image_test_api_keys']) !== '') {
+            $keys = preg_split('/[\r\n,]+/', (string)$submitted['image_test_api_keys']);
+            $keys = array_values(array_unique(array_filter(array_map('trim', $keys))));
+            if (empty($keys)) {
+                $this->error('测试图片接口 Bearer Key 格式无效');
+            }
+            $current['image_test_api_keys'] = $keys;
+        }
+
+        return $current;
+    }
+
+    private function normalizeImageGenerationSettings(array $input, array $functionKeys)
+    {
+        $defaults = ImageGenerationConfig::defaults();
+        $classifier = isset($input['classifier']) && is_array($input['classifier'])
+            ? $input['classifier'] : [];
+        $watermark = isset($input['watermark']) && is_array($input['watermark'])
+            ? $input['watermark'] : [];
+        $metadata = isset($input['metadata']) && is_array($input['metadata'])
+            ? $input['metadata'] : [];
+        $storage = isset($input['storage']) && is_array($input['storage'])
+            ? $input['storage'] : [];
+        $endpoint = isset($input['endpoint']) && is_array($input['endpoint'])
+            ? $input['endpoint'] : [];
+
+        $settings = [
+            'classifier' => [
+                'enabled' => empty($classifier['enabled']) ? 0 : 1,
+                'api_url' => trim((string)($classifier['api_url'] ?? '')),
+                'model' => trim((string)($classifier['model'] ?? '')),
+                'timeout' => (int)($classifier['timeout'] ?? $defaults['classifier']['timeout']),
+                'system_prompt' => trim((string)($classifier['system_prompt'] ?? '')),
+                'fail_closed' => 1,
+            ],
+            'watermark' => [
+                'enabled' => empty($watermark['enabled']) ? 0 : 1,
+                'text' => trim((string)($watermark['text'] ?? '')),
+                'size_percent' => (int)($watermark['size_percent'] ?? $defaults['watermark']['size_percent']),
+                'opacity_percent' => (int)($watermark['opacity_percent'] ?? $defaults['watermark']['opacity_percent']),
+                'position' => trim((string)($watermark['position'] ?? $defaults['watermark']['position'])),
+            ],
+            'metadata' => [
+                'enabled' => empty($metadata['enabled']) ? 0 : 1,
+                'label' => trim((string)($metadata['label'] ?? '')),
+                'content_producer' => trim((string)($metadata['content_producer'] ?? '')),
+                'content_propagator' => trim((string)($metadata['content_propagator'] ?? '')),
+                'xmp_prefix' => trim((string)($metadata['xmp_prefix'] ?? '')),
+                'xmp_namespace' => trim((string)($metadata['xmp_namespace'] ?? '')),
+                'id_prefix' => trim((string)($metadata['id_prefix'] ?? '')),
+            ],
+            'storage' => [
+                'sync_upyun' => empty($storage['sync_upyun']) ? 0 : 1,
+                'upyun_domain' => rtrim(trim((string)($storage['upyun_domain'] ?? '')), '/'),
+                'upyun_remote_dir' => '/' . trim((string)($storage['upyun_remote_dir'] ?? ''), '/') . '/',
+                'local_save_rel_dir' => trim((string)($storage['local_save_rel_dir'] ?? ''), '/\\'),
+                'local_url_base' => rtrim(trim((string)($storage['local_url_base'] ?? '')), '/'),
+            ],
+            'endpoint' => [
+                'default_model' => strtolower(trim((string)($endpoint['default_model'] ?? ''))),
+                'poll_interval' => (int)($endpoint['poll_interval'] ?? $defaults['endpoint']['poll_interval']),
+                'max_wait_time' => (int)($endpoint['max_wait_time'] ?? $defaults['endpoint']['max_wait_time']),
+            ],
+        ];
+
+        if ($settings['classifier']['enabled']) {
+            if (!filter_var($settings['classifier']['api_url'], FILTER_VALIDATE_URL)
+                || stripos($settings['classifier']['api_url'], 'https://') !== 0) {
+                $this->error('类目判断接口地址必须是有效的 HTTPS 地址');
+            }
+            if ($settings['classifier']['model'] === '' || $settings['classifier']['system_prompt'] === '') {
+                $this->error('启用类目判断时，模型和系统提示词不能为空');
+            }
+            if (empty($functionKeys['image_classify_api_key'])) {
+                $this->error('启用类目判断时，必须配置类目判断 API Key');
+            }
+        }
+        if ($settings['classifier']['timeout'] < 1 || $settings['classifier']['timeout'] > 120) {
+            $this->error('类目判断超时时间必须在 1～120 秒之间');
+        }
+        if (empty($functionKeys['volc_access_key_id']) || empty($functionKeys['volc_secret_access_key'])) {
+            $this->error('火山引擎 AccessKey ID 和 Secret AccessKey 不能为空');
+        }
+        if (empty($functionKeys['image_test_api_keys']) || !is_array($functionKeys['image_test_api_keys'])) {
+            $this->error('测试图片接口 Bearer Key 至少需要配置一个');
+        }
+
+        if ($settings['watermark']['enabled']) {
+            $text = $settings['watermark']['text'];
+            if ($text === '' || !preg_match('/(?:AI|人工智能)/iu', $text)
+                || (strpos($text, '生成') === false && strpos($text, '合成') === false)) {
+                $this->error('文字水印必须包含 AI/人工智能和生成/合成');
+            }
+        }
+        if ($settings['watermark']['size_percent'] < 5 || $settings['watermark']['size_percent'] > 20) {
+            $this->error('文字水印大小必须在 5～20 之间');
+        }
+        if ($settings['watermark']['opacity_percent'] < 80 || $settings['watermark']['opacity_percent'] > 100) {
+            $this->error('文字水印不透明度必须在 80～100 之间');
+        }
+        if (!in_array($settings['watermark']['position'], ['top-left', 'top-right', 'bottom-left', 'bottom-right'], true)) {
+            $this->error('文字水印位置无效');
+        }
+
+        if ($settings['metadata']['enabled']) {
+            if ($settings['metadata']['label'] === '' || $settings['metadata']['content_producer'] === ''
+                || $settings['metadata']['content_propagator'] === '') {
+                $this->error('启用 Metadata 时，Label、内容生产者和传播者不能为空');
+            }
+            if (!preg_match('/^[A-Za-z_][A-Za-z0-9_.-]*$/D', $settings['metadata']['xmp_prefix'])) {
+                $this->error('Metadata XMP 前缀格式无效');
+            }
+            if (!filter_var($settings['metadata']['xmp_namespace'], FILTER_VALIDATE_URL)) {
+                $this->error('Metadata Namespace 必须是有效 URL');
+            }
+            if (!preg_match('/^[A-Za-z0-9_-]{1,32}$/D', $settings['metadata']['id_prefix'])) {
+                $this->error('Metadata ID 前缀只能包含字母、数字、下划线和中划线，最长 32 位');
+            }
+        }
+
+        if ($settings['storage']['sync_upyun']) {
+            foreach (['upyun_service', 'upyun_operator', 'upyun_password'] as $name) {
+                if (empty($functionKeys[$name])) {
+                    $this->error('启用又拍云同步时，必须完整配置又拍云凭据');
+                }
+            }
+            if (!filter_var($settings['storage']['upyun_domain'], FILTER_VALIDATE_URL)
+                || stripos($settings['storage']['upyun_domain'], 'https://') !== 0) {
+                $this->error('又拍云访问域名必须是有效的 HTTPS 地址');
+            }
+        }
+        foreach (['local_save_rel_dir', 'upyun_remote_dir'] as $name) {
+            if (strpos($settings['storage'][$name], '..') !== false
+                || !preg_match('#^/?[A-Za-z0-9/_-]+/?$#D', $settings['storage'][$name])) {
+                $this->error('图片保存目录格式无效');
+            }
+        }
+        if (!filter_var($settings['storage']['local_url_base'], FILTER_VALIDATE_URL)) {
+            $this->error('本地图片访问域名格式无效');
+        }
+        if ($settings['endpoint']['default_model'] === '') {
+            $this->error('默认图片模型不能为空');
+        }
+        if ($settings['endpoint']['poll_interval'] < 1 || $settings['endpoint']['poll_interval'] > 30) {
+            $this->error('轮询间隔必须在 1～30 秒之间');
+        }
+        if ($settings['endpoint']['max_wait_time'] < 30 || $settings['endpoint']['max_wait_time'] > 300) {
+            $this->error('最大等待时间必须在 30～300 秒之间');
+        }
+
+        return $settings;
     }
 
     /**

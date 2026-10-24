@@ -15,6 +15,7 @@ use cmf\controller\HomeBaseController;
 use phpseclib\Crypt\RSA;
 use app\user\model\UserPointsModel;
 use app\ai\model\AiUserThreedworksModel;
+use app\ai\service\ImageGenerationConfig;
 use think\Db;
 use Upyun\Upyun;
 use Upyun\Config;
@@ -38,18 +39,18 @@ class IndexController extends HomeBaseController
     {
         $models = Db::name('portal_aiimage_model')->where('model_type', '=', "model")->select()->toArray();
         $params = $this->request->get();
-        $modelPic = isset($params['modelpic']) ? strval($params['modelpic']) : null; 
-        $userWorkId = isset($params['userWorkId']) ? strval($params['userWorkId']) : null; 
+        $modelPic = isset($params['modelpic']) ? strval($params['modelpic']) : null;
+        $userWorkId = isset($params['userWorkId']) ? strval($params['userWorkId']) : null;
         $isLogin = cmf_is_user_login();
         if ($isLogin) {
             $userid = cmf_get_current_user_id();
             $aiUserPointsModel = new UserPointsModel();
-            $currentPoints = $aiUserPointsModel->getUserPoints($userid); 
+            $currentPoints = $aiUserPointsModel->getUserPoints($userid);
             $this->assign('points', $currentPoints);
-        }    
+        }
         if(!$modelPic){
             $this->error("图片地址为空");
-        } 
+        }
         //$modelPic = "https://cdn.wujiebantu.com/ai/855778DDE9EF66594B909B4429BC3A88-01.jpg";
 
 
@@ -57,9 +58,9 @@ class IndexController extends HomeBaseController
 		$this->assign('modelPic', $modelPic);
 		$this->assign('userWorkId', $userWorkId);
 		$this->assign('isLogin', $isLogin);
-      
-        
-        
+
+
+
         return $this->fetch("/index");
         //return $this->fetch("/display");
     }
@@ -67,18 +68,18 @@ class IndexController extends HomeBaseController
     {
         $models = Db::name('portal_aiimage_model')->where('model_type', '=', "model")->select()->toArray();
         $params = $this->request->get();
-        $modelPic = isset($params['modelpic']) ? strval($params['modelpic']) : null; 
-        $userWorkId = isset($params['userWorkId']) ? strval($params['userWorkId']) : null; 
+        $modelPic = isset($params['modelpic']) ? strval($params['modelpic']) : null;
+        $userWorkId = isset($params['userWorkId']) ? strval($params['userWorkId']) : null;
         $isLogin = cmf_is_user_login();
         if ($isLogin) {
             $userid = cmf_get_current_user_id();
             $aiUserPointsModel = new UserPointsModel();
-            $currentPoints = $aiUserPointsModel->getUserPoints($userid); 
+            $currentPoints = $aiUserPointsModel->getUserPoints($userid);
             $this->assign('points', $currentPoints);
-        }    
+        }
         if(!$modelPic){
             $this->error("图片地址为空");
-        } 
+        }
         //$modelPic = "https://cdn.wujiebantu.com/ai/855778DDE9EF66594B909B4429BC3A88-01.jpg";
 
 
@@ -86,20 +87,20 @@ class IndexController extends HomeBaseController
 		$this->assign('modelPic', $modelPic);
 		$this->assign('userWorkId', $userWorkId);
 		$this->assign('isLogin', $isLogin);
-      
-        
-        
+
+
+
         return $this->fetch("/view");
         //return $this->fetch("/display");
     }
     public function getGlbResource()
     {
-        
+
         $params = $this->request->post();
-        $objectUrl = isset($params['objecturl']) ? strval($params['objecturl']) : null;  
+        $objectUrl = isset($params['objecturl']) ? strval($params['objecturl']) : null;
         $objectUrl = htmlspecialchars_decode($objectUrl);
-        
-        
+
+
      // 验证objecturl参数
         if (empty($objectUrl)) {
             return json(['error' => 'No objecturl parameter provided.'], 400);
@@ -139,14 +140,14 @@ class IndexController extends HomeBaseController
             return json(['error' => 'Failed to download file: ' . $errorMsg], 500);
         } else {
             $upyunObjectUrl = $this->uploadContentToUpyun($objectUrl,$data);
-            
+
             if($upyunObjectUrl){
                 return json(['filePath' => $upyunObjectUrl]);
 
             }
-            
-            
-            
+
+
+
             if (file_put_contents($destinationFile, $data)) {
                 curl_close($ch);
                 return json(['filePath' => $destinationFile]);
@@ -155,41 +156,49 @@ class IndexController extends HomeBaseController
                 return json(['error' => 'Failed to save the file.'], 500);
             }
         }
-      
-    }
-    
-    public function uploadUpyun($glbUrl){
 
-        
-        $serviceConfig = new Config('aiimage', 'ysyk', 'tQLcCjEd6nwZmcn0QLwjf3az9f2UpWoS');
+    }
+
+    public function uploadUpyun($glbUrl){
+        $keys = ImageGenerationConfig::keys();
+        $settings = ImageGenerationConfig::settings();
+        if (empty($keys['upyun_service']) || empty($keys['upyun_operator']) || empty($keys['upyun_password'])) {
+            return null;
+        }
+        $serviceConfig = new Config($keys['upyun_service'], $keys['upyun_operator'], $keys['upyun_password']);
         $client = new Upyun($serviceConfig);
         // 3. 直接下载内容并上传
         $remotePath = '/3d/glb/' . basename($glbUrl).'.glb'; // 又拍云保存路径
         $fileContent = file_get_contents($glbUrl); // 直接读取远程文件
-        $uploadInfo = $client->write($remotePath, $fileContent); // 上传字符串内容        
+        $uploadInfo = $client->write($remotePath, $fileContent); // 上传字符串内容
         if($uploadInfo){
-            return 'https://aiimage.hongmengyishu.com'.$remotePath;
+            return rtrim($settings['storage']['upyun_domain'], '/').$remotePath;
         }else{
             return null;
         }
 
     }
-    
+
      public function uploadContentToUpyun($glbUrl,$fileContent){
 
         $remotePath = '/3d/glb/' . md5($glbUrl).'.glb'; // 又拍云保存路径
-        $serviceConfig = new Config('aiimage', 'ysyk', 'tQLcCjEd6nwZmcn0QLwjf3az9f2UpWoS');
+        $keys = ImageGenerationConfig::keys();
+        $settings = ImageGenerationConfig::settings();
+        if (empty($keys['upyun_service']) || empty($keys['upyun_operator']) || empty($keys['upyun_password'])) {
+            return null;
+        }
+        $serviceConfig = new Config($keys['upyun_service'], $keys['upyun_operator'], $keys['upyun_password']);
         $client = new Upyun($serviceConfig);
-        $uploadInfo = $client->write($remotePath, $fileContent); // 上传字符串内容        
+        $uploadInfo = $client->write($remotePath, $fileContent); // 上传字符串内容
         if($uploadInfo){
-            return 'https://aiimage.hongmengyishu.com'.$remotePath;
+            return rtrim($settings['storage']['upyun_domain'], '/').$remotePath;
         }else{
             return null;
         }
 
-    }   
-    
-    
+    }
+
+
 /**
      * 添加用户3D作品记录
      * @return \think\response\Json
@@ -239,7 +248,7 @@ class IndexController extends HomeBaseController
         }
     }
 
- 
+
 
 
 }
