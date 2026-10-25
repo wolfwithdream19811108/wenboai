@@ -33,3 +33,7 @@ public/notify*.log
 # Local database exports can contain production/customer data
 docker/mysql/import/*.sql
 !docker/mysql/import/.gitkeep
+
+# Server-managed entrypoint and certificate validation files
+/public/index.php
+/public/.well-known/
