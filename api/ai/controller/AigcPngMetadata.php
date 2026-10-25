@@ -25,7 +25,9 @@ final class AigcPngMetadata
         $stamp = gmdate('YmdHis');
         // 无数据库无法严格证明永不重复；随机数提供实际可用的唯一性。
         $produceId = $idPrefix . '-' . $stamp . '-' . bin2hex(random_bytes(16));
-        $propagateId = $idPrefix . '-' . $stamp . '-' . bin2hex(random_bytes(16));
+        // GB 45438-2025 附录 E：生成服务提供者首次写入标识时，
+        // 内容传播编号应与内容制作编号一致。
+        $propagateId = $produceId;
         $fields = [
             'Label' => $label,
             'ContentProducer' => $producer,
