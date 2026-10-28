@@ -32,7 +32,7 @@ if ($uri ~* "^/imageai(?:/|$)") {
 if ($uri ~* "^/api/ai/imagegenerate/create_for_test$") {
     set $allow_access 1;
 }
-if ($uri ~* "^/themes/Acme/public/assets/(css|js)/imageai/") {
+if ($uri ~* "^/themes/Acme/public/assets/(css|js|images)/imageai/") {
     set $allow_access 1;
 }
 ```
