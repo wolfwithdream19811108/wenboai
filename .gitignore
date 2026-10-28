@@ -45,3 +45,4 @@ __pycache__/
 
 # Local generated reports and visual previews
 /outputs/
+/tools/create_for_test_diagnostics.patch
