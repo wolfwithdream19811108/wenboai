@@ -1,0 +1,11 @@
+<!doctype html><html><head><include file="imageai@_head"/></head><body><include file="imageai@_nav"/><main class="container doc"><h1>ImageAI API 文档</h1><div class="panel"><h2>创建图片</h2><p><code>POST /api/ai/imagegenerate/create_for_test</code></p><p>请求头：<code>Authorization: Bearer wb_sk_xxx</code></p><pre>{
+  "model": "jianyuan",
+  "stream": false,
+  "dialogue": [
+    {"role": "user", "content": "一件青花瓷文创产品设计"}
+  ]
+}</pre><p>接口返回兼容现有字段，并增加 <code>request_id</code> 供查询和排障。生成成功会扣除积分并写入作品记录；失败会自动退回预扣积分。</p><h2>测试分类而不生成</h2><pre>{
+  "model": "jianyuan",
+  "dry_run": true,
+  "dialogue": [{"role":"user","content":"测试提示词"}]
+}</pre></div></main></body></html>

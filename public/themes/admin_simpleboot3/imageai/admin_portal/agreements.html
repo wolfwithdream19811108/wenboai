@@ -1,0 +1,63 @@
+<include file="public@header"/>
+</head>
+<body>
+<div class="wrap">
+    <include file="imageai/admin_portal@_tabs"/>
+    <ul class="nav nav-pills margin-top-20" role="tablist">
+        <li class="active"><a href="#service-panel" data-toggle="tab">服务协议</a></li>
+        <li><a href="#privacy-panel" data-toggle="tab">隐私政策</a></li>
+    </ul>
+    <div class="tab-content margin-top-20">
+        <div class="tab-pane active" id="service-panel">
+            <form method="post" class="form-horizontal js-ajax-form" action="{:url('AdminPortal/agreementPost')}">
+                <input type="hidden" name="type" value="service">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">标题</label>
+                    <div class="col-sm-8"><input class="form-control" name="title" value="{$agreements.service.title}" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">版本号</label>
+                    <div class="col-sm-4"><input class="form-control" name="version" value="{$agreements.service.version}" required><p class="help-block">建议使用发布日期或内部版本号；新注册用户会记录此版本。</p></div>
+                    <div class="col-sm-4"><p class="form-control-static">上次发布：{:date('Y-m-d H:i:s',$agreements.service.published_at)}</p></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">协议正文</label>
+                    <div class="col-sm-10"><script type="text/plain" id="service-content" name="content">{$agreements.service.content|htmlspecialchars_decode}</script></div>
+                </div>
+                <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button class="btn btn-primary js-ajax-submit" type="submit">保存并发布服务协议</button> <a class="btn btn-default" href="/imageai/service" target="_blank">查看公开页面</a></div></div>
+            </form>
+        </div>
+        <div class="tab-pane" id="privacy-panel">
+            <form method="post" class="form-horizontal js-ajax-form" action="{:url('AdminPortal/agreementPost')}">
+                <input type="hidden" name="type" value="privacy">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">标题</label>
+                    <div class="col-sm-8"><input class="form-control" name="title" value="{$agreements.privacy.title}" required></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">版本号</label>
+                    <div class="col-sm-4"><input class="form-control" name="version" value="{$agreements.privacy.version}" required><p class="help-block">建议使用发布日期或内部版本号；新注册用户会记录此版本。</p></div>
+                    <div class="col-sm-4"><p class="form-control-static">上次发布：{:date('Y-m-d H:i:s',$agreements.privacy.published_at)}</p></div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">协议正文</label>
+                    <div class="col-sm-10"><script type="text/plain" id="privacy-content" name="content">{$agreements.privacy.content|htmlspecialchars_decode}</script></div>
+                </div>
+                <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button class="btn btn-primary js-ajax-submit" type="submit">保存并发布隐私政策</button> <a class="btn btn-default" href="/imageai/privacy" target="_blank">查看公开页面</a></div></div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+<script>var editorURL = GV.WEB_ROOT;</script>
+<script src="__STATIC__/js/ueditor/ueditor.config.js"></script>
+<script src="__STATIC__/js/ueditor/ueditor.all.min.js"></script>
+<script>
+    var serviceEditor = UE.getEditor('service-content');
+    var privacyEditor = UE.getEditor('privacy-content');
+    if (location.search.indexOf('tab=privacy') !== -1) {
+        $('a[href="#privacy-panel"]').tab('show');
+    }
+</script>
+</body>
+</html>

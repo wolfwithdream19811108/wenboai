@@ -37,3 +37,11 @@ docker/mysql/import/*.sql
 # Server-managed entrypoint and certificate validation files
 /public/index.php
 /public/.well-known/
+
+# Local Python batch-test artifacts
+__pycache__/
+*.py[cod]
+/create_for_test_results/
+
+# Local generated reports and visual previews
+/outputs/

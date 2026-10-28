@@ -238,6 +238,8 @@ class SettingController extends AdminBaseController
             ],
             'endpoint' => [
                 'default_model' => strtolower(trim((string)($endpoint['default_model'] ?? ''))),
+                'api_points' => (int)($endpoint['api_points'] ?? $defaults['endpoint']['api_points']),
+                'rate_limit_per_minute' => (int)($endpoint['rate_limit_per_minute'] ?? $defaults['endpoint']['rate_limit_per_minute']),
                 'poll_interval' => (int)($endpoint['poll_interval'] ?? $defaults['endpoint']['poll_interval']),
                 'max_wait_time' => (int)($endpoint['max_wait_time'] ?? $defaults['endpoint']['max_wait_time']),
             ],
@@ -320,6 +322,12 @@ class SettingController extends AdminBaseController
         }
         if ($settings['endpoint']['default_model'] === '') {
             $this->error('默认图片模型不能为空');
+        }
+        if ($settings['endpoint']['api_points'] < 0 || $settings['endpoint']['api_points'] > 100000) {
+            $this->error('API 单张积分必须在 0～100000 之间');
+        }
+        if ($settings['endpoint']['rate_limit_per_minute'] < 1 || $settings['endpoint']['rate_limit_per_minute'] > 10000) {
+            $this->error('API 每分钟请求上限必须在 1～10000 之间');
         }
         if ($settings['endpoint']['poll_interval'] < 1 || $settings['endpoint']['poll_interval'] > 30) {
             $this->error('轮询间隔必须在 1～30 秒之间');

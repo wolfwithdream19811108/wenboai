@@ -1104,7 +1104,7 @@ function cmf_get_plugin_config($name)
  * @param        $pattern
  * @return array
  */
-function cmf_scan_dir($pattern, $flags = null)
+function cmf_scan_dir($pattern, $flags = 0)
 {
     $files = glob($pattern, $flags);
     if (empty($files)) {
@@ -1394,8 +1394,13 @@ function cmf_verify_aliyun_captcha($captchaVerifyParam)
             'verifyCode' => $verifyCode,
         ];
     } catch (\Throwable $error) {
-        // 接口异常时拒绝验证，不输出密钥或完整请求。
-        error_log('Aliyun captcha verification request failed');
+        // 接口异常时拒绝验证；仅记录异常类型和消息，不输出密钥或完整请求。
+        error_log(
+            'Aliyun captcha verification request failed: '
+            . get_class($error)
+            . ': '
+            . $error->getMessage()
+        );
 
         return $failed;
     }

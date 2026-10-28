@@ -1,0 +1,32 @@
+<!doctype html>
+<html><head><include file="imageai@_head"/></head><body>
+<include file="imageai@_nav"/>
+<main class="container account-layout">
+    <include file="imageai@_account_nav"/>
+    <section>
+        <h1>API Keys</h1>
+        <if condition="!empty($new_api_key)">
+            <div class="notice warning"><strong>请立即复制，关闭后无法再次查看：</strong><br>
+                <code id="new-key">{$new_api_key}</code>
+                <button class="btn" onclick="navigator.clipboard.writeText(document.getElementById('new-key').textContent)">复制</button>
+            </div>
+        </if>
+        <form method="post" action="/imageai/account/api-keys/create" class="panel">
+            <label>密钥名称 <input name="name" maxlength="60" placeholder="例如：生产环境"></label>
+            <label>有效期 <select name="expires_in_days"><option value="0">长期有效</option><option value="30">30天</option><option value="90">90天</option><option value="365">365天</option></select></label>
+            <button class="btn btn-primary">创建 API Key</button>
+            <p class="help">每个用户最多5个有效密钥，密钥明文只展示一次。</p>
+        </form>
+        <div class="panel" style="margin-top:18px"><table>
+            <thead><tr><th>名称</th><th>密钥标识</th><th>状态</th><th>有效期</th><th>最后使用</th><th>创建时间</th><th></th></tr></thead>
+            <tbody><foreach name="keys" item="apiKey"><tr>
+                <td>{$apiKey.name}</td><td><code>{$apiKey.key_prefix}…{$apiKey.key_suffix}</code></td>
+                <td><if condition="$apiKey.status eq 1"><span class="tag">有效</span><else/>已撤销</if></td>
+                <td><if condition="$apiKey.expires_at">{:date('Y-m-d H:i:s',$apiKey.expires_at)}<else/>长期有效</if></td>
+                <td><if condition="$apiKey.last_used_at">{:date('Y-m-d H:i:s',$apiKey.last_used_at)}<else/>从未使用</if></td>
+                <td>{:date('Y-m-d H:i:s',$apiKey.create_time)}</td>
+                <td><if condition="$apiKey.status eq 1"><form method="post" action="/imageai/account/api-keys/revoke" onsubmit="return confirm('确认撤销这个密钥？')"><input type="hidden" name="id" value="{$apiKey.id}"><button class="btn btn-danger">撤销</button></form></if></td>
+            </tr></foreach></tbody>
+        </table></div>
+    </section>
+</main></body></html>

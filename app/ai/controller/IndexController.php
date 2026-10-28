@@ -17,6 +17,7 @@ use think\Db;
 use app\user\model\UserPointsModel;
 use app\portal\model\PortalPostModel;
 use app\portal\service\ApiService;
+use app\imageai\service\AccessService;
 
 
 class IndexController extends HomeBaseController
@@ -36,7 +37,9 @@ class IndexController extends HomeBaseController
 
     public function index()
     {
-        
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            $this->error('此账号仅支持通过 API 创建图片', '/imageai/account/api-keys');
+        }
 
         $isLogin = cmf_is_user_login();
         if ($isLogin) {

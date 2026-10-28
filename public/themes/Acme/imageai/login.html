@@ -1,0 +1,4 @@
+<!doctype html><html><head><include file="imageai@_head"/></head><body><include file="imageai@_nav"/>
+<main class="container"><section class="auth-card"><h1>开发者登录</h1><form id="login-form"><div class="field"><label>手机号码</label><input name="mobile" autocomplete="username" required></div><div class="field"><label>登录密码</label><input name="password" type="password" autocomplete="current-password" required></div><div id="captcha-element"></div><button id="login-submit" type="button" class="btn btn-primary btn-block">登录</button></form><p class="help"><a href="/imageai/forgot-password">忘记密码</a> · 没有账号？<a href="/imageai/register">立即注册</a></p></section></main>
+<script src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script><script src="__TMPL__/public/assets/js/imageai/auth.js?v=20261028-3"></script><script>ImageAIAuth.initSubmitCaptcha('#login-submit','#captcha-element','#login-form','/imageai/login/submit');</script>
+</body></html>

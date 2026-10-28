@@ -47,6 +47,8 @@ class ImageGenerationConfig
             ],
             'endpoint' => [
                 'default_model' => 'jianyuan',
+                'api_points' => 50,
+                'rate_limit_per_minute' => 60,
                 'poll_interval' => 3,
                 'max_wait_time' => 90,
             ],
@@ -124,6 +126,32 @@ class ImageGenerationConfig
                 $errors[] = '又拍云访问域名未配置';
             }
         }
+        return array_values(array_unique($errors));
+    }
+
+    /**
+     * Configuration required by create_for_test dry-run requests.
+     *
+     * Dry-run deliberately does not require image-generation or storage
+     * credentials because it stops after the category decision.
+     */
+    public static function dryRunErrors(array $settings = null, array $keys = null)
+    {
+        $settings = $settings === null ? self::settings() : $settings;
+        $keys = $keys === null ? self::keys() : $keys;
+        $errors = [];
+
+        if (!empty($settings['classifier']['enabled'])) {
+            if (empty($keys['image_classify_api_key'])) {
+                $errors[] = '类目判断 API Key 未配置';
+            }
+            if (empty($settings['classifier']['api_url'])
+                || empty($settings['classifier']['model'])
+                || empty($settings['classifier']['system_prompt'])) {
+                $errors[] = '类目判断接口、模型或提示词未配置';
+            }
+        }
+
         return array_values(array_unique($errors));
     }
 

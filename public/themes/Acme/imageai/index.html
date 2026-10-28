@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <include file="imageai@_head"/>
+</head>
+<body class="imageai-home-page">
+<include file="imageai@_nav"/>
+
+<main class="imageai-home-main">
+    <section class="imageai-home-hero">
+        <div class="imageai-home-hero-copy">
+            <div class="imageai-home-eyebrow"><span></span> 文博多模态图像生成开放平台</div>
+            <h1>让文博创意，<br><em>一次调用即可生成</em></h1>
+            <p class="imageai-home-lead">统一完成内容类目判断、图片生成、AI 标识与作品留档，为开发者提供稳定、合规、可追溯的图像生成能力。</p>
+            <div class="imageai-home-actions">
+                <if condition="cmf_is_user_login()">
+                    <a class="imageai-home-btn imageai-home-btn-primary" href="/imageai/account">进入开发者控制台 <span>→</span></a>
+                <else/>
+                    <a class="imageai-home-btn imageai-home-btn-primary" href="/imageai/register">免费创建开发者账号 <span>→</span></a>
+                </if>
+                <a class="imageai-home-btn imageai-home-btn-secondary" href="/imageai/docs">查看 API 文档</a>
+            </div>
+            <div class="imageai-home-trust">
+                <span><i>✓</i> 独立 API Key</span>
+                <span><i>✓</i> 请求全程留痕</span>
+                <span><i>✓</i> 生成结果可追溯</span>
+            </div>
+        </div>
+
+        <div class="imageai-home-hero-visual" aria-label="青花瓷、玉雕山水与传统花鸟画组成的文博创意图像">
+            <div class="imageai-home-orbit imageai-home-orbit-one"></div>
+            <div class="imageai-home-orbit imageai-home-orbit-two"></div>
+            <img src="__TMPL__/public/assets/images/imageai/home-hero-art.png" alt="AI 生成的青花瓷、玉雕山水与传统花鸟画">
+            <div class="imageai-home-status imageai-home-status-check"><b>✓</b><span>内容检测<strong>安全通过</strong></span></div>
+            <div class="imageai-home-status imageai-home-status-mark"><b>AI</b><span>合规标识<strong>已自动写入</strong></span></div>
+            <div class="imageai-home-status imageai-home-status-record"><b>⌁</b><span>作品记录<strong>已留档追溯</strong></span></div>
+        </div>
+    </section>
+
+    <section class="imageai-home-capability-bar" aria-label="平台核心能力">
+        <div><span>01</span><p><strong>内容类目判断</strong><small>生成前智能识别</small></p></div>
+        <div><span>02</span><p><strong>高质量图片生成</strong><small>文博创意专属能力</small></p></div>
+        <div><span>03</span><p><strong>AI 内容标识</strong><small>符合 GB 45438-2025</small></p></div>
+        <div><span>04</span><p><strong>作品统一留档</strong><small>请求与结果可追溯</small></p></div>
+    </section>
+
+    <section class="imageai-home-section imageai-home-steps-section">
+        <div class="imageai-home-section-heading">
+            <span>QUICK START</span>
+            <h2>三步，开启文博图像生成</h2>
+            <p>从注册到首次调用，只需几分钟。</p>
+        </div>
+        <div class="imageai-home-steps">
+            <article>
+                <div class="imageai-home-step-number">01</div>
+                <div class="imageai-home-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm7 7a7 7 0 0 0-14 0"/></svg></div>
+                <h3>注册开发者账号</h3>
+                <p>使用手机号码完成注册，进入专属开发者控制台。</p>
+                <a href="/imageai/register">立即注册 →</a>
+            </article>
+            <article>
+                <div class="imageai-home-step-number">02</div>
+                <div class="imageai-home-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 7 2 2-8.5 8.5H6v-2.5L14.5 6.5M13 8l3 3M5 12l-2 2 7 7 2-2"/></svg></div>
+                <h3>创建 API Key</h3>
+                <p>一键创建独立密钥，可随时查看状态或主动撤销。</p>
+                <a href="/imageai/account/api-keys">管理密钥 →</a>
+            </article>
+            <article>
+                <div class="imageai-home-step-number">03</div>
+                <div class="imageai-home-step-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 9-4 3 4 3m8-6 4 3-4 3m-2-9-4 12"/></svg></div>
+                <h3>调用接口生成</h3>
+                <p>提交提示词，平台自动完成检测、生成、标识与留档。</p>
+                <a href="/imageai/docs">阅读文档 →</a>
+            </article>
+        </div>
+    </section>
+
+    <section id="capabilities" class="imageai-home-section imageai-home-features-section">
+        <div class="imageai-home-section-heading imageai-home-section-heading-left">
+            <span>PLATFORM CAPABILITIES</span>
+            <h2>从输入到交付，全流程能力保障</h2>
+            <p>一套接口完成复杂流程，让开发者专注于产品体验和业务创新。</p>
+        </div>
+        <div class="imageai-home-features">
+            <article><div class="imageai-home-feature-icon imageai-home-feature-jade"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 6v5c0 5 3.4 8.7 8 10 4.6-1.3 8-5 8-10V6l-8-3Zm-3 9 2 2 4-5"/></svg></div><h3>智能内容类目判断</h3><p>生成前自动判断请求内容，返回清晰决策与原因，降低业务接入成本。</p></article>
+            <article><div class="imageai-home-feature-icon imageai-home-feature-blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4zM4 15l4-4 3 3 2-2 7 7M16 9h.01"/></svg></div><h3>文博图像生成</h3><p>面向文物、非遗与文创场景，提供兼顾文化质感与视觉表现的生成能力。</p></article>
+            <article><div class="imageai-home-feature-icon imageai-home-feature-gold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 9 9l-6 1 4.5 4.5L6 21l6-3 6 3-1.5-6.5L21 10l-6-1-3-6Z"/></svg></div><h3>显式与隐式 AI 标识</h3><p>自动添加可见文字标识，并写入约定图片元数据，支持内容来源识别。</p></article>
+            <article><div class="imageai-home-feature-icon imageai-home-feature-rose"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"/></svg></div><h3>作品与请求统一留档</h3><p>生成结果自动进入作品记录，关联请求编号，便于用户查询和后台管理。</p></article>
+        </div>
+    </section>
+
+    <section class="imageai-home-section imageai-home-api-section">
+        <div class="imageai-home-api-copy">
+            <span class="imageai-home-mini-title">DEVELOPER FIRST</span>
+            <h2>熟悉的调用方式，<br>快速接入现有业务</h2>
+            <p>使用标准 HTTP 请求和 Bearer 鉴权。接口返回请求编号，成功生成后自动写入个人作品记录。</p>
+            <ul><li><i>✓</i> JSON 请求与响应</li><li><i>✓</i> 独立密钥，可随时撤销</li><li><i>✓</i> 失败不产生有效作品记录</li></ul>
+            <a href="/imageai/docs">查看完整 API 文档 →</a>
+        </div>
+        <div class="imageai-home-code-card">
+            <div class="imageai-home-code-head"><span><i></i><i></i><i></i></span><b>创建一张图片</b><em>cURL</em></div>
+            <pre><code><span class="code-command">curl</span> -X POST https://wenboai.cn/api/ai/imagegenerate/create_for_test \
+  -H <span class="code-string">"Authorization: Bearer YOUR_API_KEY"</span> \
+  -H <span class="code-string">"Content-Type: application/json"</span> \
+  -d <span class="code-string">'{
+    "model": "jianyuan",
+    "stream": false,
+    "dialogue": [
+      {"role":"user","content":"一件青花瓷文创产品设计"}
+    ]
+  }'</span></code></pre>
+        </div>
+    </section>
+
+    <section class="imageai-home-compliance">
+        <div class="imageai-home-compliance-seal">AI<small>合规</small></div>
+        <div><span>COMPLIANCE BY DESIGN</span><h2>合规能力内置于每一次生成</h2><p>平台在图片生成链路中自动加入显式标识和隐式元数据，并将生成请求与结果留档，帮助业务满足人工智能生成合成内容标识与追溯需要。</p></div>
+        <div class="imageai-home-compliance-points"><p><i>✓</i><span>显式文字水印<strong>用户可直接感知</strong></span></p><p><i>✓</i><span>PNG 隐式元数据<strong>标识信息随文件保存</strong></span></p><p><i>✓</i><span>全局唯一标识<strong>支持作品来源追溯</strong></span></p></div>
+    </section>
+
+    <section class="imageai-home-cta">
+        <div><span>开始构建你的文博创意应用</span><h2>让文化灵感，成为可以调用的能力</h2></div>
+        <if condition="cmf_is_user_login()"><a href="/imageai/account">进入控制台 <span>→</span></a><else/><a href="/imageai/register">免费创建账号 <span>→</span></a></if>
+    </section>
+</main>
+
+<footer class="imageai-home-footer">
+    <div><a class="imageai-home-footer-brand" href="/imageai/">鉴渊 ImageAI</a><p>面向开发者的文博多模态图像生成开放平台</p></div>
+    <nav><a href="/imageai/docs">API 文档</a><a href="/imageai/service">服务协议</a><a href="/imageai/privacy">隐私政策</a></nav>
+    <p>© 2026 鉴渊 ImageAI</p>
+</footer>
+</body>
+</html>

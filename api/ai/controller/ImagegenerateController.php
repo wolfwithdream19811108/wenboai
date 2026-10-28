@@ -13,6 +13,9 @@ use api\ai\service\external\VolcEngineSignService;
 use api\ai\service\storage\UpyunService;
 use api\ai\service\external\YidunTextCheckService;
 use app\ai\service\ImageGenerationConfig;
+use app\imageai\service\ApiKeyService;
+use app\imageai\service\BillingService;
+use app\imageai\service\RequestService;
 require_once __DIR__ . '/AigcPngMetadata.php';
 
 class ImagegenerateController extends RestBaseController
@@ -53,6 +56,20 @@ class ImagegenerateController extends RestBaseController
     private $classifySystemPrompt;
     private $upyunRemoteDir;
     private $configurationErrors = [];
+    private $dryRunConfigurationErrors = [];
+    private $imageAiRequestId = '';
+    private $imageAiApiKey = null;
+    private $imageAiPrompt = '';
+    private $imageAiModel = '';
+    private $imageAiStartedAt = 0.0;
+    private $imageAiPointsReserved = 0;
+    private $imageAiResponseLogged = false;
+    private $imageAiPointsPerImage = 50;
+    private $imageAiRateLimitPerMinute = 60;
+    private $imageAiTaskId = '';
+    private $imageAiWidth = 0;
+    private $imageAiHeight = 0;
+    private $imageAiProduceId = '';
 
     public function __construct()
     {
@@ -71,6 +88,8 @@ class ImagegenerateController extends RestBaseController
         $this->pollInterval = (int)$settings['endpoint']['poll_interval'];
         $this->maxWaitTime = (int)$settings['endpoint']['max_wait_time'];
         $this->defaultModel = trim((string)$settings['endpoint']['default_model']);
+        $this->imageAiPointsPerImage = max(0, (int)($settings['endpoint']['api_points'] ?? 50));
+        $this->imageAiRateLimitPerMinute = max(1, (int)($settings['endpoint']['rate_limit_per_minute'] ?? 60));
         $this->localSaveRelDir = trim((string)$settings['storage']['local_save_rel_dir'], '/\\');
         $this->localUrlBase = rtrim((string)$settings['storage']['local_url_base'], '/');
         $this->upyunRemoteDir = '/' . trim((string)$settings['storage']['upyun_remote_dir'], '/') . '/';
@@ -96,6 +115,7 @@ class ImagegenerateController extends RestBaseController
         $this->classifyTimeout = (int)$settings['classifier']['timeout'];
         $this->classifySystemPrompt = trim((string)$settings['classifier']['system_prompt']);
         $this->configurationErrors = ImageGenerationConfig::runtimeErrors($settings, $keys);
+        $this->dryRunConfigurationErrors = ImageGenerationConfig::dryRunErrors($settings, $keys);
 
         $this->initServices();
     }
@@ -177,6 +197,7 @@ class ImagegenerateController extends RestBaseController
      *   "model": "jianyuan",      // 非必选，默认 jianyuan
      *   "max_tokens": 1024,       // 接收但忽略
      *   "stream": true/false,     // true: 结果放choices; false: 结果放content
+     *   "dry_run": true/false,    // true: 只执行鉴权、校验和类目判断，不调用生图
      *   "dialogue": [
      *     {"role": "user", "content": "画一只猫"}
      *   ]
@@ -192,6 +213,8 @@ class ImagegenerateController extends RestBaseController
      */
     public function create_for_test()
     {
+        $this->imageAiRequestId = RequestService::newId();
+        $this->imageAiStartedAt = microtime(true);
         // 关闭执行时间限制，防止轮询期间脚本被中断
         @set_time_limit($this->maxWaitTime + $this->classifyTimeout + 30);
         @ignore_user_abort(true);
@@ -211,12 +234,17 @@ class ImagegenerateController extends RestBaseController
                     break;
                 }
             }
+            if (!$validApiKey) {
+                $this->imageAiApiKey = (new ApiKeyService())->authenticate($apiKey, get_client_ip(0, true));
+                $validApiKey = !empty($this->imageAiApiKey);
+            }
         }
         if (!$validApiKey) {
             return $this->specResponse(false, '', '鉴权失败：API_KEY无效', false);
         }
-        if (!empty($this->configurationErrors)) {
-            return $this->specResponse(false, '', '图片生成服务配置不完整，请联系管理员', false);
+        if ($this->imageAiApiKey
+            && !(new ApiKeyService())->checkRateLimit($this->imageAiApiKey['id'], $this->imageAiRateLimitPerMinute)) {
+            return $this->specResponse(false, '', '请求过于频繁，请稍后再试', false);
         }
 
         // 3. 解析请求体
@@ -228,18 +256,87 @@ class ImagegenerateController extends RestBaseController
 
         // 4. 解析参数（model非必选有默认值，max_tokens接收但忽略）
         $model  = isset($data['model']) && !empty($data['model']) ? strtolower(trim($data['model'])) : $this->defaultModel;
+        $this->imageAiModel = $model;
         $stream = isset($data['stream']) ? filter_var($data['stream'], FILTER_VALIDATE_BOOLEAN) : false;
+        $dryRun = isset($data['dry_run']) && filter_var($data['dry_run'], FILTER_VALIDATE_BOOLEAN);
+        $dryRunProbe = isset($data['dry_run_probe'])
+            && filter_var($data['dry_run_probe'], FILTER_VALIDATE_BOOLEAN);
+
+        // 安全握手不需要提示词，也不调用类目模型或图片生成服务。
+        // 批测脚本必须先确认服务器明确支持 dry-run，避免旧版本忽略参数后误生图。
+        if ($dryRunProbe) {
+            if (!$dryRun) {
+                return $this->specResponse(
+                    false,
+                    '',
+                    'dry_run_probe 必须与 dry_run=true 同时使用',
+                    false,
+                    [
+                        'dry_run' => false,
+                        'dry_run_supported' => true,
+                        'generation_called' => false,
+                    ]
+                );
+            }
+
+            return $this->specResponse(
+                true,
+                '',
+                'success',
+                false,
+                [
+                    'dry_run' => true,
+                    'dry_run_supported' => true,
+                    'generation_called' => false,
+                ]
+            );
+        }
+
+        $activeConfigurationErrors = $dryRun
+            ? $this->dryRunConfigurationErrors
+            : $this->configurationErrors;
+        if (!empty($activeConfigurationErrors)) {
+            return $this->specResponse(
+                false,
+                '',
+                $dryRun ? '类目判断服务配置不完整，请联系管理员' : '图片生成服务配置不完整，请联系管理员',
+                $stream,
+                $dryRun ? [
+                    'dry_run' => true,
+                    'generation_called' => false,
+                    'would_generate_in_live_mode' => false,
+                    'decision' => 'error',
+                    'classification' => [
+                        'enabled' => $this->classifyEnabled,
+                        'available' => false,
+                        'is_sensitive' => null,
+                        'is_artwork' => null,
+                        'is_restricted_domain' => null,
+                        'reason' => 'configuration_error',
+                    ],
+                ] : null
+            );
+        }
 
         // 5. 从dialogue中提取最后一条用户消息作为prompt
         $prompt = $this->extractLastUserPrompt($data['dialogue'] ?? null);
         if ($prompt === null) {
             return $this->specResponse(false, '', '缺少dialogue参数或dialogue中不存在role为user的有效消息', $stream);
         }
+        $this->imageAiPrompt = $prompt;
 
         // 6. 目前仅支持 jianyuan 模型
         if ($model !== 'jianyuan') {
             return $this->specResponse(false, '', '不支持的模型: ' . $model . '，当前支持的模型: jianyuan', $stream);
         }
+
+        $aiCheck = [
+            'available' => true,
+            'sensitive' => false,
+            'artwork' => true,
+            'restricted_domain' => false,
+            'reason' => $this->classifyEnabled ? '' : '类目判断功能已关闭',
+        ];
 
         if ($this->classifyEnabled) {
             // AI 三维度判断；服务异常时 fail-close。
@@ -255,24 +352,55 @@ class ImagegenerateController extends RestBaseController
                 ];
             }
 
-            if (!$aiCheck['available']) {
-                return $this->specResponse(false, '', '内容类目判断服务暂不可用', $stream);
-            }
-            if ($aiCheck['sensitive']) {
-                return $this->specResponse(false, '', '输入内容包含敏感信息，拒绝服务', $stream);
-            }
-            if ($aiCheck['restricted_domain'] || !$aiCheck['artwork']) {
-                return $this->specResponse(
-                    false,
-                    '',
-                    '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成',
-                    $stream
-                );
-            }
         }
 
+        $decision = 'allow';
+        $decisionReason = 'success';
+        if (!$aiCheck['available']) {
+            $decision = 'error';
+            $decisionReason = '内容类目判断服务暂不可用';
+        } elseif ($aiCheck['sensitive']) {
+            $decision = 'reject';
+            $decisionReason = '输入内容包含敏感信息，拒绝服务';
+        } elseif ($aiCheck['restricted_domain'] || !$aiCheck['artwork']) {
+            $decision = 'reject';
+            $decisionReason = '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成';
+        }
 
+        if ($dryRun) {
+            return $this->specResponse(
+                $decision === 'allow',
+                '',
+                $decisionReason,
+                $stream,
+                [
+                    'dry_run' => true,
+                    'generation_called' => false,
+                    'would_generate_in_live_mode' => $decision === 'allow',
+                    'decision' => $decision,
+                    'classification' => [
+                        'enabled' => $this->classifyEnabled,
+                        'available' => (bool)$aiCheck['available'],
+                        'is_sensitive' => (bool)$aiCheck['sensitive'],
+                        'is_artwork' => (bool)$aiCheck['artwork'],
+                        'is_restricted_domain' => (bool)$aiCheck['restricted_domain'],
+                        'reason' => (string)$aiCheck['reason'],
+                    ],
+                ]
+            );
+        }
 
+        if ($decision !== 'allow') {
+            return $this->specResponse(false, '', $decisionReason, $stream);
+        }
+
+        if ($this->imageAiApiKey) {
+            $billing = new BillingService();
+            if (!$billing->reserve($this->imageAiApiKey['user_id'], $this->imageAiPointsPerImage)) {
+                return $this->specResponse(false, '', '积分不足，请先充值', $stream);
+            }
+            $this->imageAiPointsReserved = $this->imageAiPointsPerImage;
+        }
 
         // 7. 提交即梦4.0图片生成任务（固定生成1张）
         try {
@@ -290,6 +418,7 @@ class ImagegenerateController extends RestBaseController
         }
 
         $taskId = $submitResult['data']['task_id'];
+        $this->imageAiTaskId = (string)$taskId;
 
         // 8. 轮询任务状态直到成功、失败或超时
         $imageUrl  = null;
@@ -346,6 +475,9 @@ class ImagegenerateController extends RestBaseController
             return $this->specResponse(false, '', '图片转存失败: ' . $saveResult['error'], $stream);
         }
         $imageUrl = $saveResult['url'];
+        $this->imageAiWidth = (int)($saveResult['width'] ?? 0);
+        $this->imageAiHeight = (int)($saveResult['height'] ?? 0);
+        $this->imageAiProduceId = (string)($saveResult['produce_id'] ?? '');
 
         // 11. 开启同步时，将已经添加文字水印和 AIGC metadata 的最终 PNG 上传又拍云。
         if ($this->SYNC_IMAGE_UPYUN && !$this->upyunService) {
@@ -596,6 +728,7 @@ class ImagegenerateController extends RestBaseController
 
         if ($this->enableAigcMetadata) {
             try {
+                $produceId = '';
                 $imageData = AigcPngMetadata::replace(
                     $imageData,
                     $this->aigcContentProducer,
@@ -603,7 +736,8 @@ class ImagegenerateController extends RestBaseController
                     $this->aigcXmpPrefix,
                     $this->aigcXmpNamespace,
                     $this->aigcLabel,
-                    $this->aigcIdPrefix
+                    $this->aigcIdPrefix,
+                    $produceId
                 );
             } catch (\Throwable $e) {
                 return ['success' => false, 'url' => '', 'error' => '写入 AIGC 隐式标识失败: ' . $e->getMessage()];
@@ -640,7 +774,15 @@ class ImagegenerateController extends RestBaseController
         // 6. 拼接可访问URL
         $url = rtrim($this->localUrlBase, '/') . '/' . $this->localSaveRelDir . '/' . $dateDir . '/' . $filename;
 
-        return ['success' => true, 'url' => $url, 'path' => $filePath, 'error' => ''];
+        return [
+            'success' => true,
+            'url' => $url,
+            'path' => $filePath,
+            'width' => (int)$imageInfo[0],
+            'height' => (int)$imageInfo[1],
+            'produce_id' => isset($produceId) ? $produceId : '',
+            'error' => '',
+        ];
     }
 
     /**
@@ -818,8 +960,9 @@ class ImagegenerateController extends RestBaseController
      * @param string $result  图片URL（成功时）
      * @param string $reason  success或失败原因
      * @param bool   $stream  流式标识：true结果放choices，false结果放content
+     * @param array|null $data 可选附加数据（dry-run 使用）
      */
-    private function specResponse($success, $result, $reason, $stream)
+    private function specResponse($success, $result, $reason, $stream, array $data = null)
     {
         if ($success) {
             $response = [
@@ -835,6 +978,65 @@ class ImagegenerateController extends RestBaseController
                 'status'  => 'failed',
                 'reason'  => $reason,
             ];
+        }
+
+        if ($data !== null) {
+            $response['data'] = $data;
+        }
+
+        if ($this->imageAiRequestId !== '') {
+            $response['request_id'] = $this->imageAiRequestId;
+        }
+
+        if (!$this->imageAiResponseLogged && $this->imageAiRequestId !== '') {
+            $this->imageAiResponseLogged = true;
+            $status = $success ? 'success' : 'error';
+            if (isset($data['decision']) && in_array($data['decision'], ['reject', 'error'], true)) {
+                $status = $data['decision'];
+            } elseif (!$success && (strpos($reason, '敏感') !== false || strpos($reason, '不属于') !== false)) {
+                $status = 'reject';
+            }
+
+            if (!$success && $this->imageAiPointsReserved > 0 && $this->imageAiApiKey) {
+                (new BillingService())->refund($this->imageAiApiKey['user_id'], $this->imageAiPointsReserved);
+                $this->imageAiPointsReserved = 0;
+            }
+
+            try {
+                $requestService = new RequestService();
+                $requestService->log([
+                    'request_id' => $this->imageAiRequestId,
+                    'user_id' => $this->imageAiApiKey ? (int)$this->imageAiApiKey['user_id'] : 0,
+                    'api_key_id' => $this->imageAiApiKey ? (int)$this->imageAiApiKey['id'] : 0,
+                    'model' => $this->imageAiModel,
+                    'status' => $status,
+                    'reason' => $success ? 'success' : (string)$reason,
+                    'prompt_digest' => $this->imageAiPrompt === '' ? '' : hash('sha256', $this->imageAiPrompt),
+                    'image_url' => $success ? (string)$result : '',
+                    'points' => $success ? $this->imageAiPointsReserved : 0,
+                    'duration_ms' => $this->imageAiStartedAt > 0
+                        ? (int)round((microtime(true) - $this->imageAiStartedAt) * 1000) : 0,
+                    'client_ip' => get_client_ip(0, true),
+                ]);
+                if ($success && $result !== '' && $this->imageAiApiKey) {
+                    $requestService->recordWork(
+                        $this->imageAiApiKey['user_id'],
+                        $this->imageAiRequestId,
+                        $result,
+                        $this->imageAiPrompt,
+                        $this->imageAiModel,
+                        [
+                            'api_key_id' => (int)$this->imageAiApiKey['id'],
+                            'task_id' => $this->imageAiTaskId,
+                            'width' => $this->imageAiWidth,
+                            'height' => $this->imageAiHeight,
+                            'produce_id' => $this->imageAiProduceId,
+                        ]
+                    );
+                }
+            } catch (\Throwable $e) {
+                error_log('ImageAI request audit failed: ' . $e->getMessage());
+            }
         }
 
         http_response_code(200);

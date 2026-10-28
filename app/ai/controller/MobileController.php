@@ -15,6 +15,7 @@ use cmf\controller\HomeBaseController;
 use phpseclib\Crypt\RSA;
 use think\Db;
 use app\ai\model\AiUserPointsModel;
+use app\imageai\service\AccessService;
 
 class MobileController extends HomeBaseController
 {
@@ -33,6 +34,9 @@ class MobileController extends HomeBaseController
 
     public function index()
     {
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            $this->error('此账号仅支持通过 API 创建图片', '/imageai/account/api-keys');
+        }
         
    $isLogin = cmf_is_user_login();
         if ($isLogin) {
@@ -81,6 +85,9 @@ class MobileController extends HomeBaseController
     // 文章点赞
     public function create()
     {
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            $this->error('此账号仅支持通过 API 创建图片', '/imageai/account/api-keys');
+        }
         $return_data = []; 
         		$return_data['error'] = '1122';
         		$return_data['image'] = '6677';

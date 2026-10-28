@@ -16,6 +16,7 @@ use plugins\qiniu\lib\Qiniu;
 use app\user\model\UserPointsModel;
 use app\ai\model\AiUserWorksModel;
 use app\ai\service\ImageGenerationConfig;
+use app\imageai\service\AccessService;
 use think\Db;
 use think\Request;
 use api\user\model\UserModel;
@@ -44,9 +45,9 @@ class AiimageController extends RestBaseController
      */
     public function create()
     {
-
-
-
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            return ApiHelper::error('此账号仅支持通过 API 创建图片', 403);
+        }
 
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return 'Invalid request method.';
@@ -585,6 +586,9 @@ class AiimageController extends RestBaseController
 
     public function recordWorksKey()
     {
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            return ApiHelper::error('此账号仅支持通过 API 创建图片', 403);
+        }
         $aiUserWorksModel = new AiUserWorksModel();
         $keyArray = $this->request->post();
 
@@ -630,6 +634,9 @@ class AiimageController extends RestBaseController
     }
     public function updateWorksInfo()
     {
+        if (cmf_is_user_login() && AccessService::isApiOnly(cmf_get_current_user_id())) {
+            return ApiHelper::error('此账号仅支持通过 API 创建图片', 403);
+        }
         $aiUserWorksModel = new AiUserWorksModel();
         $params = $this->request->post();
         $key = $params['key'];

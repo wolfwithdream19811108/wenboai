@@ -11,7 +11,8 @@ final class AigcPngMetadata
                                    string $prefix = 'TC260',
                                    string $namespace = 'http://www.tc260.org.cn/ns/AIGC/1.0/',
                                    string $label = '1',
-                                   string $idPrefix = 'wb'): string
+                                   string $idPrefix = 'wb',
+                                   ?string &$produceIdOut = null): string
     {
         if (substr($png, 0, 8) !== self::SIGNATURE) {
             throw new \RuntimeException('隐式标识仅支持 PNG 图片');
@@ -25,6 +26,7 @@ final class AigcPngMetadata
         $stamp = gmdate('YmdHis');
         // 无数据库无法严格证明永不重复；随机数提供实际可用的唯一性。
         $produceId = $idPrefix . '-' . $stamp . '-' . bin2hex(random_bytes(16));
+        $produceIdOut = $produceId;
         // GB 45438-2025 附录 E：生成服务提供者首次写入标识时，
         // 内容传播编号应与内容制作编号一致。
         $propagateId = $produceId;

@@ -1,0 +1,14 @@
+<header class="imageai-nav">
+    <a class="imageai-brand" href="/imageai/">鉴渊 ImageAI</a>
+    <nav>
+        <a href="/imageai/docs">API 文档</a>
+        <a href="/imageai/create">网页生图</a>
+        <if condition="cmf_is_user_login()">
+            <a href="/imageai/account">控制台</a>
+            <a href="/imageai/logout">退出</a>
+        <else/>
+            <a href="/imageai/login">登录</a>
+            <a class="primary" href="/imageai/register">注册</a>
+        </if>
+    </nav>
+</header>

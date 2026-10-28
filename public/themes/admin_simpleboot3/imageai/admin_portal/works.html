@@ -1,0 +1,13 @@
+<include file="public@header"/>
+<style>.work-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:20px}.work-card{border:1px solid #ddd;padding:10px}.work-card img{width:100%;aspect-ratio:1;object-fit:cover}</style>
+</head><body><div class="wrap"><include file="imageai/admin_portal@_tabs"/>
+<div class="work-grid"><foreach name="list" item="v"><article class="work-card">
+    <a href="{$v.picture_url}" target="_blank"><img src="{$v.picture_url}"></a>
+    <p>用户：{$v.uid} {$v.mobile}</p>
+    <p>来源：<if condition="!empty($v.source)">{$v.source}<else/>web</if>；模型：<if condition="!empty($v.api_model)">{$v.api_model}<else/>{$v.model_code}</if></p>
+    <p>请求：{$v.key}</p>
+    <if condition="!empty($v.upstream_task_id)"><p>上游任务：{$v.upstream_task_id}</p></if>
+    <if condition="!empty($v.produce_id)"><p>ProduceID：{$v.produce_id}</p></if>
+    <p><if condition="!empty($v.api_width)">{$v.api_width}<else/>{$v.width}</if> × <if condition="!empty($v.api_height)">{$v.api_height}<else/>{$v.height}</if></p>
+    <p>{:date('Y-m-d H:i:s',$v.create_timestamp)}</p>
+</article></foreach></div><div class="pagination">{$page}</div></div></body></html>
