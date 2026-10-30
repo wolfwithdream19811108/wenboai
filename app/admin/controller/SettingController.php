@@ -73,6 +73,7 @@ class SettingController extends AdminBaseController
         $this->assign("cdn_settings", $cdnSettings);
         $this->assign("admin_settings", $adminSettings);
         $this->assign("function_settings", $functionSettings);
+        $this->assign('function_keys', $functionKeys);
         $this->assign('function_key_status', ImageGenerationConfig::keyStatus($functionKeys));
         $this->assign('image_generation_settings', $imageGenerationSettings);
         $this->assign('real_name_settings', $realNameSettings);

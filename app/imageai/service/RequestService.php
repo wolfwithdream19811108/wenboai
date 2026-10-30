@@ -33,12 +33,15 @@ class RequestService
     public function recordWork($userId, $requestId, $imageUrl, $prompt, $model, array $detail = [])
     {
         $user = Db::name('user')->where('id', (int)$userId)->find();
+        $userName = $user
+            ? (string)($user['user_nickname'] ?: $user['mobile'] ?: $user['user_login'])
+            : '系统测试 Key';
         $now = time();
         $workId = Db::name('ai_user_works')->insertGetId([
             'uid' => (int)$userId,
             'key' => (string)$requestId,
             'create_timestamp' => $now,
-            'user_name' => (string)($user['user_nickname'] ?: $user['mobile']),
+            'user_name' => $userName,
             'create_date' => date('Y-m-d H:i:s', $now),
             'picture_url' => (string)$imageUrl,
             'prompt' => (string)$prompt,

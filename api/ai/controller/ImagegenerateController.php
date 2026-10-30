@@ -353,7 +353,7 @@ class ImagegenerateController extends RestBaseController
             return $this->specResponse(false, '', '请求方法不支持，请使用POST方法', false);
         }
 
-        // 2. 先解析请求体。全局测试 Key 只能用于不会生图的 dry-run。
+        // 2. 先解析请求体。
         $rawData = file_get_contents('php://input');
         $data = json_decode($rawData, true);
         if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
@@ -403,8 +403,8 @@ class ImagegenerateController extends RestBaseController
                 $authError = $apiKeyService->getLastError();
                 return $this->specResponse(false, '', $authError !== '' ? $authError : '鉴权失败：API_KEY无效', false);
             }
-            if ($systemTestKey && !$dryRun) {
-                return $this->specResponse(false, '', '系统测试 Key 仅允许用于 dry_run，请使用实名用户 API Key', false);
+            if ($systemTestKey) {
+                $this->imageAiSource = 'api_test';
             }
             if ($this->imageAiApiKey) {
                 $this->imageAiUserId = (int)$this->imageAiApiKey['user_id'];
@@ -1368,7 +1368,7 @@ class ImagegenerateController extends RestBaseController
                         ? (int)round((microtime(true) - $this->imageAiStartedAt) * 1000) : 0,
                     'client_ip' => get_client_ip(0, true),
                 ]);
-                if ($success && $result !== '' && $this->imageAiUserId > 0) {
+                if ($success && $result !== '') {
                     $requestService->recordWork(
                         $this->imageAiUserId,
                         $this->imageAiRequestId,

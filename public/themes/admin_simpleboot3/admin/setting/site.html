@@ -254,14 +254,27 @@
 
                     </div>
                     <div class="tab-pane" id="I">
+                        <?php
+                        $displayFunctionKey = function ($name) use ($function_keys) {
+                            return htmlspecialchars((string)($function_keys[$name] ?? ''), ENT_QUOTES, 'UTF-8');
+                        };
+                        $displayTestApiKeys = htmlspecialchars(
+                            implode("\n", is_array($function_keys['image_test_api_keys'] ?? null)
+                                ? $function_keys['image_test_api_keys'] : []),
+                            ENT_QUOTES,
+                            'UTF-8'
+                        );
+                        ?>
                         <div class="alert alert-info">
-                            敏感值不会回显。显示“已配置”时留空保存会保留原值；只有勾选“清除”才会删除。
+                            已配置的 Key 会回填。敏感值默认遮挡，可点击
+                            <button type="button" class="btn btn-xs btn-default js-key-toggle" data-target="#I">显示 Key</button>
+                            查看；只有勾选“清除”才会删除。
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">火山 AccessKey ID</label>
                             <div class="col-md-7 col-sm-10">
                                 <input type="password" class="form-control" name="function_keys[volc_access_key_id]"
-                                       autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['volc_access_key_id']) ? '已配置，留空不修改' : '未配置'; ?>">
+                                       autocomplete="new-password" value="<?php echo $displayFunctionKey('volc_access_key_id'); ?>" placeholder="未配置">
                                 <label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[volc_access_key_id]" value="1"> 清除</label>
                             </div>
                         </div>
@@ -269,7 +282,7 @@
                             <label class="col-sm-2 control-label">火山 Secret AccessKey</label>
                             <div class="col-md-7 col-sm-10">
                                 <input type="password" class="form-control" name="function_keys[volc_secret_access_key]"
-                                       autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['volc_secret_access_key']) ? '已配置，留空不修改' : '未配置'; ?>">
+                                       autocomplete="new-password" value="<?php echo $displayFunctionKey('volc_secret_access_key'); ?>" placeholder="未配置">
                                 <label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[volc_secret_access_key]" value="1"> 清除</label>
                             </div>
                         </div>
@@ -277,7 +290,7 @@
                             <label class="col-sm-2 control-label">类目判断 API Key</label>
                             <div class="col-md-7 col-sm-10">
                                 <input type="password" class="form-control" name="function_keys[image_classify_api_key]"
-                                       autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['image_classify_api_key']) ? '已配置，留空不修改' : '未配置'; ?>">
+                                       autocomplete="new-password" value="<?php echo $displayFunctionKey('image_classify_api_key'); ?>" placeholder="未配置">
                                 <label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[image_classify_api_key]" value="1"> 清除</label>
                             </div>
                         </div>
@@ -285,7 +298,8 @@
                             <label class="col-sm-2 control-label">测试图片接口 Bearer Key</label>
                             <div class="col-md-7 col-sm-10">
                                 <textarea class="form-control" rows="4" name="function_keys[image_test_api_keys]"
-                                          placeholder="已配置 <?php echo (int)$function_key_status['image_test_api_key_count']; ?> 个；留空不修改。替换时一行一个。"></textarea>
+                                          placeholder="一行一个测试 Bearer Key"><?php echo $displayTestApiKeys; ?></textarea>
+                                <p class="help-block">后台测试 Key 可调用 dry-run，也可直接调用 API 真实生成图片；不绑定用户、不扣用户积分。</p>
                                 <label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[image_test_api_keys]" value="1"> 清除全部</label>
                             </div>
                         </div>
@@ -293,37 +307,37 @@
                         <h4 class="col-sm-offset-2">又拍云</h4>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">服务名</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_service]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['upyun_service']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_service]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_service]" autocomplete="new-password" value="<?php echo $displayFunctionKey('upyun_service'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_service]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">操作员</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_operator]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['upyun_operator']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_operator]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_operator]" autocomplete="new-password" value="<?php echo $displayFunctionKey('upyun_operator'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_operator]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">密码</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_password]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['upyun_password']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_password]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[upyun_password]" autocomplete="new-password" value="<?php echo $displayFunctionKey('upyun_password'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[upyun_password]" value="1"> 清除</label></div>
                         </div>
 
                         <h4 class="col-sm-offset-2">无界与易盾</h4>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">无界 AppID</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[wujie_appid]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['wujie_appid']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[wujie_appid]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[wujie_appid]" autocomplete="new-password" value="<?php echo $displayFunctionKey('wujie_appid'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[wujie_appid]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">无界 SignKey</label>
-                            <div class="col-md-7 col-sm-10"><textarea class="form-control" rows="3" name="function_keys[wujie_signkey]" placeholder="<?php echo !empty($function_key_status['wujie_signkey']) ? '已配置，留空不修改' : '未配置'; ?>"></textarea><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[wujie_signkey]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><textarea class="form-control" rows="3" name="function_keys[wujie_signkey]" placeholder="未配置"><?php echo $displayFunctionKey('wujie_signkey'); ?></textarea><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[wujie_signkey]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">易盾 SecretID</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_secret_id]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['yidun_secret_id']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_secret_id]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_secret_id]" autocomplete="new-password" value="<?php echo $displayFunctionKey('yidun_secret_id'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_secret_id]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">易盾 SecretKey</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_secret_key]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['yidun_secret_key']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_secret_key]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_secret_key]" autocomplete="new-password" value="<?php echo $displayFunctionKey('yidun_secret_key'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_secret_key]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">易盾 BusinessID</label>
-                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_business_id]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['yidun_business_id']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_business_id]" value="1"> 清除</label></div>
+                            <div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[yidun_business_id]" autocomplete="new-password" value="<?php echo $displayFunctionKey('yidun_business_id'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[yidun_business_id]" value="1"> 清除</label></div>
                         </div>
                         <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">{:lang('SAVE')}</button></div></div>
                     </div>
@@ -370,10 +384,10 @@
                     </div>
 
                     <div class="tab-pane" id="L">
-                        <div class="alert alert-info">使用腾讯云 FaceID 身份信息认证（二要素核验）。系统只保存认证状态、身份证带密钥摘要和尾号，不保存完整姓名或身份证号码。</div>
-                        <div class="form-group"><label class="col-sm-2 control-label">启用实名认证门禁</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[enabled]"><option value="1" <?php echo !empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>否</option></select><p class="help-block">启用后，只有实名一致且年满18周岁的用户可以创建 API Key、调用 API 和使用网页生图。</p></div></div>
-                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretId</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_id]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['tencent_faceid_secret_id']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_id]" value="1"> 清除</label></div></div>
-                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretKey</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_key]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['tencent_faceid_secret_key']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_key]" value="1"> 清除</label></div></div>
+                        <div class="alert alert-info">使用腾讯云 FaceID 身份信息认证（二要素核验）。系统只保存认证状态、身份证带密钥摘要和尾号，不保存完整姓名或身份证号码。已配置的密钥会回填，<button type="button" class="btn btn-xs btn-default js-key-toggle" data-target="#L">显示 Key</button></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">启用实名认证门禁</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[enabled]"><option value="1" <?php echo !empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>否</option></select><p class="help-block">启用后，用户自行创建的 API Key 和网页生图必须实名一致且年满18周岁；后台测试 Bearer Key 不受此限制。</p></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretId</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_id]" autocomplete="new-password" value="<?php echo $displayFunctionKey('tencent_faceid_secret_id'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_id]" value="1"> 清除</label></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretKey</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_key]" autocomplete="new-password" value="<?php echo $displayFunctionKey('tencent_faceid_secret_key'); ?>" placeholder="未配置"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_key]" value="1"> 清除</label></div></div>
                         <div class="form-group"><label class="col-sm-2 control-label">测试账号也要求实名</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[require_test_accounts]"><option value="1" <?php echo !empty($real_name_settings['require_test_accounts']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['require_test_accounts']) ? 'selected' : ''; ?>>否</option></select></div></div>
                         <div class="form-group"><label class="col-sm-2 control-label">一个身份限一个账号</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[one_identity_one_account]"><option value="1" <?php echo !empty($real_name_settings['one_identity_one_account']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['one_identity_one_account']) ? 'selected' : ''; ?>>否</option></select></div></div>
                         <div class="form-group"><label class="col-sm-2 control-label">每日尝试上限</label><div class="col-md-7 col-sm-10"><input type="number" min="1" max="20" class="form-control" name="real_name_settings[daily_attempt_limit]" value="{$real_name_settings.daily_attempt_limit|default='5'}"></div></div>
@@ -487,6 +501,18 @@
     var endpoint = "{:url('setting/sitePost')}";
     var credentials = [];
     var batchCode = '';
+
+    document.querySelectorAll('.js-key-toggle').forEach(function (keyToggle) {
+        keyToggle.addEventListener('click', function () {
+            var show = keyToggle.getAttribute('data-visible') !== '1';
+            var target = keyToggle.getAttribute('data-target') || '';
+            document.querySelectorAll(target + ' input[name^="function_keys["]').forEach(function (input) {
+                input.type = show ? 'text' : 'password';
+            });
+            keyToggle.setAttribute('data-visible', show ? '1' : '0');
+            keyToggle.textContent = show ? '隐藏 Key' : '显示 Key';
+        });
+    });
 
     function value(id) {
         var element = document.getElementById(id);
