@@ -12,6 +12,7 @@ namespace app\admin\controller;
 
 use app\admin\model\RouteModel;
 use app\ai\service\ImageGenerationConfig;
+use app\imageai\service\TestAccountService;
 use cmf\controller\AdminBaseController;
 
 use think\Db;
@@ -73,6 +74,7 @@ class SettingController extends AdminBaseController
         $this->assign('function_key_status', ImageGenerationConfig::keyStatus($functionKeys));
         $this->assign('image_generation_settings', $imageGenerationSettings);
         $this->assign("cmf_settings", $cmfSettings);
+        $this->assignTestAccounts();
 
         return $this->fetch();
     }
@@ -93,6 +95,10 @@ class SettingController extends AdminBaseController
     public function sitePost()
     {
         if ($this->request->isPost()) {
+            $testAccountAction = trim((string)$this->request->post('test_account_action', ''));
+            if ($testAccountAction !== '') {
+                return $this->handleTestAccountAction($testAccountAction);
+            }
             $result = $this->validate($this->request->param(), 'SettingSite');
             if ($result !== true) {
                 $this->error($result);
@@ -149,6 +155,115 @@ class SettingController extends AdminBaseController
             $this->success("保存成功！", '');
 
         }
+    }
+
+    private function assignTestAccounts()
+    {
+        $ready = TestAccountService::tablesReady();
+        $this->assign('test_account_tables_ready', $ready);
+        $this->assign('test_accounts', []);
+        $this->assign('test_account_page', '');
+        $this->assign('test_account_batches', []);
+        if (!$ready) {
+            return;
+        }
+
+        $keyword = trim((string)$this->request->param('test_keyword', ''));
+        $query = Db::name('imageai_test_account')->alias('t')
+            ->join('__USER__ u', 'u.id=t.user_id')
+            ->join('__IMAGEAI_TEST_ACCOUNT_BATCH__ b', 'b.id=t.batch_id', 'LEFT')
+            ->join('__USER_POINTS__ p', 'p.userid=t.user_id', 'LEFT')
+            ->field('t.*,u.user_login,u.user_nickname,u.last_login_time,b.batch_code,p.points');
+        if ($keyword !== '') {
+            $query->whereLike('u.user_login|b.batch_code', '%' . $keyword . '%');
+        }
+        $paginator = $query->order('t.create_time DESC')->paginate(30, false, [
+            'query' => $this->request->param(),
+        ]);
+        $accounts = $paginator->items();
+        $userIds = array_column($accounts, 'user_id');
+        $workCounts = [];
+        if (!empty($userIds)) {
+            $workRows = Db::name('ai_user_works')->whereIn('uid', $userIds)
+                ->where('picture_url', '<>', '')
+                ->field('uid,COUNT(*) AS work_count')->group('uid')->select();
+            foreach ($workRows as $row) {
+                $workCounts[(int)$row['uid']] = (int)$row['work_count'];
+            }
+        }
+        foreach ($accounts as &$account) {
+            $account['work_count'] = $workCounts[(int)$account['user_id']] ?? 0;
+            $account['is_active'] = (int)$account['status'] === 1
+                && (empty($account['expires_at']) || (int)$account['expires_at'] >= time());
+            $account['is_expired'] = !empty($account['expires_at']) && (int)$account['expires_at'] < time();
+        }
+        unset($account);
+
+        $this->assign('test_accounts', $accounts);
+        $this->assign('test_account_page', $paginator->render());
+        $this->assign('test_account_batches', Db::name('imageai_test_account_batch')
+            ->order('id DESC')->limit(20)->select());
+    }
+
+    private function handleTestAccountAction($action)
+    {
+        if (!TestAccountService::tablesReady()) {
+            return json(['code' => 0, 'msg' => '测试账号数据表尚未安装，请先执行数据库迁移']);
+        }
+        $service = new TestAccountService();
+        try {
+            if ($action === 'batch_create') {
+                $result = $service->createBatch([
+                    'prefix' => $this->request->post('prefix'),
+                    'start' => $this->request->post('start'),
+                    'count' => $this->request->post('count'),
+                    'password' => $this->request->post('password'),
+                    'points' => $this->request->post('points'),
+                    'expires_at' => $this->parseTestAccountExpiry($this->request->post('expires_on')),
+                    'status' => $this->request->post('status'),
+                ], cmf_get_current_admin_id());
+                return json(['code' => 1, 'msg' => '批量测试账号创建成功', 'data' => $result]);
+            }
+            if ($action === 'single_create') {
+                $result = $service->createOne([
+                    'username' => $this->request->post('username'),
+                    'password' => $this->request->post('password'),
+                    'points' => $this->request->post('points'),
+                    'expires_at' => $this->parseTestAccountExpiry($this->request->post('expires_on')),
+                    'status' => $this->request->post('status'),
+                ], cmf_get_current_admin_id());
+                return json(['code' => 1, 'msg' => '测试账号创建成功', 'data' => $result]);
+            }
+            if ($action === 'operate') {
+                $ids = $this->request->post('user_ids/a');
+                if (!is_array($ids)) {
+                    $ids = preg_split('/\s*,\s*/', trim((string)$this->request->post('user_ids', '')));
+                }
+                $operation = trim((string)$this->request->post('operation'));
+                $service->operate($ids, $operation, [
+                    'password' => $this->request->post('password'),
+                    'points' => $this->request->post('points'),
+                    'expires_at' => $this->parseTestAccountExpiry($this->request->post('expires_on')),
+                ]);
+                return json(['code' => 1, 'msg' => '测试账号操作成功']);
+            }
+            throw new \InvalidArgumentException('不支持的测试账号操作');
+        } catch (\Throwable $e) {
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    private function parseTestAccountExpiry($date)
+    {
+        $date = trim((string)$date);
+        if ($date === '') {
+            return 0;
+        }
+        $timestamp = strtotime($date . ' 23:59:59');
+        if (!$timestamp) {
+            throw new \InvalidArgumentException('有效期格式不正确');
+        }
+        return $timestamp;
     }
 
     private function mergeImageFunctionKeys(array $current, array $submitted, array $clear)

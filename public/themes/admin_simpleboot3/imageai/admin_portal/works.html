@@ -3,7 +3,7 @@
 </head><body><div class="wrap"><include file="imageai/admin_portal@_tabs"/>
 <div class="work-grid"><foreach name="list" item="v"><article class="work-card">
     <a href="{$v.picture_url}" target="_blank"><img src="{$v.picture_url}"></a>
-    <p>用户：{$v.uid} {$v.mobile}</p>
+    <p>用户：{$v.uid} <if condition="!empty($v.mobile)">{$v.mobile}<else/>{$v.user_login}</if></p>
     <p>来源：<if condition="!empty($v.source)">{$v.source}<else/>web</if>；模型：<if condition="!empty($v.api_model)">{$v.api_model}<else/>{$v.model_code}</if></p>
     <p>请求：{$v.key}</p>
     <if condition="!empty($v.upstream_task_id)"><p>上游任务：{$v.upstream_task_id}</p></if>

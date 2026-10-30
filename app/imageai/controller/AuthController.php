@@ -4,6 +4,7 @@ namespace app\imageai\controller;
 
 use app\imageai\service\AccessService;
 use app\imageai\service\AgreementService;
+use app\imageai\service\TestAccountService;
 use app\user\model\UserModel;
 use cmf\controller\HomeBaseController;
 use think\Db;
@@ -142,21 +143,28 @@ class AuthController extends HomeBaseController
         if (!$this->request->isPost()) {
             $this->error('请求方式错误');
         }
-        $mobile = trim((string)$this->request->post('mobile'));
+        $account = trim((string)$this->request->post('account', $this->request->post('mobile', '')));
         $password = (string)$this->request->post('password');
         if (!$this->consumeCaptchaVerification()) {
             $this->error('请重新完成滑块验证');
         }
-        $model = new UserModel();
-        $result = $model->doMobile(['mobile' => $mobile, 'user_pass' => $password]);
-        if ($result !== 0) {
-            $this->error($result === 3 ? '账号已停用' : '手机号码或密码错误');
+        if (cmf_check_mobile($account)) {
+            $model = new UserModel();
+            $result = $model->doMobile(['mobile' => $account, 'user_pass' => $password]);
+            if ($result !== 0) {
+                $this->error($result === 3 ? '账号已停用' : '手机号码或密码错误');
+            }
+        } else {
+            $result = TestAccountService::login($account, $password);
+            if (empty($result['ok'])) {
+                $this->error($result['message'] ?? '测试账号或密码错误');
+            }
         }
         $userId = cmf_get_current_user_id();
         if (!AccessService::isEnabled($userId)) {
             session('user', null);
             session('token', null);
-            $this->error('ImageAI 账号已停用');
+            $this->error('ImageAI 账号已停用或已过期');
         }
         $this->success('登录成功', '/imageai/account');
     }

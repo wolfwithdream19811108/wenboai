@@ -16,6 +16,36 @@ CREATE TABLE IF NOT EXISTS `cmf_imageai_user_profile` (
   KEY `idx_mode_status` (`account_mode`,`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS `cmf_imageai_test_account_batch` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `batch_code` varchar(32) NOT NULL,
+  `account_prefix` varchar(32) NOT NULL DEFAULT '',
+  `start_number` varchar(16) NOT NULL DEFAULT '',
+  `account_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `initial_points` int(11) NOT NULL DEFAULT '0',
+  `expires_at` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `created_by` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_batch_code` (`batch_code`),
+  KEY `idx_create_time` (`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cmf_imageai_test_account` (
+  `user_id` bigint(20) unsigned NOT NULL,
+  `batch_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `expires_at` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `created_by` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`user_id`),
+  KEY `idx_batch_status` (`batch_id`,`status`),
+  KEY `idx_expiry` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 CREATE TABLE IF NOT EXISTS `cmf_imageai_api_key` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) unsigned NOT NULL,
@@ -52,6 +82,33 @@ CREATE TABLE IF NOT EXISTS `cmf_imageai_api_request_log` (
   UNIQUE KEY `uk_request_id` (`request_id`),
   KEY `idx_user_time` (`user_id`,`create_time`),
   KEY `idx_status_time` (`status`,`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS `cmf_imageai_failure_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `request_id` char(32) NOT NULL DEFAULT '',
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `api_key_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `stage` varchar(30) NOT NULL DEFAULT 'unknown',
+  `error_code` varchar(64) NOT NULL DEFAULT 'UNKNOWN_ERROR',
+  `error_message` varchar(1000) NOT NULL DEFAULT '',
+  `http_status` int(10) unsigned NOT NULL DEFAULT '0',
+  `prompt_digest` char(64) NOT NULL DEFAULT '',
+  `local_image_url` varchar(500) NOT NULL DEFAULT '',
+  `local_file_path` varchar(1000) NOT NULL DEFAULT '',
+  `remote_path` varchar(500) NOT NULL DEFAULT '',
+  `remote_image_url` varchar(500) NOT NULL DEFAULT '',
+  `context_json` text,
+  `retry_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `resolved_at` int(10) unsigned NOT NULL DEFAULT '0',
+  `client_ip` varchar(45) NOT NULL DEFAULT '',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_request_id` (`request_id`),
+  KEY `idx_stage_status_time` (`stage`,`status`,`create_time`),
+  KEY `idx_user_time` (`user_id`,`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `cmf_imageai_work_detail` (

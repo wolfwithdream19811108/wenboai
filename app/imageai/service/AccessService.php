@@ -49,6 +49,12 @@ class AccessService
             return false;
         }
         $profile = self::profile($userId);
-        return !$profile || (int)$profile['status'] === 1;
+        if ($profile && (int)$profile['status'] !== 1) {
+            return false;
+        }
+        if ($profile && (string)$profile['account_mode'] === 'test') {
+            return TestAccountService::isUsable($userId);
+        }
+        return true;
     }
 }

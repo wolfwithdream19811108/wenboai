@@ -12,6 +12,7 @@
         <li><a href="#H" data-toggle="tab">功能开关设置</a></li>
         <li><a href="#I" data-toggle="tab">相关 Key 设置</a></li>
         <li><a href="#J" data-toggle="tab">图片生成设置forAPI</a></li>
+        <li><a href="#K" data-toggle="tab">测试账号设置</a></li>
     </ul>
     <form class="form-horizontal js-ajax-form margin-top-20" role="form" action="{:url('setting/sitePost')}"
           method="post">
@@ -366,6 +367,101 @@
                         <div class="form-group"><label class="col-sm-2 control-label">最大等待时间（秒）</label><div class="col-md-7 col-sm-10"><input type="number" min="30" max="300" class="form-control" name="image_generation_settings[endpoint][max_wait_time]" value="{$image_generation_settings.endpoint.max_wait_time|default='90'}"></div></div>
                         <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">{:lang('SAVE')}</button></div></div>
                     </div>
+
+                    <div class="tab-pane" id="K">
+                        <style>
+                            .test-account-panel{padding:18px;margin-bottom:20px;border:1px solid #e5e5e5;border-radius:5px;background:#fff}
+                            .test-account-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+                            .test-account-grid label{display:block;margin-bottom:5px;font-weight:600}
+                            .test-account-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+                            .test-account-result{display:none;margin-top:16px}
+                            .test-account-result textarea{min-height:180px;font-family:Consolas,monospace}
+                            .test-account-table-wrap{overflow-x:auto}
+                            .test-account-table td,.test-account-table th{white-space:nowrap;vertical-align:middle!important}
+                        </style>
+
+                        <notempty name="test_account_tables_ready">
+                            <div class="alert alert-info">测试账号使用独立用户名登录，默认可以使用网页生图和创建 API Key；登录仍需完成滑块验证。密码只在创建或重置时显示，系统不会保存明文。</div>
+
+                            <div class="test-account-panel">
+                                <h4>批量创建测试账号</h4>
+                                <div class="test-account-grid">
+                                    <div><label>账号前缀</label><input id="test-batch-prefix" class="form-control" value="jytest" maxlength="21"></div>
+                                    <div><label>起始编号</label><input id="test-batch-start" class="form-control" value="0001" maxlength="10"></div>
+                                    <div><label>创建数量</label><input id="test-batch-count" class="form-control" type="number" min="1" max="500" value="10"></div>
+                                    <div><label>统一密码</label><input id="test-batch-password" class="form-control" type="password" minlength="8" maxlength="32" autocomplete="new-password"></div>
+                                    <div><label>初始积分</label><input id="test-batch-points" class="form-control" type="number" min="0" max="10000000" value="500"></div>
+                                    <div><label>有效期（留空为永久）</label><input id="test-batch-expiry" class="form-control" type="date"></div>
+                                    <div><label>初始状态</label><select id="test-batch-status" class="form-control"><option value="1">启用</option><option value="0">停用</option></select></div>
+                                </div>
+                                <div class="test-account-actions"><button id="test-batch-create" type="button" class="btn btn-primary">批量创建</button></div>
+                                <div id="test-account-result" class="test-account-result alert alert-success">
+                                    <strong id="test-account-result-title"></strong>
+                                    <p>请立即复制或下载。关闭或刷新页面后，密码无法再次查看。</p>
+                                    <textarea id="test-account-credentials" class="form-control" readonly></textarea>
+                                    <div class="test-account-actions">
+                                        <button id="test-account-copy" type="button" class="btn btn-default">复制账号凭证</button>
+                                        <button id="test-account-download" type="button" class="btn btn-default">下载 CSV</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="test-account-panel">
+                                <h4>单独创建测试账号</h4>
+                                <div class="test-account-grid">
+                                    <div><label>测试账号</label><input id="test-single-username" class="form-control" maxlength="32" placeholder="例如：jytester01"></div>
+                                    <div><label>登录密码</label><input id="test-single-password" class="form-control" type="password" minlength="8" maxlength="32" autocomplete="new-password"></div>
+                                    <div><label>初始积分</label><input id="test-single-points" class="form-control" type="number" min="0" max="10000000" value="500"></div>
+                                    <div><label>有效期（留空为永久）</label><input id="test-single-expiry" class="form-control" type="date"></div>
+                                    <div><label>初始状态</label><select id="test-single-status" class="form-control"><option value="1">启用</option><option value="0">停用</option></select></div>
+                                </div>
+                                <div class="test-account-actions"><button id="test-single-create" type="button" class="btn btn-primary">创建账号</button></div>
+                            </div>
+
+                            <div class="test-account-panel">
+                                <h4>批量或单独设置</h4>
+                                <div class="test-account-grid">
+                                    <div><label>操作</label><select id="test-manage-operation" class="form-control"><option value="enable">启用</option><option value="disable">停用</option><option value="reset_password">重置密码</option><option value="set_points">设置积分</option><option value="add_points">增减积分</option><option value="set_expiry">设置有效期</option></select></div>
+                                    <div><label>新密码（重置密码时填写）</label><input id="test-manage-password" class="form-control" type="password" minlength="8" maxlength="32" autocomplete="new-password"></div>
+                                    <div><label>积分（可填写负数进行扣减）</label><input id="test-manage-points" class="form-control" type="number" min="-10000000" max="10000000" value="0"></div>
+                                    <div><label>有效期（留空设为永久）</label><input id="test-manage-expiry" class="form-control" type="date"></div>
+                                </div>
+                                <div class="test-account-actions"><button id="test-manage-submit" type="button" class="btn btn-warning">应用到选中账号</button></div>
+                            </div>
+
+                            <div class="test-account-panel">
+                                <div class="clearfix"><h4 class="pull-left">测试账号列表</h4><div class="pull-right"><input id="test-account-filter" class="form-control" style="width:220px" placeholder="筛选账号或批次"></div></div>
+                                <div class="test-account-table-wrap">
+                                    <table class="table table-striped table-bordered test-account-table">
+                                        <thead><tr><th><input id="test-account-check-all" type="checkbox"></th><th>账号</th><th>批次</th><th>积分</th><th>状态</th><th>有效期</th><th>最近登录</th><th>作品数</th><th>快捷操作</th></tr></thead>
+                                        <tbody id="test-account-list">
+                                        <volist name="test_accounts" id="vo">
+                                            <tr data-search="{$vo.user_login|htmlspecialchars} {$vo.batch_code|htmlspecialchars}">
+                                                <td><input class="test-account-check" type="checkbox" value="{$vo.user_id}"></td>
+                                                <td>{$vo.user_login|htmlspecialchars}</td>
+                                                <td>{$vo.batch_code|htmlspecialchars}</td>
+                                                <td>{$vo.points|default=0}</td>
+                                                <td><if condition="$vo.is_active"><span class="label label-success">启用</span><elseif condition="$vo.is_expired"/><span class="label label-warning">已过期</span><else/><span class="label label-default">停用</span></if></td>
+                                                <td><if condition="$vo.expires_at gt 0">{$vo.expires_at|date='Y-m-d',###}<else/>永久</if></td>
+                                                <td><if condition="$vo.last_login_time gt 0">{$vo.last_login_time|date='Y-m-d H:i',###}<else/>从未登录</if></td>
+                                                <td>{$vo.work_count|default=0}</td>
+                                                <td><button type="button" class="btn btn-xs btn-default test-account-one" data-user-id="{$vo.user_id}" data-operation="<?php echo (int)$vo['status'] === 1 ? 'disable' : 'enable'; ?>"><?php echo (int)$vo['status'] === 1 ? '停用' : '启用'; ?></button></td>
+                                            </tr>
+                                        </volist>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div id="test-account-page">{$test_account_page}</div>
+                            </div>
+
+                            <div class="test-account-panel">
+                                <h4>最近创建批次</h4>
+                                <div class="test-account-table-wrap"><table class="table table-bordered"><thead><tr><th>批次编号</th><th>前缀</th><th>数量</th><th>初始积分</th><th>有效期</th><th>创建时间</th></tr></thead><tbody><volist name="test_account_batches" id="batch"><tr><td>{$batch.batch_code|htmlspecialchars}</td><td>{$batch.account_prefix|htmlspecialchars}</td><td>{$batch.account_count}</td><td>{$batch.initial_points}</td><td><if condition="$batch.expires_at gt 0">{$batch.expires_at|date='Y-m-d',###}<else/>永久</if></td><td>{$batch.create_time|date='Y-m-d H:i',###}</td></tr></volist></tbody></table></div>
+                            </div>
+                        <else/>
+                            <div class="alert alert-warning">测试账号数据表尚未安装。请先执行 <code>database/imageai_test_accounts.sql</code>，然后刷新本页。</div>
+                        </notempty>
+                    </div>
                 </div>
             </div>
         </fieldset>
@@ -373,5 +469,166 @@
 
 </div>
 <script type="text/javascript" src="__STATIC__/js/admin.js"></script>
+<script>
+(function () {
+    var endpoint = "{:url('setting/sitePost')}";
+    var credentials = [];
+    var batchCode = '';
+
+    function value(id) {
+        var element = document.getElementById(id);
+        return element ? element.value : '';
+    }
+
+    function post(data) {
+        return fetch(endpoint, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json'
+            },
+            body: new URLSearchParams(data)
+        }).then(function (response) { return response.json(); });
+    }
+
+    function notify(result) {
+        var message = result.msg || (result.code === 1 ? '操作成功' : '操作失败');
+        if (window.layer && typeof window.layer.msg === 'function') {
+            window.layer.msg(message, {icon: result.code === 1 ? 1 : 2});
+        } else {
+            alert(message);
+        }
+    }
+
+    function showCredentials(result) {
+        credentials = result.data && result.data.credentials ? result.data.credentials : [];
+        batchCode = result.data && result.data.batch_code ? result.data.batch_code : 'test_accounts';
+        var lines = ['账号,密码'];
+        credentials.forEach(function (item) { lines.push(item.username + ',' + item.password); });
+        document.getElementById('test-account-credentials').value = lines.join('\n');
+        document.getElementById('test-account-result-title').textContent = '批次 ' + batchCode + ' 已创建 ' + credentials.length + ' 个账号';
+        document.getElementById('test-account-result').style.display = 'block';
+        document.getElementById('test-account-result').scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    }
+
+    function selectedIds() {
+        return Array.prototype.map.call(document.querySelectorAll('.test-account-check:checked'), function (item) {
+            return item.value;
+        });
+    }
+
+    function operate(ids, operation) {
+        if (!ids.length) {
+            notify({code: 0, msg: '请选择测试账号'});
+            return;
+        }
+        post({
+            test_account_action: 'operate',
+            user_ids: ids.join(','),
+            operation: operation,
+            password: value('test-manage-password'),
+            points: value('test-manage-points'),
+            expires_on: value('test-manage-expiry')
+        }).then(function (result) {
+            notify(result);
+            if (result.code === 1) {
+                location.href = location.pathname + location.search + '#K';
+            }
+        }).catch(function () { notify({code: 0, msg: '请求失败，请稍后重试'}); });
+    }
+
+    var batchButton = document.getElementById('test-batch-create');
+    if (!batchButton) {
+        return;
+    }
+
+    if (location.hash === '#K') {
+        $('a[href="#K"]').tab('show');
+    }
+    $('a[href="#K"]').on('shown.bs.tab', function () { history.replaceState(null, '', location.pathname + location.search + '#K'); });
+
+    batchButton.addEventListener('click', function () {
+        post({
+            test_account_action: 'batch_create',
+            prefix: value('test-batch-prefix'),
+            start: value('test-batch-start'),
+            count: value('test-batch-count'),
+            password: value('test-batch-password'),
+            points: value('test-batch-points'),
+            expires_on: value('test-batch-expiry'),
+            status: value('test-batch-status')
+        }).then(function (result) {
+            notify(result);
+            if (result.code === 1) { showCredentials(result); }
+        }).catch(function () { notify({code: 0, msg: '请求失败，请稍后重试'}); });
+    });
+
+    document.getElementById('test-single-create').addEventListener('click', function () {
+        post({
+            test_account_action: 'single_create',
+            username: value('test-single-username'),
+            password: value('test-single-password'),
+            points: value('test-single-points'),
+            expires_on: value('test-single-expiry'),
+            status: value('test-single-status')
+        }).then(function (result) {
+            notify(result);
+            if (result.code === 1) { showCredentials(result); }
+        }).catch(function () { notify({code: 0, msg: '请求失败，请稍后重试'}); });
+    });
+
+    document.getElementById('test-manage-submit').addEventListener('click', function () {
+        operate(selectedIds(), value('test-manage-operation'));
+    });
+
+    document.getElementById('test-account-check-all').addEventListener('change', function () {
+        var checked = this.checked;
+        document.querySelectorAll('.test-account-check').forEach(function (item) { item.checked = checked; });
+    });
+
+    document.querySelectorAll('.test-account-one').forEach(function (button) {
+        button.addEventListener('click', function () {
+            operate([button.getAttribute('data-user-id')], button.getAttribute('data-operation'));
+        });
+    });
+
+    document.getElementById('test-account-filter').addEventListener('input', function () {
+        var keyword = this.value.toLowerCase();
+        document.querySelectorAll('#test-account-list tr').forEach(function (row) {
+            row.style.display = row.getAttribute('data-search').toLowerCase().indexOf(keyword) >= 0 ? '' : 'none';
+        });
+    });
+
+    document.getElementById('test-account-copy').addEventListener('click', function () {
+        var text = document.getElementById('test-account-credentials').value;
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(function () { notify({code: 1, msg: '账号凭证已复制'}); });
+            return;
+        }
+        var textarea = document.getElementById('test-account-credentials');
+        textarea.select();
+        document.execCommand('copy');
+        notify({code: 1, msg: '账号凭证已复制'});
+    });
+
+    document.getElementById('test-account-download').addEventListener('click', function () {
+        if (!credentials.length) { return; }
+        var csv = '\uFEFF账号,密码\r\n' + credentials.map(function (item) {
+            return '"' + item.username.replace(/"/g, '""') + '","' + item.password.replace(/"/g, '""') + '"';
+        }).join('\r\n');
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(new Blob([csv], {type: 'text/csv;charset=utf-8'}));
+        link.download = batchCode + '.csv';
+        link.click();
+        URL.revokeObjectURL(link.href);
+    });
+
+    document.querySelectorAll('#test-account-page a').forEach(function (link) {
+        link.href += '#K';
+    });
+})();
+</script>
 </body>
 </html>

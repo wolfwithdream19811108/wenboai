@@ -853,13 +853,40 @@ class AiimageController extends RestBaseController
 
     public function isLogin()
     {
-
         if (cmf_is_user_login()) {
-            $response ['user'] =  cmf_get_current_user();
-            $this->success("请求成功",$response);
+            $user = cmf_get_current_user();
+            $response['user'] = [
+                'id'            => isset($user['id']) ? (int)$user['id'] : 0,
+                'user_login'    => $this->normalizeUtf8Text(isset($user['user_login']) ? $user['user_login'] : ''),
+                'user_nickname' => $this->normalizeUtf8Text(isset($user['user_nickname']) ? $user['user_nickname'] : ''),
+            ];
+            $this->success("请求成功", $response);
         } else {
-            $this->success("请求成功",null);
+            $this->success("请求成功", null);
         }
+    }
+
+    /**
+     * 兼容历史用户数据中的非 UTF-8 文本，避免整个 JSON 响应编码失败。
+     */
+    private function normalizeUtf8Text($value)
+    {
+        $value = (string)$value;
+        if ($value === '' || preg_match('//u', $value) === 1) {
+            return $value;
+        }
+
+        if (function_exists('mb_detect_encoding') && function_exists('mb_convert_encoding')) {
+            $encoding = mb_detect_encoding($value, ['GB18030', 'GBK', 'BIG-5'], true);
+            if ($encoding !== false) {
+                $converted = mb_convert_encoding($value, 'UTF-8', $encoding);
+                if (preg_match('//u', $converted) === 1) {
+                    return $converted;
+                }
+            }
+        }
+
+        return '';
     }
 
 

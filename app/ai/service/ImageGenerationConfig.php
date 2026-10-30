@@ -107,6 +107,12 @@ class ImageGenerationConfig
         if (empty($keys['volc_access_key_id']) || empty($keys['volc_secret_access_key'])) {
             $errors[] = '火山引擎密钥未配置';
         }
+        if (empty($settings['watermark']['enabled'])) {
+            $errors[] = '显式 AI 水印必须开启';
+        }
+        if (empty($settings['metadata']['enabled'])) {
+            $errors[] = 'AIGC metadata 必须开启';
+        }
         if (!empty($settings['classifier']['enabled'])) {
             if (empty($keys['image_classify_api_key'])) {
                 $errors[] = '类目判断 API Key 未配置';

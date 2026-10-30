@@ -52,7 +52,7 @@ class RequestService
             'request_id' => (string)$requestId,
             'user_id' => (int)$userId,
             'api_key_id' => (int)($detail['api_key_id'] ?? 0),
-            'source' => 'api',
+            'source' => (string)($detail['source'] ?? 'api'),
             'model' => (string)$model,
             'prompt_digest' => hash('sha256', (string)$prompt),
             'upstream_task_id' => (string)($detail['task_id'] ?? ''),

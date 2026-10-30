@@ -36,24 +36,69 @@ class UpyunService
      */
     public function uploadFromUrl(string $imageUrl, string $savePath = '/works/'): ?string
     {
-        try {
-            $remotePath = $savePath . basename($imageUrl);
-            $fileContent = file_get_contents($imageUrl);
+        $result = $this->uploadFromUrlResult($imageUrl, $savePath);
+        return !empty($result['success']) ? $result['url'] : null;
+    }
 
+    /** 上传并返回可用于诊断的结构化结果。 */
+    public function uploadFromUrlResult(string $imageUrl, string $savePath = '/works/'): array
+    {
+        $path = (string)(parse_url($imageUrl, PHP_URL_PATH) ?: $imageUrl);
+        $remotePath = rtrim($savePath, '/') . '/' . basename($path);
+        return $this->uploadFile($imageUrl, $remotePath);
+    }
+
+    /** 从本地文件或 URL 读取内容后上传到指定远端路径。 */
+    public function uploadFile(string $source, string $remotePath): array
+    {
+        $remotePath = '/' . ltrim($remotePath, '/');
+        try {
+            $fileContent = @file_get_contents($source);
             if ($fileContent === false) {
-                return null;
+                $lastError = error_get_last();
+                return [
+                    'success' => false,
+                    'url' => '',
+                    'remote_path' => $remotePath,
+                    'error_code' => 'SOURCE_READ_FAILED',
+                    'error_message' => isset($lastError['message']) ? $lastError['message'] : '无法读取待上传图片',
+                    'http_status' => 0,
+                    'context' => [],
+                ];
             }
 
             $uploadInfo = $this->client->write($remotePath, $fileContent);
-
-            if ($uploadInfo) {
-                return $this->domain . $remotePath;
+            if (!$uploadInfo) {
+                return [
+                    'success' => false,
+                    'url' => '',
+                    'remote_path' => $remotePath,
+                    'error_code' => 'UPYUN_WRITE_FAILED',
+                    'error_message' => '又拍云写入未返回成功结果',
+                    'http_status' => 0,
+                    'context' => [],
+                ];
             }
 
-            return null;
-
-        } catch (\Exception $e) {
-            return null;
+            return [
+                'success' => true,
+                'url' => $this->domain . $remotePath,
+                'remote_path' => $remotePath,
+                'error_code' => '',
+                'error_message' => '',
+                'http_status' => 200,
+                'context' => [],
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'success' => false,
+                'url' => '',
+                'remote_path' => $remotePath,
+                'error_code' => 'UPYUN_EXCEPTION',
+                'error_message' => $e->getMessage(),
+                'http_status' => method_exists($e, 'getCode') && is_numeric($e->getCode()) ? max(0, (int)$e->getCode()) : 0,
+                'context' => ['exception_class' => get_class($e)],
+            ];
         }
     }
 
@@ -64,7 +109,7 @@ class UpyunService
     {
         try {
             return (bool)$this->client->write($remotePath, $content);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return false;
         }
     }

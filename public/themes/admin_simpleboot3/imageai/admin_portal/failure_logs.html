@@ -1,0 +1,43 @@
+<include file="public@header"/>
+<style>
+    .failure-log-table td,.failure-log-table th{vertical-align:top!important}
+    .failure-log-table code{word-break:break-all;white-space:normal}
+    .failure-log-detail{max-width:460px;white-space:pre-wrap;word-break:break-word;margin:8px 0 0}
+    .failure-log-message{max-width:420px;white-space:normal;word-break:break-word}
+</style>
+</head><body><div class="wrap"><include file="imageai/admin_portal@_tabs"/>
+<form class="well form-inline margin-top-20" method="get">
+    <select name="stage" class="form-control">
+        <option value="">全部阶段</option>
+        <option value="classifier" <if condition="input('request.stage') eq 'classifier'">selected</if>>类目判断</option>
+        <option value="upyun" <if condition="input('request.stage') eq 'upyun'">selected</if>>又拍云</option>
+        <option value="jimeng" <if condition="input('request.stage') eq 'jimeng'">selected</if>>即梦</option>
+        <option value="local_storage" <if condition="input('request.stage') eq 'local_storage'">selected</if>>本地存储</option>
+        <option value="configuration" <if condition="input('request.stage') eq 'configuration'">selected</if>>配置</option>
+    </select>
+    <select name="status" class="form-control">
+        <option value="">全部状态</option>
+        <option value="pending" <if condition="input('request.status') eq 'pending'">selected</if>>待处理</option>
+        <option value="resolved" <if condition="input('request.status') eq 'resolved'">selected</if>>已解决</option>
+        <option value="ignored" <if condition="input('request.status') eq 'ignored'">selected</if>>已忽略</option>
+    </select>
+    <input name="request_id" class="form-control" value="{:input('request.request_id')}" placeholder="请求 ID">
+    <input name="user_id" class="form-control" type="number" min="1" value="{:input('request.user_id')}" placeholder="用户 ID">
+    <input name="date_from" class="form-control" type="date" value="{:input('request.date_from')}">
+    <input name="date_to" class="form-control" type="date" value="{:input('request.date_to')}">
+    <button class="btn btn-primary">筛选</button>
+    <a class="btn btn-default" href="{:url('imageai/AdminPortal/failureLogs')}">清空</a>
+</form>
+
+<div class="alert alert-info">日志默认保留90天，仅保存脱敏后的技术信息，不记录提示词原文、API Key、Authorization 或云存储密钥。又拍云失败时接口已经返回服务器本地图片，可在此重新同步。</div>
+
+<div class="table-responsive"><table class="table table-bordered table-hover failure-log-table">
+    <thead><tr><th>ID/时间</th><th>阶段/状态</th><th>请求与用户</th><th>错误</th><th>图片与重试</th></tr></thead>
+    <tbody><foreach name="list" item="v"><tr>
+        <td>#{$v.id}<br>{:date('Y-m-d H:i:s',$v.create_time)}</td>
+        <td>{$v.stage|htmlspecialchars}<br><if condition="$v.status eq 'resolved'"><span class="label label-success">已解决</span><elseif condition="$v.status eq 'ignored'"/><span class="label label-default">已忽略</span><else/><span class="label label-warning">待处理</span></if><br>重试 {$v.retry_count} 次</td>
+        <td><code>{$v.request_id|htmlspecialchars}</code><br>用户：{$v.user_id} <if condition="!empty($v.mobile)">{$v.mobile|htmlspecialchars}<elseif condition="!empty($v.user_login)"/>{$v.user_login|htmlspecialchars}<else/>-</if><br>API Key ID：{$v.api_key_id}</td>
+        <td><strong>{$v.error_code|htmlspecialchars}</strong><if condition="$v.http_status gt 0">（HTTP {$v.http_status}）</if><div class="failure-log-message">{$v.error_message|htmlspecialchars}</div><notempty name="v.context_pretty"><details><summary>脱敏详情</summary><pre class="failure-log-detail">{$v.context_pretty|htmlspecialchars}</pre></details></notempty></td>
+        <td><notempty name="v.local_image_url"><a href="{$v.local_image_url|htmlspecialchars}" target="_blank">服务器图片</a><br></notempty><notempty name="v.remote_image_url"><a href="{$v.remote_image_url|htmlspecialchars}" target="_blank">又拍云图片</a><br></notempty><notempty name="v.remote_path"><code>{$v.remote_path|htmlspecialchars}</code><br></notempty><if condition="$v.stage eq 'upyun' and $v.status neq 'resolved'"><a class="btn btn-xs btn-primary js-ajax-dialog-btn" data-msg="确认重新同步到又拍云？" href="{:url('AdminPortal/retryFailure',['id'=>$v.id])}">重新同步</a></if></td>
+    </tr></foreach></tbody>
+</table></div><div class="pagination">{$page}</div></div><script src="__STATIC__/js/admin.js"></script></body></html>

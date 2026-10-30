@@ -7,6 +7,67 @@ final class AigcPngMetadata
     private const SIGNATURE = "\x89PNG\r\n\x1a\n";
     private const XMP_KEY = 'XML:com.adobe.xmp';
 
+    /** 读取最终 PNG 中实际存在的 AIGC XMP 标识。 */
+    public static function inspect(string $png): array
+    {
+        if (substr($png, 0, 8) !== self::SIGNATURE) {
+            throw new \RuntimeException('文件不是有效的 PNG 图片');
+        }
+
+        $result = [
+            'format' => 'PNG',
+            'file_size' => strlen($png),
+            'width' => 0,
+            'height' => 0,
+            'bit_depth' => null,
+            'color_type' => null,
+            'xmp_key' => self::XMP_KEY,
+            'xmp_prefix' => '',
+            'xmp_namespace' => '',
+            'aigc' => [],
+        ];
+        $position = 8;
+        $size = strlen($png);
+        $foundEnd = false;
+
+        while ($position + 12 <= $size) {
+            $length = unpack('N', substr($png, $position, 4))[1];
+            if ($length > $size - $position - 12) {
+                throw new \RuntimeException('PNG 数据块长度无效');
+            }
+            $type = substr($png, $position + 4, 4);
+            $data = substr($png, $position + 8, $length);
+            $crc = substr($png, $position + 8 + $length, 4);
+            $position += $length + 12;
+
+            if (hash('crc32b', $type . $data, true) !== $crc) {
+                throw new \RuntimeException('PNG 数据块 CRC 校验失败');
+            }
+            if ($type === 'IHDR' && $length === 13) {
+                $dimensions = unpack('Nwidth/Nheight/CbitDepth/CcolorType', $data);
+                $result['width'] = (int)$dimensions['width'];
+                $result['height'] = (int)$dimensions['height'];
+                $result['bit_depth'] = (int)$dimensions['bitDepth'];
+                $result['color_type'] = (int)$dimensions['colorType'];
+            }
+            if (in_array($type, ['tEXt', 'zTXt', 'iTXt'], true)) {
+                $text = self::decodeTextChunk($type, $data);
+                if ($text !== null && strcasecmp($text['key'], self::XMP_KEY) === 0) {
+                    self::readAigcXmp($text['value'], $result);
+                }
+            }
+            if ($type === 'IEND') {
+                $foundEnd = true;
+                break;
+            }
+        }
+
+        if (!$foundEnd || $position !== $size) {
+            throw new \RuntimeException('PNG 缺少有效的 IEND 或存在尾随数据');
+        }
+        return $result;
+    }
+
     public static function replace(string $png, string $producer, string $propagator,
                                    string $prefix = 'TC260',
                                    string $namespace = 'http://www.tc260.org.cn/ns/AIGC/1.0/',
@@ -175,6 +236,69 @@ final class AigcPngMetadata
         }
         $clean = $dom->saveXML();
         return self::XMP_KEY . "\0\0\0\0\0" . $clean;
+    }
+
+    private static function decodeTextChunk(string $type, string $data): ?array
+    {
+        $zero = strpos($data, "\0");
+        if ($zero === false) {
+            return null;
+        }
+        $key = substr($data, 0, $zero);
+        $body = substr($data, $zero + 1);
+        $compressed = false;
+
+        if ($type === 'iTXt') {
+            if (strlen($body) < 4 || !in_array(ord($body[0]), [0, 1], true) || ord($body[1]) !== 0) {
+                return null;
+            }
+            $compressed = ord($body[0]) === 1;
+            $languageEnd = strpos($body, "\0", 2);
+            $translatedEnd = $languageEnd === false ? false : strpos($body, "\0", $languageEnd + 1);
+            if ($translatedEnd === false) {
+                return null;
+            }
+            $body = substr($body, $translatedEnd + 1);
+        } elseif ($type === 'zTXt') {
+            if ($body === '' || ord($body[0]) !== 0) {
+                return null;
+            }
+            $compressed = true;
+            $body = substr($body, 1);
+        }
+
+        $value = $compressed ? @gzuncompress($body) : $body;
+        return $value === false ? null : ['key' => $key, 'value' => $value];
+    }
+
+    private static function readAigcXmp(string $xml, array &$result): void
+    {
+        if (!class_exists('\DOMDocument')) {
+            throw new \RuntimeException('PHP DOM 扩展不可用');
+        }
+        $dom = new \DOMDocument();
+        $previous = libxml_use_internal_errors(true);
+        try {
+            if (!$dom->loadXML($xml, LIBXML_NONET)) {
+                return;
+            }
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+        $xpath = new \DOMXPath($dom);
+        $nodes = $xpath->query('//*[local-name()="AIGC"]');
+        if ($nodes->length === 0) {
+            return;
+        }
+        $node = $nodes->item(0);
+        $fields = json_decode(trim($node->textContent), true);
+        if (!is_array($fields)) {
+            throw new \RuntimeException('AIGC metadata JSON 格式无效');
+        }
+        $result['xmp_prefix'] = (string)$node->prefix;
+        $result['xmp_namespace'] = (string)$node->namespaceURI;
+        $result['aigc'] = $fields;
     }
 
     private static function containsAigc(string $data): bool

@@ -1,0 +1,27 @@
+-- ImageAI 结构化失败日志。可重复执行；数据库表前缀不是 cmf_ 时请相应替换。
+CREATE TABLE IF NOT EXISTS `cmf_imageai_failure_log` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `request_id` char(32) NOT NULL DEFAULT '',
+  `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `api_key_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+  `stage` varchar(30) NOT NULL DEFAULT 'unknown',
+  `error_code` varchar(64) NOT NULL DEFAULT 'UNKNOWN_ERROR',
+  `error_message` varchar(1000) NOT NULL DEFAULT '',
+  `http_status` int(10) unsigned NOT NULL DEFAULT '0',
+  `prompt_digest` char(64) NOT NULL DEFAULT '',
+  `local_image_url` varchar(500) NOT NULL DEFAULT '',
+  `local_file_path` varchar(1000) NOT NULL DEFAULT '',
+  `remote_path` varchar(500) NOT NULL DEFAULT '',
+  `remote_image_url` varchar(500) NOT NULL DEFAULT '',
+  `context_json` text,
+  `retry_count` int(10) unsigned NOT NULL DEFAULT '0',
+  `status` varchar(20) NOT NULL DEFAULT 'pending',
+  `resolved_at` int(10) unsigned NOT NULL DEFAULT '0',
+  `client_ip` varchar(45) NOT NULL DEFAULT '',
+  `create_time` int(10) unsigned NOT NULL DEFAULT '0',
+  `update_time` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `idx_request_id` (`request_id`),
+  KEY `idx_stage_status_time` (`stage`,`status`,`create_time`),
+  KEY `idx_user_time` (`user_id`,`create_time`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
