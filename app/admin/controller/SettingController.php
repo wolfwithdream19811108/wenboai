@@ -325,7 +325,9 @@ class SettingController extends AdminBaseController
                 'api_url' => trim((string)($classifier['api_url'] ?? '')),
                 'model' => trim((string)($classifier['model'] ?? '')),
                 'timeout' => (int)($classifier['timeout'] ?? $defaults['classifier']['timeout']),
-                'system_prompt' => trim((string)($classifier['system_prompt'] ?? '')),
+                'system_prompt' => $this->normalizeClassifierSystemPrompt(
+                    $classifier['system_prompt'] ?? ''
+                ),
                 'fail_closed' => 1,
             ],
             'watermark' => [
@@ -452,6 +454,21 @@ class SettingController extends AdminBaseController
         }
 
         return $settings;
+    }
+
+    private function normalizeClassifierSystemPrompt($prompt)
+    {
+        $prompt = trim((string)$prompt);
+
+        for ($i = 0; $i < 2; $i++) {
+            $decoded = html_entity_decode($prompt, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if ($decoded === $prompt) {
+                break;
+            }
+            $prompt = $decoded;
+        }
+
+        return $prompt;
     }
 
     /**

@@ -729,25 +729,18 @@ class ImagegenerateController extends RestBaseController
 
         return (string)$upyunResult['url'];
     }
-/**
-     * AI双维度判断：敏感内容（从严）+ 文创类目（从宽）
-     * fail-close：调用失败或结果无法解析时 available=false，由调用方拒绝服务
+    /**
+     * AI三维度判断：
+     * 1. 敏感内容（从严）
+     * 2. 文创类目（从宽）
+     * 3. 受限领域
+     *
+     * fail-close：
+     * 调用失败或结果无法解析时 available=false，由调用方拒绝服务
      *
      * @param string $prompt 用户提示词
-     * @return array ['available' => bool, 'sensitive' => bool, 'artwork' => bool, 'reason' => string]
+     * @return array
      */
- /**
- * AI三维度判断：
- * 1. 敏感内容（从严）
- * 2. 文创类目（从宽）
- * 3. 受限领域
- *
- * fail-close：
- * 调用失败或结果无法解析时 available=false，由调用方拒绝服务
- *
- * @param string $prompt 用户提示词
- * @return array
- */
     private function checkPromptWithAi($prompt)
     {
         $originalTimeout = $this->classifyTimeout;
@@ -898,19 +891,12 @@ class ImagegenerateController extends RestBaseController
             ];
         }
 
-        // 容错提取JSON
-        // 模型可能返回 ```json ... ``` 或附带其他文字
-        $jsonStr = $content;
-
-        if (preg_match('/\{.*\}/su', $content, $matches)) {
-            $jsonStr = $matches[0];
-        }
-
-        $result = json_decode($jsonStr, true);
+        $parsed = $this->parseClassifierContent($content);
+        $result = $parsed['result'];
 
         // 三个字段必须全部存在
         if (
-            json_last_error() !== JSON_ERROR_NONE
+            !is_array($result)
             || !isset($result['is_artwork'])
             || !isset($result['is_sensitive'])
             || !isset($result['is_restricted_domain'])
@@ -923,7 +909,10 @@ class ImagegenerateController extends RestBaseController
                 'reason' => '分类结果解析失败',
                 'error_code' => 'CLASSIFIER_PARSE_FAILED',
                 'http_status' => 200,
-                'context' => ['content_excerpt' => substr((string)$content, 0, 1500)],
+                'context' => [
+                    'content_excerpt' => substr((string)$content, 0, 1500),
+                    'json_error' => $parsed['json_error'],
+                ],
             ];
         }
 
@@ -949,7 +938,37 @@ class ImagegenerateController extends RestBaseController
         ];
     }
 
-/**
+    /**
+     * 兼容模型返回的 JSON 代码块、附加说明以及 HTML 实体编码。
+     */
+    private function parseClassifierContent($content)
+    {
+        $normalized = trim((string)$content);
+
+        // 历史提示词中的示例曾使用 &quot;，模型可能照样返回实体编码的 JSON。
+        for ($i = 0; $i < 2; $i++) {
+            $decoded = html_entity_decode($normalized, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if ($decoded === $normalized) {
+                break;
+            }
+            $normalized = $decoded;
+        }
+
+        $normalized = preg_replace('/^\xEF\xBB\xBF/', '', $normalized);
+        $jsonStr = $normalized;
+        if (preg_match('/\{.*\}/su', $normalized, $matches)) {
+            $jsonStr = $matches[0];
+        }
+
+        $result = json_decode($jsonStr, true);
+
+        return [
+            'result' => $result,
+            'json_error' => json_last_error() === JSON_ERROR_NONE ? '' : json_last_error_msg(),
+        ];
+    }
+
+    /**
      * 下载远程图片保存到本地public目录，返回可长期访问的URL
      *
      * @param string $remoteUrl 远程图片URL（即梦原始地址，带过期签名）
