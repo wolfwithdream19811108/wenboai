@@ -12,6 +12,7 @@
         <li><a href="#H" data-toggle="tab">功能开关设置</a></li>
         <li><a href="#I" data-toggle="tab">相关 Key 设置</a></li>
         <li><a href="#J" data-toggle="tab">图片生成设置forAPI</a></li>
+        <li><a href="#L" data-toggle="tab">实名认证设置</a></li>
         <li><a href="#K" data-toggle="tab">测试账号设置</a></li>
     </ul>
     <form class="form-horizontal js-ajax-form margin-top-20" role="form" action="{:url('setting/sitePost')}"
@@ -368,6 +369,18 @@
                         <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">{:lang('SAVE')}</button></div></div>
                     </div>
 
+                    <div class="tab-pane" id="L">
+                        <div class="alert alert-info">使用腾讯云 FaceID 身份信息认证（二要素核验）。系统只保存认证状态、身份证带密钥摘要和尾号，不保存完整姓名或身份证号码。</div>
+                        <div class="form-group"><label class="col-sm-2 control-label">启用实名认证门禁</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[enabled]"><option value="1" <?php echo !empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['enabled']) ? 'selected' : ''; ?>>否</option></select><p class="help-block">启用后，只有实名一致且年满18周岁的用户可以创建 API Key、调用 API 和使用网页生图。</p></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretId</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_id]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['tencent_faceid_secret_id']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_id]" value="1"> 清除</label></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">腾讯云 FaceID SecretKey</label><div class="col-md-7 col-sm-10"><input type="password" class="form-control" name="function_keys[tencent_faceid_secret_key]" autocomplete="new-password" placeholder="<?php echo !empty($function_key_status['tencent_faceid_secret_key']) ? '已配置，留空不修改' : '未配置'; ?>"><label class="checkbox-inline"><input type="checkbox" name="function_keys_clear[tencent_faceid_secret_key]" value="1"> 清除</label></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">测试账号也要求实名</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[require_test_accounts]"><option value="1" <?php echo !empty($real_name_settings['require_test_accounts']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['require_test_accounts']) ? 'selected' : ''; ?>>否</option></select></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">一个身份限一个账号</label><div class="col-md-7 col-sm-10"><select class="form-control" name="real_name_settings[one_identity_one_account]"><option value="1" <?php echo !empty($real_name_settings['one_identity_one_account']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($real_name_settings['one_identity_one_account']) ? 'selected' : ''; ?>>否</option></select></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">每日尝试上限</label><div class="col-md-7 col-sm-10"><input type="number" min="1" max="20" class="form-control" name="real_name_settings[daily_attempt_limit]" value="{$real_name_settings.daily_attempt_limit|default='5'}"></div></div>
+                        <div class="form-group"><label class="col-sm-2 control-label">接口超时（秒）</label><div class="col-md-7 col-sm-10"><input type="number" min="3" max="30" class="form-control" name="real_name_settings[timeout]" value="{$real_name_settings.timeout|default='10'}"></div></div>
+                        <div class="form-group"><div class="col-sm-offset-2 col-sm-10"><button type="submit" class="btn btn-primary js-ajax-submit" data-refresh="0">{:lang('SAVE')}</button></div></div>
+                    </div>
+
                     <div class="tab-pane" id="K">
                         <style>
                             .test-account-panel{padding:18px;margin-bottom:20px;border:1px solid #e5e5e5;border-radius:5px;background:#fff}
@@ -381,7 +394,7 @@
                         </style>
 
                         <notempty name="test_account_tables_ready">
-                            <div class="alert alert-info">测试账号使用独立用户名登录，默认可以使用网页生图和创建 API Key；登录仍需完成滑块验证。密码只在创建或重置时显示，系统不会保存明文。</div>
+                            <div class="alert alert-info">测试账号使用独立用户名登录；是否需要实名认证由“实名认证设置”控制，登录仍需完成滑块验证。密码只在创建或重置时显示，系统不会保存明文。</div>
 
                             <div class="test-account-panel">
                                 <h4>批量创建测试账号</h4>

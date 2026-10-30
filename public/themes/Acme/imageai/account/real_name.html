@@ -1,0 +1,47 @@
+<!doctype html>
+<html><head><include file="imageai@_head"/></head><body>
+<include file="imageai@_nav"/>
+<main class="container account-layout">
+    <include file="imageai@_account_nav"/>
+    <section>
+        <h1>实名认证</h1>
+        <notempty name="real_name_notice"><div class="notice success">{$real_name_notice|htmlspecialchars}</div></notempty>
+        <notempty name="real_name_error"><div class="notice warning">{$real_name_error|htmlspecialchars}</div></notempty>
+
+        <empty name="real_name_enabled">
+            <div class="panel"><p>实名认证功能当前未启用。</p></div>
+        <else/>
+            <div class="panel">
+                <notempty name="real_name_record">
+                    <if condition="$real_name_record.status eq 'verified_adult'">
+                        <h2>认证状态：已实名且已成年</h2>
+                        <p>身份证尾号：{$real_name_record.id_card_last4|htmlspecialchars}</p>
+                        <p>认证时间：{:date('Y-m-d H:i:s',$real_name_record.verified_at)}</p>
+                        <p class="help">你现在可以创建 API Key，并使用 API 与网页生图服务。</p>
+                    <elseif condition="$real_name_record.status eq 'verified_minor'"/>
+                        <h2>认证状态：已实名，未满18周岁</h2>
+                        <p>达到年龄要求日期：{:date('Y-m-d',$real_name_record.adult_eligible_at)}</p>
+                        <p class="help">达到年龄要求后，系统会自动开放图片生成服务。</p>
+                    <else/>
+                        <h2>认证状态：尚未通过</h2>
+                        <notempty name="real_name_record.last_error_message"><p>{$real_name_record.last_error_message|htmlspecialchars}</p></notempty>
+                    </if>
+                <else/>
+                    <h2>认证状态：未认证</h2>
+                </notempty>
+            </div>
+
+            <if condition="empty($real_name_record) or $real_name_record.status eq 'failed' or $real_name_record.status eq 'unverified'">
+                <form method="post" action="/imageai/account/real-name/submit" class="panel" style="margin-top:18px" autocomplete="off">
+                    <h2>提交实名信息</h2>
+                    <p class="help">姓名与身份证号码将直接发送至腾讯云进行一致性核验。本系统不保存完整姓名和身份证号码。</p>
+                    <div class="field"><label>真实姓名</label><input type="text" name="real_name" maxlength="30" required autocomplete="off"></div>
+                    <div class="field"><label>身份证号码</label><input type="text" name="id_card" maxlength="18" required autocomplete="off" inputmode="text"></div>
+                    <label style="display:flex;align-items:flex-start;gap:8px"><input type="checkbox" name="consent" value="1" required style="width:auto;margin-top:4px"> <span>我已阅读并同意<a href="/imageai/privacy" target="_blank">隐私协议</a>，授权平台将上述信息提交至腾讯云进行实名认证和年龄判断。</span></label>
+                    <button class="btn btn-primary" type="submit">提交认证</button>
+                </form>
+            </if>
+        </empty>
+    </section>
+</main>
+</body></html>

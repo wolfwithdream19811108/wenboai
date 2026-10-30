@@ -4,6 +4,7 @@ namespace app\imageai\controller;
 
 use app\imageai\service\AgreementService;
 use app\imageai\service\FailureLogService;
+use app\imageai\service\RealNameService;
 use cmf\controller\AdminBaseController;
 use think\Db;
 
@@ -158,6 +159,57 @@ class AdminPortalController extends AdminBaseController
         $this->assign('list', $items);
         $this->assign('page', $list->render());
         return $this->fetch('/admin_portal/failure_logs');
+    }
+
+    /**
+     * @adminMenu(
+     *     'name'    => '实名认证记录',
+     *     'parent'  => 'imageai/AdminPortal/default',
+     *     'display' => true,
+     *     'hasView' => true,
+     *     'order'   => 48
+     * )
+     */
+    public function realNames()
+    {
+        $status = trim((string)$this->request->param('status', ''));
+        $keyword = trim((string)$this->request->param('keyword', ''));
+        $query = Db::name('imageai_real_name_verification')->alias('r')
+            ->join('__USER__ u', 'u.id=r.user_id', 'LEFT')
+            ->field('r.*,u.user_login,u.mobile,u.user_nickname');
+        if (in_array($status, [
+            RealNameService::STATUS_ADULT,
+            RealNameService::STATUS_MINOR,
+            RealNameService::STATUS_FAILED,
+            RealNameService::STATUS_UNVERIFIED,
+        ], true)) {
+            $query->where('r.status', $status);
+        }
+        if ($keyword !== '') {
+            $query->whereLike('u.user_login|u.mobile|u.user_nickname|r.provider_request_id', '%' . $keyword . '%');
+        }
+        $list = $query->order('r.update_time DESC')->paginate(30, false, ['query' => $this->request->param()]);
+        $this->assign('list', $list);
+        $this->assign('page', $list->render());
+        return $this->fetch('/admin_portal/real_names');
+    }
+
+    /**
+     * @adminMenu(
+     *     'name'    => '重置实名认证',
+     *     'parent'  => 'imageai/AdminPortal/realNames',
+     *     'display' => false,
+     *     'hasView' => false
+     * )
+     */
+    public function resetRealName()
+    {
+        $userId = (int)$this->request->param('id');
+        if ($userId <= 0) {
+            $this->error('用户参数无效');
+        }
+        Db::name('imageai_real_name_verification')->where('user_id', $userId)->delete();
+        $this->success('实名认证状态已重置', url('AdminPortal/realNames'));
     }
 
     /**

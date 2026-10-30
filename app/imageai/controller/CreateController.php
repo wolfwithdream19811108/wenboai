@@ -18,6 +18,10 @@ class CreateController extends HomeBaseController
             $this->error('此账号仅支持通过 API 创建图片', '/imageai/account/api-keys');
         }
         if ($isLogin) {
+            $eligibility = AccessService::generationEligibility(cmf_get_current_user_id());
+            if (empty($eligibility['allowed'])) {
+                $this->error($eligibility['message'], '/imageai/account/real-name');
+            }
             $this->assign('points', (new UserPointsModel())->getUserPoints(cmf_get_current_user_id()));
         }
 

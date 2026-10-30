@@ -13,6 +13,7 @@ namespace app\admin\controller;
 use app\admin\model\RouteModel;
 use app\ai\service\ImageGenerationConfig;
 use app\imageai\service\TestAccountService;
+use app\imageai\service\RealNameConfig;
 use cmf\controller\AdminBaseController;
 
 use think\Db;
@@ -64,6 +65,7 @@ class SettingController extends AdminBaseController
         $functionSettings  = cmf_get_option('function_settings');
         $functionKeys = ImageGenerationConfig::keys();
         $imageGenerationSettings = ImageGenerationConfig::settings();
+        $realNameSettings = RealNameConfig::settings();
 
         $this->assign('site_info', cmf_get_option('site_info'));
         $this->assign("admin_styles", $adminStyles);
@@ -73,6 +75,7 @@ class SettingController extends AdminBaseController
         $this->assign("function_settings", $functionSettings);
         $this->assign('function_key_status', ImageGenerationConfig::keyStatus($functionKeys));
         $this->assign('image_generation_settings', $imageGenerationSettings);
+        $this->assign('real_name_settings', $realNameSettings);
         $this->assign("cmf_settings", $cmfSettings);
         $this->assignTestAccounts();
 
@@ -117,6 +120,10 @@ class SettingController extends AdminBaseController
             $imageGenerationSettings = is_array($submittedImageSettings)
                 ? $this->normalizeImageGenerationSettings($submittedImageSettings, $functionKeys)
                 : ImageGenerationConfig::settings();
+            $submittedRealNameSettings = $this->request->param('real_name_settings/a');
+            $realNameSettings = is_array($submittedRealNameSettings)
+                ? $this->normalizeRealNameSettings($submittedRealNameSettings, $functionKeys)
+                : RealNameConfig::settings();
 
             $options = $this->request->param('options/a');
             cmf_set_option('site_info', $options);
@@ -139,6 +146,7 @@ class SettingController extends AdminBaseController
             cmf_set_option('function_settings', $funSettings);
             cmf_set_option(ImageGenerationConfig::KEYS_OPTION, $functionKeys, true);
             cmf_set_option(ImageGenerationConfig::SETTINGS_OPTION, $imageGenerationSettings, true);
+            cmf_set_option(RealNameConfig::SETTINGS_OPTION, $realNameSettings, true);
 
             $adminSettings = $this->request->param('admin_settings/a');
 
@@ -280,6 +288,8 @@ class SettingController extends AdminBaseController
             'yidun_secret_id',
             'yidun_secret_key',
             'yidun_business_id',
+            'tencent_faceid_secret_id',
+            'tencent_faceid_secret_key',
         ];
         foreach ($scalarKeys as $name) {
             if (!empty($clear[$name])) {
@@ -303,6 +313,30 @@ class SettingController extends AdminBaseController
         }
 
         return $current;
+    }
+
+    private function normalizeRealNameSettings(array $input, array $functionKeys)
+    {
+        $defaults = RealNameConfig::defaults();
+        $settings = [
+            'enabled' => empty($input['enabled']) ? 0 : 1,
+            'minimum_age' => 18,
+            'require_test_accounts' => empty($input['require_test_accounts']) ? 0 : 1,
+            'one_identity_one_account' => empty($input['one_identity_one_account']) ? 0 : 1,
+            'daily_attempt_limit' => (int)($input['daily_attempt_limit'] ?? $defaults['daily_attempt_limit']),
+            'timeout' => (int)($input['timeout'] ?? $defaults['timeout']),
+        ];
+        if ($settings['daily_attempt_limit'] < 1 || $settings['daily_attempt_limit'] > 20) {
+            $this->error('实名认证每日尝试次数必须在 1～20 之间');
+        }
+        if ($settings['timeout'] < 3 || $settings['timeout'] > 30) {
+            $this->error('实名认证接口超时时间必须在 3～30 秒之间');
+        }
+        if ($settings['enabled'] && (empty($functionKeys['tencent_faceid_secret_id'])
+            || empty($functionKeys['tencent_faceid_secret_key']))) {
+            $this->error('启用实名认证时，必须配置腾讯云 FaceID SecretId 和 SecretKey');
+        }
+        return $settings;
     }
 
     private function normalizeImageGenerationSettings(array $input, array $functionKeys)

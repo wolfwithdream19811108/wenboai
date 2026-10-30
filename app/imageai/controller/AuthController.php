@@ -88,7 +88,7 @@ class AuthController extends HomeBaseController
         cmf_update_current_user($user);
         session('token', cmf_generate_user_token($userId, 'web'));
         session('imageai_sms_captcha_' . $mobile, null);
-        $this->success('注册成功', '/imageai/account/api-keys');
+        $this->success('注册成功，请完成实名认证', '/imageai/account/real-name');
     }
 
     public function sendCode()

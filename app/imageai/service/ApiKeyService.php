@@ -7,9 +7,11 @@ use think\Db;
 class ApiKeyService
 {
     const MAX_ACTIVE_KEYS = 5;
+    private $lastError = '';
 
     public function create($userId, $name = '', $expiresInDays = 0)
     {
+        AccessService::assertGenerationEligible($userId);
         $activeCount = Db::name('imageai_api_key')
             ->where('user_id', (int)$userId)
             ->where('status', 1)
@@ -38,6 +40,7 @@ class ApiKeyService
 
     public function authenticate($plain, $clientIp = '')
     {
+        $this->lastError = '';
         $plain = trim((string)$plain);
         if ($plain === '') {
             return null;
@@ -50,7 +53,9 @@ class ApiKeyService
         if (!$key || (!empty($key['expires_at']) && (int)$key['expires_at'] < time())) {
             return null;
         }
-        if (!AccessService::isEnabled($key['user_id'])) {
+        $eligibility = AccessService::generationEligibility($key['user_id']);
+        if (empty($eligibility['allowed'])) {
+            $this->lastError = (string)$eligibility['message'];
             return null;
         }
 
@@ -59,6 +64,11 @@ class ApiKeyService
             'last_used_ip' => (string)$clientIp,
         ]);
         return $key;
+    }
+
+    public function getLastError()
+    {
+        return $this->lastError;
     }
 
     public function revoke($userId, $keyId)

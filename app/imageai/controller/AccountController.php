@@ -4,6 +4,8 @@ namespace app\imageai\controller;
 
 use app\imageai\service\AccessService;
 use app\imageai\service\ApiKeyService;
+use app\imageai\service\RealNameConfig;
+use app\imageai\service\RealNameService;
 use cmf\controller\HomeBaseController;
 use think\Db;
 
@@ -29,13 +31,16 @@ class AccountController extends HomeBaseController
         $this->assign('request_count', Db::name('imageai_api_request_log')->where('user_id', $userId)->count());
         $this->assign('work_count', Db::name('ai_user_works')->where('uid', $userId)->where('picture_url', '<>', '')->count());
         $this->assign('points', (int)Db::name('user_points')->where('userid', $userId)->value('points'));
+        $this->assign('generation_eligibility', AccessService::generationEligibility($userId));
         return $this->fetch('/account/index');
     }
 
     public function apiKeys()
     {
+        $eligibility = AccessService::generationEligibility(cmf_get_current_user_id());
         $keys = Db::name('imageai_api_key')->where('user_id', cmf_get_current_user_id())->order('id DESC')->select();
         $this->assign('keys', $keys);
+        $this->assign('real_name_eligible', !empty($eligibility['allowed']));
         $this->assign('new_api_key', session('imageai_new_api_key'));
         session('imageai_new_api_key', null);
         return $this->fetch('/account/api_keys');
@@ -88,6 +93,55 @@ class AccountController extends HomeBaseController
     {
         $this->assign('current_user', cmf_get_current_user());
         return $this->fetch('/account/security');
+    }
+
+    public function realName()
+    {
+        $userId = cmf_get_current_user_id();
+        $this->assign('real_name_enabled', !empty(RealNameConfig::settings()['enabled']));
+        $this->assign('real_name_record', RealNameService::record($userId));
+        $this->assign('real_name_notice', session('imageai_real_name_notice'));
+        $this->assign('real_name_error', session('imageai_real_name_error'));
+        session('imageai_real_name_notice', null);
+        session('imageai_real_name_error', null);
+        return $this->fetch('/account/real_name');
+    }
+
+    public function realNamePost()
+    {
+        if (!$this->request->isPost()) {
+            $this->error('请求方式错误');
+        }
+        if (empty(RealNameConfig::settings()['enabled'])) {
+            session('imageai_real_name_error', '实名认证功能当前未启用');
+            return redirect('/imageai/account/real-name');
+        }
+
+        $userId = cmf_get_current_user_id();
+        $record = RealNameService::record($userId);
+        if ($record && in_array((string)$record['status'], [
+            RealNameService::STATUS_ADULT,
+            RealNameService::STATUS_MINOR,
+        ], true)) {
+            session('imageai_real_name_notice', '当前账号已经完成实名认证，无需重复提交');
+            return redirect('/imageai/account/real-name');
+        }
+
+        try {
+            $result = (new RealNameService())->verify(
+                $userId,
+                $this->request->post('real_name'),
+                $this->request->post('id_card'),
+                $this->request->post('consent') === '1'
+            );
+            session(
+                'imageai_real_name_notice',
+                !empty($result['adult']) ? '实名认证成功，已开通图片生成服务' : '实名认证成功，但当前未满18周岁，暂不能使用图片生成服务'
+            );
+        } catch (\Throwable $e) {
+            session('imageai_real_name_error', $e->getMessage());
+        }
+        return redirect('/imageai/account/real-name');
     }
 
     private function renderPagination($paginator, $ariaLabel)

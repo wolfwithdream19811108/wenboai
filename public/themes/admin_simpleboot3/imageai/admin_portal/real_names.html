@@ -1,0 +1,33 @@
+<include file="public@header"/>
+</head><body>
+<div class="wrap js-check-wrap">
+    <include file="imageai/admin_portal@_tabs"/>
+    <form class="well form-inline margin-top-20" method="get" action="{:url('imageai/AdminPortal/realNames')}">
+        状态：<select class="form-control" name="status">
+            <option value="">全部</option>
+            <option value="verified_adult" <if condition="input('status') eq 'verified_adult'">selected</if>>已实名成年</option>
+            <option value="verified_minor" <if condition="input('status') eq 'verified_minor'">selected</if>>已实名未成年</option>
+            <option value="failed" <if condition="input('status') eq 'failed'">selected</if>>认证失败</option>
+        </select>
+        <input class="form-control" name="keyword" value="{:input('keyword')}" placeholder="账号、手机号或 RequestId">
+        <button class="btn btn-primary">搜索</button>
+    </form>
+    <table class="table table-hover table-bordered">
+        <thead><tr><th>用户</th><th>手机号</th><th>状态</th><th>身份证尾号</th><th>达到年龄日期</th><th>腾讯云 RequestId</th><th>结果码</th><th>认证时间</th><th>最近更新</th><th>操作</th></tr></thead>
+        <tbody><volist name="list" id="vo"><tr>
+            <td>{$vo.user_login|htmlspecialchars}<br><small>ID: {$vo.user_id}</small></td>
+            <td>{$vo.mobile|htmlspecialchars}</td>
+            <td><if condition="$vo.status eq 'verified_adult'"><span class="label label-success">已实名成年</span><elseif condition="$vo.status eq 'verified_minor'"/><span class="label label-warning">已实名未成年</span><else/><span class="label label-default">认证失败</span></if></td>
+            <td><notempty name="vo.id_card_last4">****{$vo.id_card_last4|htmlspecialchars}<else/>-</notempty></td>
+            <td><if condition="$vo.adult_eligible_at gt 0">{$vo.adult_eligible_at|date='Y-m-d',###}<else/>-</if></td>
+            <td><code>{$vo.provider_request_id|htmlspecialchars}</code></td>
+            <td>{$vo.last_result_code|htmlspecialchars}<notempty name="vo.last_error_message"><br><small>{$vo.last_error_message|htmlspecialchars}</small></notempty></td>
+            <td><if condition="$vo.verified_at gt 0">{$vo.verified_at|date='Y-m-d H:i:s',###}<else/>-</if></td>
+            <td>{$vo.update_time|date='Y-m-d H:i:s',###}</td>
+            <td><a class="btn btn-xs btn-danger js-ajax-dialog-btn" data-msg="确认重置该用户的实名认证状态？" href="{:url('imageai/AdminPortal/resetRealName',['id'=>$vo['user_id']])}">重置</a></td>
+        </tr></volist></tbody>
+    </table>
+    <div class="pagination">{$page}</div>
+</div>
+<script src="__STATIC__/js/admin.js"></script>
+</body></html>

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3302d1d3fccc5f419bfbe19a57b4e640",
+    "content-hash": "e0b9741d3baf230dfb4f39f5897ba242",
     "packages": [
         {
             "name": "adbario/php-dot-notation",
@@ -3559,6 +3559,93 @@
                 }
             ],
             "time": "2026-08-28T11:28:19+00:00"
+        },
+        {
+            "name": "tencentcloud/common",
+            "version": "3.0.1692",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tencentcloud-sdk-php/common.git",
+                "reference": "9d1c3977a5ffc3f05a3581a779b8090e4d4d02c4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/common/zipball/9d1c3977a5ffc3f05a3581a779b8090e4d4d02c4",
+                "reference": "9d1c3977a5ffc3f05a3581a779b8090e4d4d02c4",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.3||^7.0",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TencentCloud\\": "./src/TencentCloud"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "tencentcloudapi",
+                    "email": "tencentcloudapi@tencent.com",
+                    "homepage": "https://cloud.tencent.com/document/sdk/PHP",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TencentCloudApi php sdk",
+            "homepage": "https://github.com/tencentcloud-sdk-php/common",
+            "support": {
+                "issues": "https://github.com/tencentcloud-sdk-php/common/issues",
+                "source": "https://github.com/tencentcloud-sdk-php/common/tree/3.0.1692"
+            },
+            "time": "2026-10-29T19:45:03+00:00"
+        },
+        {
+            "name": "tencentcloud/faceid",
+            "version": "3.0.1692",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tencentcloud-sdk-php/faceid.git",
+                "reference": "18693aa5e7a40d687b1df0003d74d7f8ccaf323f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tencentcloud-sdk-php/faceid/zipball/18693aa5e7a40d687b1df0003d74d7f8ccaf323f",
+                "reference": "18693aa5e7a40d687b1df0003d74d7f8ccaf323f",
+                "shasum": ""
+            },
+            "require": {
+                "tencentcloud/common": ">=3.0.1692"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "TencentCloud\\": "./src/TencentCloud"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "tencentcloudapi",
+                    "email": "tencentcloudapi@tencent.com",
+                    "homepage": "https://github.com/tencentcloud-sdk-php/faceid",
+                    "role": "Developer"
+                }
+            ],
+            "description": "TencentCloudApi php sdk faceid",
+            "homepage": "https://github.com/tencentcloud-sdk-php/faceid",
+            "support": {
+                "issues": "https://github.com/tencentcloud-sdk-php/faceid/issues",
+                "source": "https://github.com/tencentcloud-sdk-php/faceid/tree/3.0.1692"
+            },
+            "time": "2026-10-29T19:55:31+00:00"
         },
         {
             "name": "topthink/think-captcha",

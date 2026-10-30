@@ -57,4 +57,20 @@ class AccessService
         }
         return true;
     }
+
+    public static function generationEligibility($userId)
+    {
+        if (!self::isEnabled($userId)) {
+            return ['allowed' => false, 'code' => 'ACCOUNT_DISABLED', 'message' => '账号已被停用或已过期'];
+        }
+        return RealNameService::eligibility($userId);
+    }
+
+    public static function assertGenerationEligible($userId)
+    {
+        $eligibility = self::generationEligibility($userId);
+        if (empty($eligibility['allowed'])) {
+            throw new \RuntimeException($eligibility['message']);
+        }
+    }
 }

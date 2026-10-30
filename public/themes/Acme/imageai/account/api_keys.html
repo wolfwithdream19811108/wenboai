@@ -5,6 +5,7 @@
     <include file="imageai@_account_nav"/>
     <section>
         <h1>API Keys</h1>
+        <if condition="empty($real_name_eligible)"><div class="notice warning">创建和使用 API Key 前需要完成实名认证且年满18周岁。<a href="/imageai/account/real-name">立即认证</a></div></if>
         <if condition="!empty($new_api_key)">
             <div class="notice warning"><strong>请立即复制，关闭后无法再次查看：</strong><br>
                 <code id="new-key">{$new_api_key}</code>
@@ -14,7 +15,7 @@
         <form method="post" action="/imageai/account/api-keys/create" class="panel">
             <label>密钥名称 <input name="name" maxlength="60" placeholder="例如：生产环境"></label>
             <label>有效期 <select name="expires_in_days"><option value="0">长期有效</option><option value="30">30天</option><option value="90">90天</option><option value="365">365天</option></select></label>
-            <button class="btn btn-primary">创建 API Key</button>
+            <button class="btn btn-primary" <?php echo empty($real_name_eligible) ? 'disabled' : ''; ?>>创建 API Key</button>
             <p class="help">每个用户最多5个有效密钥，密钥明文只展示一次。</p>
         </form>
         <div class="panel" style="margin-top:18px"><table>

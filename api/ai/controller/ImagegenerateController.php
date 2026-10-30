@@ -353,7 +353,18 @@ class ImagegenerateController extends RestBaseController
             return $this->specResponse(false, '', '请求方法不支持，请使用POST方法', false);
         }
 
-        // 2. 网页请求使用登录态；API 请求使用 Bearer Key。
+        // 2. 先解析请求体。全局测试 Key 只能用于不会生图的 dry-run。
+        $rawData = file_get_contents('php://input');
+        $data = json_decode($rawData, true);
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            return $this->specResponse(false, '', '无效的JSON格式', false);
+        }
+        $dryRun = !$webRequest && isset($data['dry_run'])
+            && filter_var($data['dry_run'], FILTER_VALIDATE_BOOLEAN);
+        $dryRunProbe = !$webRequest && isset($data['dry_run_probe'])
+            && filter_var($data['dry_run_probe'], FILTER_VALIDATE_BOOLEAN);
+
+        // 3. 网页请求使用登录态；API 请求使用 Bearer Key。
         if ($webRequest) {
             $userId = (int)cmf_get_current_user_id();
             if ($userId <= 0) {
@@ -365,24 +376,35 @@ class ImagegenerateController extends RestBaseController
             if (AccessService::isApiOnly($userId)) {
                 return $this->specResponse(false, '', '此账号仅支持通过 API 创建图片', false);
             }
+            $eligibility = AccessService::generationEligibility($userId);
+            if (empty($eligibility['allowed'])) {
+                return $this->specResponse(false, '', $eligibility['message'], false);
+            }
             $this->imageAiUserId = $userId;
         } else {
             $apiKey = $this->getBearerToken();
             $validApiKey = false;
+            $systemTestKey = false;
+            $apiKeyService = new ApiKeyService();
             if ($apiKey !== '') {
                 foreach ($this->testApiKeys as $allowedApiKey) {
                     if (hash_equals($allowedApiKey, $apiKey)) {
                         $validApiKey = true;
+                        $systemTestKey = true;
                         break;
                     }
                 }
                 if (!$validApiKey) {
-                    $this->imageAiApiKey = (new ApiKeyService())->authenticate($apiKey, get_client_ip(0, true));
+                    $this->imageAiApiKey = $apiKeyService->authenticate($apiKey, get_client_ip(0, true));
                     $validApiKey = !empty($this->imageAiApiKey);
                 }
             }
             if (!$validApiKey) {
-                return $this->specResponse(false, '', '鉴权失败：API_KEY无效', false);
+                $authError = $apiKeyService->getLastError();
+                return $this->specResponse(false, '', $authError !== '' ? $authError : '鉴权失败：API_KEY无效', false);
+            }
+            if ($systemTestKey && !$dryRun) {
+                return $this->specResponse(false, '', '系统测试 Key 仅允许用于 dry_run，请使用实名用户 API Key', false);
             }
             if ($this->imageAiApiKey) {
                 $this->imageAiUserId = (int)$this->imageAiApiKey['user_id'];
@@ -396,13 +418,6 @@ class ImagegenerateController extends RestBaseController
             }
         }
 
-        // 3. 解析请求体
-        $rawData = file_get_contents('php://input');
-        $data = json_decode($rawData, true);
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-            return $this->specResponse(false, '', '无效的JSON格式', false);
-        }
-
         // 4. 解析参数（model非必选有默认值，max_tokens接收但忽略）
         $model  = $webRequest
             ? 'jianyuan'
@@ -410,10 +425,6 @@ class ImagegenerateController extends RestBaseController
         $this->imageAiModel = $model;
         $stream = !$webRequest && isset($data['stream'])
             ? filter_var($data['stream'], FILTER_VALIDATE_BOOLEAN) : false;
-        $dryRun = !$webRequest && isset($data['dry_run'])
-            && filter_var($data['dry_run'], FILTER_VALIDATE_BOOLEAN);
-        $dryRunProbe = !$webRequest && isset($data['dry_run_probe'])
-            && filter_var($data['dry_run_probe'], FILTER_VALIDATE_BOOLEAN);
 
         // 安全握手不需要提示词，也不调用类目模型或图片生成服务。
         // 批测脚本必须先确认服务器明确支持 dry-run，避免旧版本忽略参数后误生图。

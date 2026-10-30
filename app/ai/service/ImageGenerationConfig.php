@@ -83,6 +83,8 @@ class ImageGenerationConfig
             'yidun_secret_id',
             'yidun_secret_key',
             'yidun_business_id',
+            'tencent_faceid_secret_id',
+            'tencent_faceid_secret_key',
         ];
         $status = [];
         foreach ($names as $name) {

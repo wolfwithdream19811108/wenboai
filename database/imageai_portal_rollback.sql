@@ -1,4 +1,5 @@
 -- Only removes tables introduced by the ImageAI portal.
+DROP TABLE IF EXISTS `cmf_imageai_real_name_verification`;
 -- Existing cmf_user, cmf_user_points and cmf_ai_user_works data is preserved.
 DROP TABLE IF EXISTS `cmf_imageai_failure_log`;
 DROP TABLE IF EXISTS `cmf_imageai_test_account`;
