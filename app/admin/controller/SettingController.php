@@ -244,10 +244,7 @@ class SettingController extends AdminBaseController
                 return json(['code' => 1, 'msg' => '测试账号创建成功', 'data' => $result]);
             }
             if ($action === 'operate') {
-                $ids = $this->request->post('user_ids/a');
-                if (!is_array($ids)) {
-                    $ids = preg_split('/\s*,\s*/', trim((string)$this->request->post('user_ids', '')));
-                }
+                $ids = $this->parseTestAccountUserIds($this->request->post('user_ids', ''));
                 $operation = trim((string)$this->request->post('operation'));
                 $service->operate($ids, $operation, [
                     'password' => $this->request->post('password'),
@@ -260,6 +257,21 @@ class SettingController extends AdminBaseController
         } catch (\Throwable $e) {
             return json(['code' => 0, 'msg' => $e->getMessage()]);
         }
+    }
+
+    private function parseTestAccountUserIds($rawIds)
+    {
+        $values = is_array($rawIds) ? $rawIds : [$rawIds];
+        $ids = [];
+        foreach ($values as $value) {
+            foreach (preg_split('/[\s,]+/', trim((string)$value), -1, PREG_SPLIT_NO_EMPTY) as $id) {
+                $id = (int)$id;
+                if ($id > 0) {
+                    $ids[] = $id;
+                }
+            }
+        }
+        return array_values(array_unique($ids));
     }
 
     private function parseTestAccountExpiry($date)
