@@ -18,6 +18,7 @@ class RequestService
             'user_id' => 0,
             'api_key_id' => 0,
             'model' => '',
+            'source' => 'api',
             'status' => 'error',
             'reason' => '',
             'prompt_digest' => '',

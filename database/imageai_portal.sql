@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS `cmf_imageai_api_request_log` (
   `user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `api_key_id` bigint(20) unsigned NOT NULL DEFAULT '0',
   `model` varchar(50) NOT NULL DEFAULT '',
+  `source` varchar(20) NOT NULL DEFAULT 'api' COMMENT 'web/api/api_test',
   `status` varchar(20) NOT NULL DEFAULT 'error',
   `reason` varchar(500) NOT NULL DEFAULT '',
   `prompt_digest` char(64) NOT NULL DEFAULT '',
@@ -103,6 +104,7 @@ CREATE TABLE IF NOT EXISTS `cmf_imageai_api_request_log` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_request_id` (`request_id`),
   KEY `idx_user_time` (`user_id`,`create_time`),
+  KEY `idx_source_time` (`source`,`create_time`),
   KEY `idx_status_time` (`status`,`create_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

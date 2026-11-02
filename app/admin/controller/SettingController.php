@@ -355,8 +355,12 @@ class SettingController extends AdminBaseController
     private function normalizeImageGenerationSettings(array $input, array $functionKeys)
     {
         $defaults = ImageGenerationConfig::defaults();
+        $examples = isset($input['examples']) && is_array($input['examples'])
+            ? $input['examples'] : [];
         $classifier = isset($input['classifier']) && is_array($input['classifier'])
             ? $input['classifier'] : [];
+        $response = isset($input['response']) && is_array($input['response'])
+            ? $input['response'] : [];
         $watermark = isset($input['watermark']) && is_array($input['watermark'])
             ? $input['watermark'] : [];
         $metadata = isset($input['metadata']) && is_array($input['metadata'])
@@ -367,6 +371,7 @@ class SettingController extends AdminBaseController
             ? $input['endpoint'] : [];
 
         $settings = [
+            'examples' => $this->normalizeImageGenerationExamples($examples),
             'classifier' => [
                 'enabled' => empty($classifier['enabled']) ? 0 : 1,
                 'api_url' => trim((string)($classifier['api_url'] ?? '')),
@@ -376,6 +381,10 @@ class SettingController extends AdminBaseController
                     $classifier['system_prompt'] ?? ''
                 ),
                 'fail_closed' => 1,
+            ],
+            'response' => [
+                'refusal_message' => trim((string)($response['refusal_message']
+                    ?? $defaults['response']['refusal_message'])),
             ],
             'watermark' => [
                 'enabled' => empty($watermark['enabled']) ? 0 : 1,
@@ -423,6 +432,12 @@ class SettingController extends AdminBaseController
         }
         if ($settings['classifier']['timeout'] < 1 || $settings['classifier']['timeout'] > 120) {
             $this->error('类目判断超时时间必须在 1～120 秒之间');
+        }
+        if ($settings['response']['refusal_message'] === '') {
+            $settings['response']['refusal_message'] = $defaults['response']['refusal_message'];
+        }
+        if (mb_strlen($settings['response']['refusal_message'], 'UTF-8') > 500) {
+            $this->error('统一拒答文案不能超过 500 个字符');
         }
         if (empty($functionKeys['volc_access_key_id']) || empty($functionKeys['volc_secret_access_key'])) {
             $this->error('火山引擎 AccessKey ID 和 Secret AccessKey 不能为空');
@@ -501,6 +516,32 @@ class SettingController extends AdminBaseController
         }
 
         return $settings;
+    }
+
+    private function normalizeImageGenerationExamples(array $examples)
+    {
+        $normalized = [];
+        foreach ($examples as $example) {
+            if (!is_array($example)) {
+                continue;
+            }
+            $title = trim((string)($example['title'] ?? ''));
+            $prompt = trim((string)($example['prompt'] ?? ''));
+            if ($title === '' && $prompt === '') {
+                continue;
+            }
+            if ($title === '' || $prompt === '') {
+                $this->error('示例提示词的显示名称和完整提示词都不能为空');
+            }
+            if (mb_strlen($title, 'UTF-8') > 80 || mb_strlen($prompt, 'UTF-8') > 400) {
+                $this->error('示例提示词显示名称不能超过 80 字，完整提示词不能超过 400 字');
+            }
+            $normalized[] = [
+                'title' => $title,
+                'prompt' => $prompt,
+            ];
+        }
+        return $normalized;
     }
 
     private function normalizeClassifierSystemPrompt($prompt)

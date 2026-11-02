@@ -23,6 +23,10 @@ require_once __DIR__ . '/AigcPngMetadata.php';
 
 class ImagegenerateController extends RestBaseController
 {
+    const REASON_SENSITIVE_CONTENT = '输入内容包含敏感信息，拒绝服务';
+    const REASON_OUT_OF_DOMAIN = '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成';
+    const REASON_CLASSIFIER_UNAVAILABLE = '项目分类暂时无法服务';
+
     private $SYNC_IMAGE_UPYUN;
     private $volcAccessKeyId;
     private $volcSecretAccessKey;
@@ -57,6 +61,7 @@ class ImagegenerateController extends RestBaseController
     private $classifyModel;
     private $classifyTimeout;
     private $classifySystemPrompt;
+    private $refusalMessage;
     private $upyunRemoteDir;
     private $configurationErrors = [];
     private $webConfigurationErrors = [];
@@ -121,6 +126,10 @@ class ImagegenerateController extends RestBaseController
         $this->classifyModel = trim((string)$settings['classifier']['model']);
         $this->classifyTimeout = (int)$settings['classifier']['timeout'];
         $this->classifySystemPrompt = trim((string)$settings['classifier']['system_prompt']);
+        $this->refusalMessage = trim((string)($settings['response']['refusal_message'] ?? ''));
+        if ($this->refusalMessage === '') {
+            $this->refusalMessage = ImageGenerationConfig::defaults()['response']['refusal_message'];
+        }
         // 云存储是可降级能力：配置或上传异常不能阻止已经在本地生成成功的图片交付。
         $this->configurationErrors = array_values(array_filter(
             ImageGenerationConfig::runtimeErrors($settings, $keys),
@@ -265,6 +274,31 @@ class ImagegenerateController extends RestBaseController
             ->where('user_id', $userId)
             ->field('image_url,produce_id,width,height')
             ->find();
+        if (!$work) {
+            $legacyWork = Db::name('ai_user_works')
+                ->where('key', $requestId)
+                ->where('uid', $userId)
+                ->field('picture_url AS image_url,width,height')
+                ->find();
+            if ($legacyWork) {
+                $legacyWork['produce_id'] = '';
+                $work = $legacyWork;
+            }
+        }
+        if (!$work) {
+            $requestLog = Db::name('imageai_api_request_log')
+                ->where('request_id', $requestId)
+                ->where('user_id', $userId)
+                ->where('status', 'success')
+                ->field('image_url')
+                ->find();
+            if ($requestLog && !empty($requestLog['image_url'])) {
+                $requestLog['produce_id'] = '';
+                $requestLog['width'] = 0;
+                $requestLog['height'] = 0;
+                $work = $requestLog;
+            }
+        }
         if (!$work || empty($work['image_url'])) {
             return $this->metadataResponse(false, '未找到对应的作品');
         }
@@ -539,7 +573,7 @@ class ImagegenerateController extends RestBaseController
         $decisionReason = 'success';
         if (!$aiCheck['available']) {
             $decision = 'error';
-            $decisionReason = '内容类目判断服务暂不可用';
+            $decisionReason = self::REASON_CLASSIFIER_UNAVAILABLE;
             $this->logFailure(
                 'classifier',
                 (string)($aiCheck['error_code'] ?? 'CLASSIFIER_UNAVAILABLE'),
@@ -549,17 +583,17 @@ class ImagegenerateController extends RestBaseController
             );
         } elseif ($aiCheck['sensitive']) {
             $decision = 'reject';
-            $decisionReason = '输入内容包含敏感信息，拒绝服务';
+            $decisionReason = self::REASON_SENSITIVE_CONTENT;
         } elseif ($aiCheck['restricted_domain'] || !$aiCheck['artwork']) {
             $decision = 'reject';
-            $decisionReason = '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成';
+            $decisionReason = self::REASON_OUT_OF_DOMAIN;
         }
 
         if ($dryRun) {
             return $this->specResponse(
                 $decision === 'allow',
                 '',
-                $decisionReason,
+                $decision === 'allow' ? $decisionReason : $this->refusalMessage,
                 $stream,
                 [
                     'dry_run' => true,
@@ -575,12 +609,19 @@ class ImagegenerateController extends RestBaseController
                         'reason' => !empty($aiCheck['available'])
                             ? (string)$aiCheck['reason'] : 'service_unavailable',
                     ],
+                ],
+                [
+                    'status' => $decision,
+                    'reason' => $decisionReason,
                 ]
             );
         }
 
         if ($decision !== 'allow') {
-            return $this->specResponse(false, '', $decisionReason, $stream);
+            return $this->specResponse(false, '', $this->refusalMessage, $stream, null, [
+                'status' => $decision,
+                'reason' => $decisionReason,
+            ]);
         }
 
         if ($this->imageAiUserId > 0) {
@@ -1311,8 +1352,9 @@ class ImagegenerateController extends RestBaseController
      * @param string $reason  success或失败原因
      * @param bool   $stream  流式标识：true结果放choices，false结果放content
      * @param array|null $data 可选附加数据（dry-run 使用）
+     * @param array $audit 仅写入后台审计日志的真实状态和原因，不对外返回
      */
-    private function specResponse($success, $result, $reason, $stream, array $data = null)
+    private function specResponse($success, $result, $reason, $stream, ?array $data = null, array $audit = [])
     {
         if ($success) {
             $response = [
@@ -1340,27 +1382,32 @@ class ImagegenerateController extends RestBaseController
 
         if (!$this->imageAiResponseLogged && $this->imageAiRequestId !== '') {
             $this->imageAiResponseLogged = true;
-            $status = $success ? 'success' : 'error';
-            if (isset($data['decision']) && in_array($data['decision'], ['reject', 'error'], true)) {
+            $status = isset($audit['status']) ? (string)$audit['status'] : ($success ? 'success' : 'error');
+            if (!in_array($status, ['success', 'reject', 'error'], true)) {
+                $status = $success ? 'success' : 'error';
+            }
+            if (empty($audit) && isset($data['decision']) && in_array($data['decision'], ['reject', 'error'], true)) {
                 $status = $data['decision'];
-            } elseif (!$success && (strpos($reason, '敏感') !== false || strpos($reason, '不属于') !== false)) {
+            } elseif (empty($audit) && !$success && (strpos($reason, '敏感') !== false || strpos($reason, '不属于') !== false)) {
                 $status = 'reject';
             }
+            $auditReason = isset($audit['reason']) ? (string)$audit['reason'] : (string)$reason;
 
             if (!$success && $this->imageAiPointsReserved > 0 && $this->imageAiUserId > 0) {
                 (new BillingService())->refund($this->imageAiUserId, $this->imageAiPointsReserved);
                 $this->imageAiPointsReserved = 0;
             }
 
+            $requestService = new RequestService();
             try {
-                $requestService = new RequestService();
                 $requestService->log([
                     'request_id' => $this->imageAiRequestId,
                     'user_id' => $this->imageAiUserId,
                     'api_key_id' => $this->imageAiApiKeyId,
                     'model' => $this->imageAiModel,
+                    'source' => $this->imageAiSource,
                     'status' => $status,
-                    'reason' => $success ? 'success' : (string)$reason,
+                    'reason' => $success ? 'success' : $auditReason,
                     'prompt_digest' => $this->imageAiPrompt === '' ? '' : hash('sha256', $this->imageAiPrompt),
                     'image_url' => $success ? (string)$result : '',
                     'points' => $success ? $this->imageAiPointsReserved : 0,
@@ -1368,7 +1415,11 @@ class ImagegenerateController extends RestBaseController
                         ? (int)round((microtime(true) - $this->imageAiStartedAt) * 1000) : 0,
                     'client_ip' => get_client_ip(0, true),
                 ]);
-                if ($success && $result !== '') {
+            } catch (\Throwable $e) {
+                error_log('ImageAI request log failed: ' . $e->getMessage());
+            }
+            if ($success && $result !== '') {
+                try {
                     $requestService->recordWork(
                         $this->imageAiUserId,
                         $this->imageAiRequestId,
@@ -1384,9 +1435,9 @@ class ImagegenerateController extends RestBaseController
                             'produce_id' => $this->imageAiProduceId,
                         ]
                     );
+                } catch (\Throwable $e) {
+                    error_log('ImageAI work audit failed: ' . $e->getMessage());
                 }
-            } catch (\Throwable $e) {
-                error_log('ImageAI request audit failed: ' . $e->getMessage());
             }
         }
 

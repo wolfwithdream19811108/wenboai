@@ -2,6 +2,7 @@
 
 namespace app\imageai\controller;
 
+use app\ai\service\ImageGenerationConfig;
 use app\imageai\service\AccessService;
 use app\imageai\service\ApiKeyService;
 use app\imageai\service\RealNameConfig;
@@ -84,7 +85,21 @@ class AccountController extends HomeBaseController
     public function requests()
     {
         $list = Db::name('imageai_api_request_log')->where('user_id', cmf_get_current_user_id())->order('id DESC')->paginate(30);
-        $this->assign('list', $list);
+        $items = $list->items();
+        $publicRefusal = (string)ImageGenerationConfig::settings()['response']['refusal_message'];
+        $internalReasons = [
+            '输入内容包含敏感信息，拒绝服务',
+            '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成',
+            '项目分类暂时无法服务',
+            '内容类目判断服务暂不可用',
+        ];
+        foreach ($items as &$item) {
+            if (in_array((string)$item['reason'], $internalReasons, true)) {
+                $item['reason'] = $publicRefusal;
+            }
+        }
+        unset($item);
+        $this->assign('list', $items);
         $this->assign('page', $this->renderPagination($list, '请求分页'));
         return $this->fetch('/account/requests');
     }

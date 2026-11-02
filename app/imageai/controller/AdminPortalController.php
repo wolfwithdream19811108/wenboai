@@ -75,14 +75,60 @@ class AdminPortalController extends AdminBaseController
     public function requests()
     {
         $status = trim((string)$this->request->param('status'));
+        $source = trim((string)$this->request->param('source'));
+        $reasonType = trim((string)$this->request->param('reason_type'));
         $query = Db::name('imageai_api_request_log')->alias('r')->join('__USER__ u', 'u.id=r.user_id', 'LEFT')
             ->field('r.*,u.user_login,u.mobile');
         if (in_array($status, ['success', 'reject', 'error'], true)) {
             $query->where('r.status', $status);
         }
+        if (in_array($source, ['web', 'api', 'api_test'], true)) {
+            $query->where('r.source', $source);
+        }
+        $reasonMap = [
+            'sensitive' => ['输入内容包含敏感信息，拒绝服务'],
+            'out_of_domain' => ['提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成'],
+            'classifier_unavailable' => ['项目分类暂时无法服务', '内容类目判断服务暂不可用'],
+        ];
+        if (isset($reasonMap[$reasonType])) {
+            $query->whereIn('r.reason', $reasonMap[$reasonType]);
+        }
         $list = $query->order('r.id DESC')->paginate(30, false, ['query' => $this->request->param()]);
-        $this->assign('list', $list);
+        $items = $list->items();
+        foreach ($items as &$item) {
+            $sourceLabels = [
+                'web' => '网页端',
+                'api' => '用户 API',
+                'api_test' => '后台测试 Key',
+            ];
+            $itemSource = isset($item['source']) && $item['source'] !== ''
+                ? (string)$item['source']
+                : ((int)$item['api_key_id'] > 0 ? 'api' : ((int)$item['user_id'] > 0 ? 'web' : 'api_test'));
+            $item['source'] = $itemSource;
+            $item['source_label'] = $sourceLabels[$itemSource] ?? $itemSource;
+            $item['reason_type'] = '';
+            $item['reason_label'] = '';
+            $item['reason_class'] = 'label-default';
+            if ($item['reason'] === '输入内容包含敏感信息，拒绝服务') {
+                $item['reason_type'] = 'sensitive';
+                $item['reason_label'] = '内容拒绝';
+                $item['reason_class'] = 'label-danger';
+            } elseif ($item['reason'] === '提示词不属于艺术品/工艺美术品/文创作品范畴，拒绝生成') {
+                $item['reason_type'] = 'out_of_domain';
+                $item['reason_label'] = '领域拒绝';
+                $item['reason_class'] = 'label-warning';
+            } elseif (in_array($item['reason'], $reasonMap['classifier_unavailable'], true)) {
+                $item['reason_type'] = 'classifier_unavailable';
+                $item['reason_label'] = '服务异常';
+                $item['reason_class'] = 'label-danger';
+            }
+        }
+        unset($item);
+        $this->assign('list', $items);
         $this->assign('page', $list->render());
+        $this->assign('request_status', $status);
+        $this->assign('request_source', $source);
+        $this->assign('request_reason_type', $reasonType);
         return $this->fetch('/admin_portal/requests');
     }
 

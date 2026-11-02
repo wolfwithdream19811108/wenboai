@@ -14,6 +14,7 @@ class ImageGenerationConfig
     public static function defaults()
     {
         return [
+            'examples' => self::defaultExamples(),
             'classifier' => [
                 'enabled' => 1,
                 'api_url' => 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
@@ -21,6 +22,9 @@ class ImageGenerationConfig
                 'timeout' => 30,
                 'system_prompt' => '',
                 'fail_closed' => 1,
+            ],
+            'response' => [
+                'refusal_message' => '我是一个文博领域的图片生成垂域大模型，你的问题不在我的能力范围，请更换问题或者提示词再试一次。',
             ],
             'watermark' => [
                 'enabled' => 1,
@@ -58,7 +62,28 @@ class ImageGenerationConfig
     public static function settings()
     {
         $stored = cmf_get_option(self::SETTINGS_OPTION);
-        return self::mergeRecursive(self::defaults(), is_array($stored) ? $stored : []);
+        $stored = is_array($stored) ? $stored : [];
+        $settings = self::mergeRecursive(self::defaults(), $stored);
+        if (array_key_exists('examples', $stored) && is_array($stored['examples'])) {
+            $settings['examples'] = array_values($stored['examples']);
+        }
+        return $settings;
+    }
+
+    public static function defaultExamples()
+    {
+        return [
+            ['title' => '清代漆器 · 剔犀盘', 'prompt' => '请生成一件清代时期的漆器剔犀盘，采用螺钿镶嵌、磨漆工艺制作，器物线条流畅，装饰有莲瓣纹纹样，器物在墓葬场景中，置于春节庙会中，器物造型独特、器物细腻温润。'],
+            ['title' => '清代珠宝 · 碧玺朝珠', 'prompt' => '请生成一件清代碧玺朝珠，采用雕琢、穿系工艺制作，器物饰佛头纹，局部施粉红碧玺，置于清代后妃礼佛展柜中，器物为馆藏珍品。'],
+            ['title' => '商周青铜器 · 青铜人物立像', 'prompt' => '请生成一件商周时期的青铜器青铜人物立像，采用镶嵌、鎏金工艺制作，器物轻盈灵动，装饰有云雷纹纹样，完整器型展示，置于博物馆展架上，器物经修复处理。'],
+            ['title' => '南北朝雕塑 · 石狮', 'prompt' => '请生成一件南北朝时期的雕塑石狮，采用刻划工艺制作，器物线条刚劲，装饰有花卉纹纹样，器物在自然环境中，置于古代婚嫁场合，器物置于木质展台上。'],
+            ['title' => '明中期漆器 · 螺钿漆盒', 'prompt' => '请生成一件明中期时期的漆器螺钿漆盒，采用戗金工艺制作，器物镂空雕花、构图严谨，装饰有海水纹纹样，器物在庙宇中，置于古代客栈中，器物保存完好。'],
+            ['title' => '清末陶瓷 · 越窑青瓷盘', 'prompt' => '请生成一件清末时期的陶瓷越窑青瓷盘，采用还原焰烧制工艺制作，器物栩栩如生，装饰有山水纹纹样，器物在水边，置于古代酒肆中，器物包浆醇厚、器物为成对出现。'],
+            ['title' => '汉代陶瓷 · 磁州窑瓷罐', 'prompt' => '请生成一件汉代时期的陶瓷磁州窑瓷罐，采用斗彩工艺制作，器物光泽柔和，装饰有海水纹、云纹纹样，局部放大，置于博物馆浅色背景，器物沁色自然。'],
+            ['title' => '西周漆器 · 漆屏风', 'prompt' => '请生成一件西周时期的漆器漆屏风，采用漆塑工艺制作，器物形态逼真，装饰有缠枝花纹、缠枝梅花纹纹样，器物在雨景中，置于古代宫殿中，器物工艺精湛。'],
+            ['title' => '魏晋南北朝玉器 · 玉杯', 'prompt' => '请生成一件魏晋南北朝时期的玉器玉杯，采用雕刻、透雕工艺制作，器物鎏金装饰，装饰有海水纹纹样，器物在烛光下，置于古代书房中，器物底部有款识。'],
+            ['title' => '明晚期雕塑 · 石雕佛像', 'prompt' => '请生成一件明晚期时期的雕塑石雕佛像，采用瓷塑工艺制作，器物轻盈灵动，装饰有花鸟纹纹样，整体展示，置于博物馆展柜中，器物纹饰清晰可见。'],
+        ];
     }
 
     public static function keys()

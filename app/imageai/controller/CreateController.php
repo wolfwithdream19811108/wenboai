@@ -2,6 +2,7 @@
 
 namespace app\imageai\controller;
 
+use app\ai\service\ImageGenerationConfig;
 use app\imageai\service\AccessService;
 use app\user\model\UserPointsModel;
 use cmf\controller\HomeBaseController;
@@ -26,6 +27,7 @@ class CreateController extends HomeBaseController
         }
 
         $this->assign('isLogin', $isLogin);
+        $this->assign('example_prompts', ImageGenerationConfig::settings()['examples']);
         return $this->fetch('/create');
     }
 }

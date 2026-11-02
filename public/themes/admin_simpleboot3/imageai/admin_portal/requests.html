@@ -1,1 +1,55 @@
-<include file="public@header"/></head><body><div class="wrap"><include file="imageai/admin_portal@_tabs"/><form class="well form-inline margin-top-20"><select name="status" class="form-control"><option value="">全部结果</option><option value="success">success</option><option value="reject">reject</option><option value="error">error</option></select><button class="btn btn-primary">筛选</button></form><table class="table table-bordered table-hover"><thead><tr><th>请求ID</th><th>用户</th><th>模型</th><th>结果</th><th>原因</th><th>积分/耗时</th><th>时间</th></tr></thead><tbody><foreach name="list" item="v"><tr><td><code>{$v.request_id}</code></td><td>{$v.user_id}<br><if condition="!empty($v.mobile)">{$v.mobile}<else/>{$v.user_login}</if></td><td>{$v.model}</td><td>{$v.status}</td><td>{$v.reason}</td><td>{$v.points} / {$v.duration_ms}ms</td><td>{:date('Y-m-d H:i:s',$v.create_time)}</td></tr></foreach></tbody></table><div class="pagination">{$page}</div></div></body></html>
+<include file="public@header"/>
+<style>
+    .request-reason{max-width:420px;white-space:normal;word-break:break-word}
+    .request-reason .label{display:inline-block;margin-bottom:5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <include file="imageai/admin_portal@_tabs"/>
+    <form class="well form-inline margin-top-20">
+        <select name="status" class="form-control">
+            <option value="">全部结果</option>
+            <option value="success" <?php echo $request_status === 'success' ? 'selected' : ''; ?>>success</option>
+            <option value="reject" <?php echo $request_status === 'reject' ? 'selected' : ''; ?>>reject</option>
+            <option value="error" <?php echo $request_status === 'error' ? 'selected' : ''; ?>>error</option>
+        </select>
+        <select name="source" class="form-control">
+            <option value="">全部来源</option>
+            <option value="web" <?php echo $request_source === 'web' ? 'selected' : ''; ?>>网页端</option>
+            <option value="api" <?php echo $request_source === 'api' ? 'selected' : ''; ?>>用户 API</option>
+            <option value="api_test" <?php echo $request_source === 'api_test' ? 'selected' : ''; ?>>后台测试 Key</option>
+        </select>
+        <select name="reason_type" class="form-control">
+            <option value="">全部原因</option>
+            <option value="sensitive" <?php echo $request_reason_type === 'sensitive' ? 'selected' : ''; ?>>敏感内容拒绝</option>
+            <option value="out_of_domain" <?php echo $request_reason_type === 'out_of_domain' ? 'selected' : ''; ?>>非文博领域拒绝</option>
+            <option value="classifier_unavailable" <?php echo $request_reason_type === 'classifier_unavailable' ? 'selected' : ''; ?>>分类服务异常</option>
+        </select>
+        <button class="btn btn-primary">筛选</button>
+        <a class="btn btn-default" href="{:url('imageai/AdminPortal/requests')}">清空</a>
+    </form>
+    <table class="table table-bordered table-hover">
+        <thead><tr><th>请求ID</th><th>用户</th><th>来源</th><th>模型</th><th>结果</th><th>内部原因</th><th>积分/耗时</th><th>时间</th></tr></thead>
+        <tbody>
+        <foreach name="list" item="v">
+            <tr>
+                <td><code>{$v.request_id}</code></td>
+                <td>{$v.user_id}<br><if condition="!empty($v.mobile)">{$v.mobile}<else/>{$v.user_login}</if></td>
+                <td>{$v.source_label|htmlspecialchars}</td>
+                <td>{$v.model}</td>
+                <td>{$v.status}</td>
+                <td class="request-reason">
+                    <notempty name="v.reason_label"><span class="label {$v.reason_class}">{$v.reason_label}</span><br></notempty>
+                    {$v.reason|htmlspecialchars}
+                </td>
+                <td>{$v.points} / {$v.duration_ms}ms</td>
+                <td>{:date('Y-m-d H:i:s',$v.create_time)}</td>
+            </tr>
+        </foreach>
+        </tbody>
+    </table>
+    <div class="pagination">{$page}</div>
+</div>
+</body>
+</html>

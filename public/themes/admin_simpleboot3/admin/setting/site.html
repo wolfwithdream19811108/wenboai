@@ -353,6 +353,39 @@
                         <div class="form-group"><label class="col-sm-2 control-label">超时时间（秒）</label><div class="col-md-7 col-sm-10"><input type="number" min="1" max="120" class="form-control" name="image_generation_settings[classifier][timeout]" value="{$image_generation_settings.classifier.timeout|default='30'}"></div></div>
                         <div class="form-group"><label class="col-sm-2 control-label">系统提示词</label><div class="col-md-7 col-sm-10"><textarea class="form-control" rows="16" name="image_generation_settings[classifier][system_prompt]">{$image_generation_settings.classifier.system_prompt|default=''}</textarea></div></div>
 
+                        <hr><h4>对外拒答</h4>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">统一拒答文案</label>
+                            <div class="col-md-7 col-sm-10">
+                                <textarea class="form-control" rows="4" maxlength="500" name="image_generation_settings[response][refusal_message]">{$image_generation_settings.response.refusal_message|default=''}</textarea>
+                                <p class="help-block">网页生图和 API 在敏感内容、非文博领域或类目判断服务不可用时统一显示此文案；真实原因仍保留在后台“API 请求”和“失败日志”中。</p>
+                            </div>
+                        </div>
+
+                        <hr><h4>前台示例提示词</h4>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">提示词列表</label>
+                            <div class="col-md-9 col-sm-10">
+                                <div id="imageai-example-list">
+                                    <?php foreach (($image_generation_settings['examples'] ?? []) as $exampleIndex => $example): ?>
+                                    <div class="panel panel-default imageai-example-row" style="padding:15px;margin-bottom:12px">
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-sm-2 control-label">显示名称</label>
+                                            <div class="col-sm-10"><input type="text" maxlength="80" class="form-control" name="image_generation_settings[examples][<?php echo (int)$exampleIndex; ?>][title]" value="<?php echo htmlspecialchars((string)($example['title'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>"></div>
+                                        </div>
+                                        <div class="form-group" style="margin-bottom:10px">
+                                            <label class="col-sm-2 control-label">完整提示词</label>
+                                            <div class="col-sm-10"><textarea rows="3" maxlength="400" class="form-control" name="image_generation_settings[examples][<?php echo (int)$exampleIndex; ?>][prompt]"><?php echo htmlspecialchars((string)($example['prompt'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></textarea></div>
+                                        </div>
+                                        <div class="text-right"><button type="button" class="btn btn-danger btn-sm js-imageai-example-remove">删除</button></div>
+                                    </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <button type="button" class="btn btn-default" id="imageai-example-add"><i class="fa fa-plus"></i> 添加示例提示词</button>
+                                <p class="help-block">保存后前台 <code>/imageai/create</code> 立即使用此列表，并默认选择第一条。可以删除全部提示词。</p>
+                            </div>
+                        </div>
+
                         <hr><h4>文字水印</h4>
                         <div class="form-group"><label class="col-sm-2 control-label">启用文字水印</label><div class="col-md-7 col-sm-10"><select class="form-control" name="image_generation_settings[watermark][enabled]"><option value="1" <?php echo !empty($image_generation_settings['watermark']['enabled']) ? 'selected' : ''; ?>>是</option><option value="0" <?php echo empty($image_generation_settings['watermark']['enabled']) ? 'selected' : ''; ?>>否</option></select></div></div>
                         <div class="form-group"><label class="col-sm-2 control-label">水印文字</label><div class="col-md-7 col-sm-10"><input type="text" class="form-control" name="image_generation_settings[watermark][text]" value="{$image_generation_settings.watermark.text|default=''}"><p class="help-block">启用时必须包含“AI/人工智能”和“生成/合成”。</p></div></div>
@@ -501,6 +534,41 @@
     var endpoint = "{:url('setting/sitePost')}";
     var credentials = [];
     var batchCode = '';
+
+    var exampleList = document.getElementById('imageai-example-list');
+    var exampleAdd = document.getElementById('imageai-example-add');
+    var exampleIndex = exampleList ? exampleList.querySelectorAll('.imageai-example-row').length : 0;
+
+    function bindExampleRemove(button) {
+        button.addEventListener('click', function () {
+            var row = button.closest('.imageai-example-row');
+            if (row) {
+                row.remove();
+            }
+        });
+    }
+
+    if (exampleList && exampleAdd) {
+        exampleList.querySelectorAll('.js-imageai-example-remove').forEach(bindExampleRemove);
+        exampleAdd.addEventListener('click', function () {
+            var index = exampleIndex++;
+            var row = document.createElement('div');
+            row.className = 'panel panel-default imageai-example-row';
+            row.style.cssText = 'padding:15px;margin-bottom:12px';
+            row.innerHTML = '<div class="form-group" style="margin-bottom:10px">' +
+                '<label class="col-sm-2 control-label">显示名称</label>' +
+                '<div class="col-sm-10"><input type="text" maxlength="80" class="form-control" name="image_generation_settings[examples][' + index + '][title]"></div>' +
+                '</div>' +
+                '<div class="form-group" style="margin-bottom:10px">' +
+                '<label class="col-sm-2 control-label">完整提示词</label>' +
+                '<div class="col-sm-10"><textarea rows="3" maxlength="400" class="form-control" name="image_generation_settings[examples][' + index + '][prompt]"></textarea></div>' +
+                '</div>' +
+                '<div class="text-right"><button type="button" class="btn btn-danger btn-sm js-imageai-example-remove">删除</button></div>';
+            exampleList.appendChild(row);
+            bindExampleRemove(row.querySelector('.js-imageai-example-remove'));
+            row.querySelector('input').focus();
+        });
+    }
 
     document.querySelectorAll('.js-key-toggle').forEach(function (keyToggle) {
         keyToggle.addEventListener('click', function () {
