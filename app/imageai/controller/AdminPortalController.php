@@ -35,7 +35,8 @@ class AdminPortalController extends AdminBaseController
         $keyword = trim((string)$this->request->param('keyword'));
         $query = Db::name('imageai_user_profile')->alias('p')
             ->join('__USER__ u', 'u.id=p.user_id')
-            ->field('p.*,u.user_login,u.mobile,u.user_nickname,u.create_time AS user_create_time');
+            ->join('__IMAGEAI_REAL_NAME_VERIFICATION__ r', 'r.user_id=p.user_id', 'LEFT')
+            ->field('p.*,u.user_login,u.mobile,u.user_nickname,u.create_time AS user_create_time,r.status AS real_name_status,r.verified_at AS real_name_verified_at');
         if ($keyword !== '') {
             $query->whereLike('u.user_login|u.mobile|u.user_nickname', '%' . $keyword . '%');
         }
@@ -336,6 +337,27 @@ class AdminPortalController extends AdminBaseController
      */
     public function userStatus()
     {
+        if ($this->request->isPost()
+            && trim((string)$this->request->post('operation', '')) === 'reset_password') {
+            $userId = (int)$this->request->post('id');
+            $password = (string)$this->request->post('password', '');
+            $passwordConfirm = (string)$this->request->post('password_confirm', '');
+            if ($userId <= 0 || !Db::name('imageai_user_profile')->where('user_id', $userId)->find()) {
+                return json(['code' => 0, 'msg' => 'ImageAI 用户不存在']);
+            }
+            $passwordLength = strlen($password);
+            if ($passwordLength < 8 || $passwordLength > 32) {
+                return json(['code' => 0, 'msg' => '新密码长度必须为 8～32 位']);
+            }
+            if (!hash_equals($password, $passwordConfirm)) {
+                return json(['code' => 0, 'msg' => '两次输入的新密码不一致']);
+            }
+            Db::name('user')->where('id', $userId)->update([
+                'user_pass' => cmf_password($password),
+            ]);
+            return json(['code' => 1, 'msg' => '密码已重设']);
+        }
+
         $userId = (int)$this->request->param('id');
         $status = $this->request->param('status') ? 1 : 0;
         Db::name('imageai_user_profile')->where('user_id', $userId)->update(['status' => $status, 'update_time' => time()]);

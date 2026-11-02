@@ -42,8 +42,11 @@ class AccountController extends HomeBaseController
         $keys = Db::name('imageai_api_key')->where('user_id', cmf_get_current_user_id())->order('id DESC')->select();
         $this->assign('keys', $keys);
         $this->assign('real_name_eligible', !empty($eligibility['allowed']));
+        $this->assign('generation_eligibility', $eligibility);
         $this->assign('new_api_key', session('imageai_new_api_key'));
+        $this->assign('api_key_error', session('imageai_api_key_error'));
         session('imageai_new_api_key', null);
+        session('imageai_api_key_error', null);
         return $this->fetch('/account/api_keys');
     }
 
@@ -61,7 +64,8 @@ class AccountController extends HomeBaseController
             session('imageai_new_api_key', $result['key']);
             return redirect('/imageai/account/api-keys');
         } catch (\Throwable $e) {
-            $this->error($e->getMessage());
+            session('imageai_api_key_error', $e->getMessage());
+            return redirect('/imageai/account/api-keys');
         }
     }
 
