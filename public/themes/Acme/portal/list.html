@@ -118,6 +118,53 @@
   }
 }
 
+/* 作品列表：桌面端四列瀑布流 */
+#my-gallery-container {
+  width: 100%;
+  padding: 0 15px;
+  column-count: 4;
+  column-gap: 20px;
+}
+
+#my-gallery-container .item {
+  display: inline-block;
+  width: 100%;
+  margin: 0 0 20px;
+  vertical-align: top;
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+}
+
+#my-gallery-container .blog-img,
+#my-gallery-container figure,
+#my-gallery-container .blog-img img {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+#my-gallery-container .blog-img img {
+  height: auto;
+}
+
+@media (max-width: 1199px) {
+  #my-gallery-container {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 991px) {
+  #my-gallery-container {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 575px) {
+  #my-gallery-container {
+    column-count: 1;
+  }
+}
+
 
     </style>
 </block>
@@ -294,7 +341,9 @@ $(document).ready(function() {
 	{
 		var filter=document.getElementById("filter");
 		var child=document.getElementById("museumlist");
-		filter.removeChild(child);
+		if (filter && child) {
+			filter.removeChild(child);
+		}
 	}
 
   	if(pageIsOver)
@@ -307,14 +356,20 @@ $(document).ready(function() {
 		window.location.href=jumpUrl;
 	}
 	
-  // 同步分类状态
-  const categoryId = urlParams.get('category');
-  $('a[name="category"]').removeClass('on');
-  if(categoryId) {
-    $(`a[name="category"][rel="${categoryId}"]`).addClass('on');
-  } else {
-    $('a[name="category"].all').addClass('on');
-  }	
+	// 同步各筛选项的选中状态
+	['category', 'times', 'museum'].forEach(function(filterName) {
+		var selectedValue = urlParams.get(filterName) || '';
+		var $links = $('a[name="' + filterName + '"]');
+		$links.removeClass('on');
+		var $selected = $links.filter(function() {
+			return String($(this).attr('rel') || '') === selectedValue;
+		}).first();
+		if ($selected.length) {
+			$selected.addClass('on');
+		} else {
+			$links.filter('.all').addClass('on');
+		}
+	});
 	
 	
 	
@@ -353,41 +408,25 @@ $(document).ready(function() {
  
   });
 
-/*
-$(document).on('click', 'a[name="museum"]', function() {
-    event.preventDefault(); // 取消a标签的默认跳转行为
-    var museumId = $(this).data('museumid');
+// 分类、年代和博物馆筛选始终留在当前站点。
+// 选择分类时沿用原有逻辑：重置其他筛选；其余筛选保留当前条件。
+$(document).on('click', 'a[name="category"], a[name="times"], a[name="museum"]', function(event) {
+    event.preventDefault();
 
-    url = window.document.location.href;
-    var params = new URLSearchParams(new URL(url).search);
-    var category = params.get('category');
-    var museum = params.get('museum');
-    var times = params.get('times');
-    var jumpUrl = 'https://www.hongmengyishu.com/';
-    if (category) {
-      jumpUrl += '?category=' + category;
+    var filterName = String($(this).attr('name') || '');
+    var filterValue = String($(this).attr('rel') || '');
+    var targetUrl = filterName === 'category'
+        ? new URL(window.location.pathname, window.location.origin)
+        : new URL(window.location.href);
+
+    targetUrl.searchParams.delete('page');
+    if (filterValue) {
+        targetUrl.searchParams.set(filterName, filterValue);
+    } else {
+        targetUrl.searchParams.delete(filterName);
     }
-    if (museumId) {
-      jumpUrl += '&museum=' + museumId;
-    }
-    if (times) {
-      jumpUrl += '&times=' + times;
-    }
-    window.location.href=jumpUrl;
-    
-});
-*/
-//如果选了类别，则重置所有筛选参数
-$(document).on('click', 'a[name="category"]', function() {
-    event.preventDefault(); // 取消a标签的默认跳转行为
-    var clickCategoryId = $(this).data('categoryid');
-    var jumpUrl = 'https://www.hongmengyishu.com/';
-    if (clickCategoryId) {
-      jumpUrl += '?category=' + clickCategoryId;
-    }
-   
-    window.location.href=jumpUrl;
-    
+
+    window.location.href = targetUrl.pathname + targetUrl.search;
 });
 
 const museumToggle = document.querySelector('#museumlist .toggle-more');
