@@ -36,6 +36,9 @@ class ListController extends HomeBaseController
 		$page                 = $this->request->param('page');
 
 		$where=array();
+        $museums = [];
+        $tags = [];
+        $tagTypeArray = [];
         if (empty($category_id)) {
             //如果没有类别，默认当前类别是国画，否则会在paginate函数中count * 慢查询
             $category_id = 101;
@@ -163,13 +166,12 @@ class ListController extends HomeBaseController
 		}else{
 					
 			$PortalPostModel = new PortalPostModel();
-			$data = $PortalPostModel->Distinct(true)->field('post_museum_id')->where($where)->select();
+			$data = $PortalPostModel->Distinct(true)->field('post_museum_id')->where($where)->select()->toArray();
 			
 			
             $cacheKey = md5(json_encode($where));
             //$museums = cache($cacheKey);        
             if(empty($museums)){
-    			$PortalMuseumModel = new PortalMuseumModel();
                 $postMuseumIds = array_unique(array_column($data, 'post_museum_id'));
 
                 // 初始化博物馆数组
@@ -177,15 +179,21 @@ class ListController extends HomeBaseController
                 
                 if (!empty($postMuseumIds)) {
                     // 一次性查询所有可见的博物馆
-                    $museumList = PortalMuseumModel::where('is_visible', 1)
+                    $museumRows = PortalMuseumModel::where('is_visible', 1)
                         ->whereIn('id', $postMuseumIds)
                         ->select()
-                        ->column('*', 'id'); // 将结果以ID为键映射
+                        ->toArray();
+                    $museumList = [];
+                    foreach ($museumRows as $museum) {
+                        $museumList[$museum['id']] = $museum;
+                    }
                     
                     // 遍历原始数据并匹配博物馆
                     foreach ($data as $val) {
                         $museumId = $val['post_museum_id'];
-                        $museums[] = $museumList[$museumId] ?? null;
+                        if (isset($museumList[$museumId])) {
+                            $museums[] = $museumList[$museumId];
+                        }
                     }
                 }
                 

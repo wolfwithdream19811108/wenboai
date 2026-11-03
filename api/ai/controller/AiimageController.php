@@ -8,6 +8,7 @@
 // +----------------------------------------------------------------------
 namespace api\ai\controller;
 require_once VENDOR_PATH. 'upyun/vendor/autoload.php';
+use api\ApiHelper;
 use Upyun\Upyun;
 use Upyun\Config;
 use cmf\controller\RestBaseController;
