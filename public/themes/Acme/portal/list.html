@@ -390,13 +390,16 @@ $(document).on('click', 'a[name="category"]', function() {
     
 });
 
-document.querySelector('#museumlist .toggle-more').addEventListener('click', function() {
-    document.getElementById('museumlist').classList.toggle('expanded');
-    this.querySelector('.arrow').style.transform = 
-        document.getElementById('museumlist').classList.contains('expanded') 
-        ? 'rotate(180deg)' 
-        : 'rotate(0deg)';
-});
+const museumToggle = document.querySelector('#museumlist .toggle-more');
+if (museumToggle) {
+    museumToggle.addEventListener('click', function() {
+        const museumList = document.getElementById('museumlist');
+        museumList.classList.toggle('expanded');
+        this.querySelector('.arrow').style.transform = museumList.classList.contains('expanded')
+            ? 'rotate(180deg)'
+            : 'rotate(0deg)';
+    });
+}
 </script>
 
 </block>
