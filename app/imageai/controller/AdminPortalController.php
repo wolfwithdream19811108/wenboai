@@ -21,6 +21,8 @@ use think\Db;
  */
 class AdminPortalController extends AdminBaseController
 {
+    const MAX_USER_POINTS = 10000000;
+
     /**
      * @adminMenu(
      *     'name'    => '开发者用户',
@@ -36,7 +38,8 @@ class AdminPortalController extends AdminBaseController
         $query = Db::name('imageai_user_profile')->alias('p')
             ->join('__USER__ u', 'u.id=p.user_id')
             ->join('__IMAGEAI_REAL_NAME_VERIFICATION__ r', 'r.user_id=p.user_id', 'LEFT')
-            ->field('p.*,u.user_login,u.mobile,u.user_nickname,u.create_time AS user_create_time,r.status AS real_name_status,r.verified_at AS real_name_verified_at');
+            ->join('__USER_POINTS__ up', 'up.userid=p.user_id', 'LEFT')
+            ->field('p.*,u.user_login,u.mobile,u.user_nickname,u.create_time AS user_create_time,r.status AS real_name_status,r.verified_at AS real_name_verified_at,COALESCE(up.points,0) AS points');
         if ($keyword !== '') {
             $query->whereLike('u.user_login|u.mobile|u.user_nickname', '%' . $keyword . '%');
         }
@@ -363,6 +366,14 @@ class AdminPortalController extends AdminBaseController
             ]);
         }
 
+        if (in_array($operation, ['set_points', 'add_points'], true)) {
+            return $this->updateUserPoints($operation);
+        }
+
+        if ($operation === 'points_history') {
+            return $this->userPointsHistory();
+        }
+
         if ($operation === 'reset_password') {
             $userId = (int)$this->request->post('id');
             $password = (string)$this->request->post('password', '');
@@ -387,6 +398,101 @@ class AdminPortalController extends AdminBaseController
         $status = $this->request->param('status') ? 1 : 0;
         Db::name('imageai_user_profile')->where('user_id', $userId)->update(['status' => $status, 'update_time' => time()]);
         $this->success($status ? '用户已启用' : '用户已停用', url('AdminPortal/users'));
+    }
+
+    private function updateUserPoints($operation)
+    {
+        $userId = (int)$this->request->post('id');
+        $rawPoints = trim((string)$this->request->post('points', ''));
+        $remark = trim((string)$this->request->post('remark', ''));
+        $profile = Db::name('imageai_user_profile')->where('user_id', $userId)->find();
+        if (!$profile) {
+            return json(['code' => 0, 'msg' => 'ImageAI 用户不存在']);
+        }
+        if ((string)$profile['account_mode'] === 'test') {
+            return json(['code' => 0, 'msg' => '测试账号请在“测试账号设置”中调整积分']);
+        }
+        if (!preg_match('/^-?[0-9]+$/D', $rawPoints)) {
+            return json(['code' => 0, 'msg' => '请输入整数积分']);
+        }
+        $points = (int)$rawPoints;
+        if ($operation === 'set_points' && ($points < 0 || $points > self::MAX_USER_POINTS)) {
+            return json(['code' => 0, 'msg' => '积分必须在 0～' . self::MAX_USER_POINTS . ' 之间']);
+        }
+        if ($operation === 'add_points'
+            && ($points === 0 || $points < -self::MAX_USER_POINTS || $points > self::MAX_USER_POINTS)) {
+            return json(['code' => 0, 'msg' => '增减积分不能为 0，且不能超过 ' . self::MAX_USER_POINTS]);
+        }
+        if (mb_strlen($remark, 'UTF-8') > 200) {
+            return json(['code' => 0, 'msg' => '备注不能超过 200 个字符']);
+        }
+
+        Db::startTrans();
+        try {
+            $pointsRow = Db::name('user_points')->where('userid', $userId)->lock(true)->find();
+            if (!$pointsRow) {
+                Db::name('user_points')->insert(['userid' => $userId, 'points' => 0]);
+                $beforePoints = 0;
+            } else {
+                $beforePoints = (int)$pointsRow['points'];
+            }
+            $afterPoints = $operation === 'set_points' ? $points : $beforePoints + $points;
+            if ($afterPoints < 0) {
+                throw new \RuntimeException('积分不足，扣减后不能小于 0');
+            }
+            if ($afterPoints > self::MAX_USER_POINTS) {
+                throw new \RuntimeException('调整后积分不能超过 ' . self::MAX_USER_POINTS);
+            }
+            Db::name('user_points')->where('userid', $userId)->update(['points' => $afterPoints]);
+            Db::name('imageai_points_log')->insert([
+                'user_id' => $userId,
+                'admin_id' => (int)cmf_get_current_admin_id(),
+                'operation' => $operation === 'set_points' ? 'set' : 'add',
+                'change_points' => $afterPoints - $beforePoints,
+                'before_points' => $beforePoints,
+                'after_points' => $afterPoints,
+                'remark' => $remark,
+                'admin_ip' => get_client_ip(0, true),
+                'create_time' => time(),
+            ]);
+            Db::commit();
+        } catch (\Throwable $e) {
+            Db::rollback();
+            return json(['code' => 0, 'msg' => $e->getMessage()]);
+        }
+
+        return json([
+            'code' => 1,
+            'msg' => '积分调整成功',
+            'data' => ['points' => $afterPoints],
+        ]);
+    }
+
+    private function userPointsHistory()
+    {
+        $userId = (int)$this->request->post('id');
+        if ($userId <= 0 || !Db::name('imageai_user_profile')->where('user_id', $userId)->find()) {
+            return json(['code' => 0, 'msg' => 'ImageAI 用户不存在']);
+        }
+        try {
+            $logs = Db::name('imageai_points_log')->alias('l')
+                ->join('__USER__ a', 'a.id=l.admin_id', 'LEFT')
+                ->where('l.user_id', $userId)
+                ->field('l.admin_id,l.operation,l.change_points,l.before_points,l.after_points,l.remark,l.admin_ip,l.create_time,a.user_login AS admin_login,a.user_nickname AS admin_nickname')
+                ->order('l.id DESC')
+                ->limit(50)
+                ->select()
+                ->toArray();
+        } catch (\Throwable $e) {
+            return json(['code' => 0, 'msg' => '积分记录表尚未安装']);
+        }
+        foreach ($logs as &$log) {
+            $log['operation_label'] = $log['operation'] === 'set' ? '设置积分' : '增减积分';
+            $log['admin_name'] = $log['admin_nickname'] ?: ($log['admin_login'] ?: ('管理员#' . $log['admin_id']));
+            $log['create_time_text'] = $log['create_time'] ? date('Y-m-d H:i:s', $log['create_time']) : '';
+        }
+        unset($log);
+        return json(['code' => 1, 'msg' => '读取成功', 'data' => $logs]);
     }
 
     /**
