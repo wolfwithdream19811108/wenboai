@@ -232,12 +232,16 @@ class ImagegenerateController extends RestBaseController
      *   ]
      * }
      *
-     * 响应（不论成功失败 HTTP 状态码均为 200）:
+     * 响应（不论成功失败 HTTP 状态码均为 200，status_code 为业务状态码）:
      * {
+     *   "reply": "图片URL/失败提示", // 必选，统一回复内容
+     *   "status_code": 0,           // 必选，0成功，非0失败
+     *   "id": "请求唯一标识",       // 可选，与request_id一致
      *   "content": "图片URL",     // 非流式结果
      *   "choices": [...],         // 流式结果
      *   "status": "success/failed",
-     *   "reason": "success/失败原因"
+     *   "reason": "success/失败原因",
+     *   "request_id": "请求唯一标识"
      * }
      */
     public function create_for_test()
@@ -1345,7 +1349,9 @@ class ImagegenerateController extends RestBaseController
 
     /**
      * 按规范输出响应
-     * 不论成功失败，HTTP状态码均为200，最外层始终包含 content / choices / status / reason
+     * 不论成功失败，HTTP状态码均为200，最外层始终包含
+     * reply / status_code / content / choices / status / reason。
+     * id 与 request_id 相同，用于生成内容追踪并兼容既有调用方。
      *
      * @param bool   $success 是否成功
      * @param string $result  图片URL（成功时）
@@ -1356,8 +1362,11 @@ class ImagegenerateController extends RestBaseController
      */
     private function specResponse($success, $result, $reason, $stream, ?array $data = null, array $audit = [])
     {
+        $statusCode = $this->responseStatusCode($success, $reason, $audit);
         if ($success) {
             $response = [
+                'reply'   => $result,
+                'status_code' => $statusCode,
                 'content' => $stream ? '' : $result,
                 'choices' => $stream ? [['delta' => $result, 'finish_reason' => 'stop']] : '',
                 'status'  => 'success',
@@ -1365,6 +1374,8 @@ class ImagegenerateController extends RestBaseController
             ];
         } else {
             $response = [
+                'reply'   => $reason,
+                'status_code' => $statusCode,
                 'content' => '',
                 'choices' => $stream ? [['delta' => '', 'finish_reason' => 'stop']] : '',
                 'status'  => 'failed',
@@ -1377,6 +1388,7 @@ class ImagegenerateController extends RestBaseController
         }
 
         if ($this->imageAiRequestId !== '') {
+            $response['id'] = $this->imageAiRequestId;
             $response['request_id'] = $this->imageAiRequestId;
         }
 
@@ -1445,6 +1457,59 @@ class ImagegenerateController extends RestBaseController
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
+    }
+
+    /**
+     * 返回稳定的业务状态码；HTTP 状态码继续保持 200 以兼容现有调用方。
+     */
+    private function responseStatusCode($success, $reason, array $audit = [])
+    {
+        if ($success) {
+            return 0;
+        }
+
+        $auditStatus = isset($audit['status']) ? (string)$audit['status'] : '';
+        if ($auditStatus === 'reject') {
+            return 40301;
+        }
+        if ($auditStatus === 'error') {
+            return 50001;
+        }
+
+        $reason = (string)$reason;
+        if (strpos($reason, '鉴权失败') !== false || strpos($reason, 'API Key') !== false || strpos($reason, 'API_KEY') !== false) {
+            return 40101;
+        }
+        if (strpos($reason, '积分不足') !== false) {
+            return 40201;
+        }
+        if (strpos($reason, '请求过于频繁') !== false) {
+            return 42901;
+        }
+        if (strpos($reason, '超时') !== false) {
+            return 50401;
+        }
+        if (
+            strpos($reason, '请登录') !== false
+            || strpos($reason, '账号已被停用') !== false
+            || strpos($reason, '未开通') !== false
+            || strpos($reason, '实名认证') !== false
+            || strpos($reason, '年满18周岁') !== false
+            || ($this->refusalMessage !== '' && strpos($reason, $this->refusalMessage) !== false)
+        ) {
+            return 40301;
+        }
+        if (
+            strpos($reason, '请求方法') !== false
+            || strpos($reason, 'JSON') !== false
+            || strpos($reason, '缺少dialogue') !== false
+            || strpos($reason, '不支持的模型') !== false
+            || strpos($reason, 'dry_run_probe') !== false
+        ) {
+            return 40001;
+        }
+
+        return 50001;
     }
     /**
      * 获取图片状态

@@ -1,11 +1,94 @@
-<!doctype html><html><head><include file="imageai@_head"/></head><body><include file="imageai@_nav"/><main class="container doc"><h1>ImageAI API 文档</h1><div class="panel"><h2>创建图片</h2><p>调用图片生成接口前，账号必须完成实名认证并年满18周岁；API Key 可在实名后的控制台创建。</p><p><code>POST /api/ai/imagegenerate/create_for_test</code></p><p>请求头：<code>Authorization: Bearer wb_sk_xxx</code></p><pre>{
+<!doctype html>
+<html>
+<head>
+<include file="imageai@_head"/>
+<style>
+.api-table{width:100%;border-collapse:collapse;margin:16px 0}.api-table th,.api-table td{padding:11px 12px;border:1px solid #dfe5ec;text-align:left;vertical-align:top}.api-table th{background:#f5f7fa;white-space:nowrap}
+</style>
+</head>
+<body>
+<include file="imageai@_nav"/>
+<main class="container doc">
+<h1>ImageAI API 文档</h1>
+<div class="panel">
+<h2>创建图片</h2>
+<p>调用图片生成接口前，账号必须完成实名认证并年满18周岁；API Key 可在实名后的控制台创建。</p>
+<p><code>POST /api/ai/imagegenerate/create_for_test</code></p>
+<p>请求头：<code>Authorization: Bearer wb_sk_xxx</code></p>
+<h3>请求示例</h3>
+<pre>{
   "model": "jianyuan",
   "stream": false,
   "dialogue": [
     {"role": "user", "content": "一件青花瓷文创产品设计"}
   ]
-}</pre><p>接口返回兼容现有字段，并增加 <code>request_id</code> 供查询和排障。生成成功会扣除积分并写入作品记录；失败会自动退回预扣积分。</p><h2>测试分类而不生成</h2><pre>{
+}</pre>
+
+<h3>返回参数</h3>
+<p>接口不论成功或失败均返回 HTTP 200；请使用 <code>status_code</code> 判断业务结果。既有字段继续保留，以兼容已经接入的调用方。</p>
+<table class="api-table">
+<thead><tr><th>参数名称</th><th>接口说明</th><th>类型</th><th>是否必选</th></tr></thead>
+<tbody>
+<tr><td><code>reply</code></td><td>回复内容；成功时为生成图片地址，失败时为对外错误提示</td><td>string</td><td>必选</td></tr>
+<tr><td><code>status_code</code></td><td>业务状态码；0 表示成功，非 0 表示失败</td><td>integer</td><td>必选</td></tr>
+<tr><td><code>id</code></td><td>通用唯一识别码，用于请求及生成内容溯源；与 <code>request_id</code> 一致</td><td>string</td><td>可选</td></tr>
+<tr><td><code>content</code></td><td>兼容字段；非流式成功结果中的图片地址</td><td>string</td><td>必选</td></tr>
+<tr><td><code>choices</code></td><td>兼容字段；流式结果数组，非流式请求为空字符串</td><td>array|string</td><td>必选</td></tr>
+<tr><td><code>status</code></td><td>兼容字段；<code>success</code> 或 <code>failed</code></td><td>string</td><td>必选</td></tr>
+<tr><td><code>reason</code></td><td>兼容字段；成功时为 <code>success</code>，失败时为错误提示</td><td>string</td><td>必选</td></tr>
+<tr><td><code>request_id</code></td><td>请求唯一识别码，用于查询和排障</td><td>string</td><td>可选</td></tr>
+</tbody>
+</table>
+
+<h3>成功响应示例</h3>
+<pre>{
+  "reply": "https://example.com/generated/image.png",
+  "status_code": 0,
+  "id": "4c98f30b64844c87a01df2fb805b27a1",
+  "content": "https://example.com/generated/image.png",
+  "choices": "",
+  "status": "success",
+  "reason": "success",
+  "request_id": "4c98f30b64844c87a01df2fb805b27a1"
+}</pre>
+
+<h3>失败响应示例</h3>
+<pre>{
+  "reply": "鉴权失败：API_KEY无效",
+  "status_code": 40101,
+  "id": "c991ba7525df4a0aa667bc378e13c65a",
+  "content": "",
+  "choices": "",
+  "status": "failed",
+  "reason": "鉴权失败：API_KEY无效",
+  "request_id": "c991ba7525df4a0aa667bc378e13c65a"
+}</pre>
+
+<h3>业务错误码</h3>
+<p>不同业务状态码会返回对应的具体 <code>reply</code>，不会统一成同一句错误提示。仅内容分类判定相关的拒绝或不可用，按后台配置返回统一的文博领域拒答。</p>
+<table class="api-table">
+<thead><tr><th>status_code</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>0</code></td><td>请求成功</td></tr>
+<tr><td><code>40001</code></td><td>请求方法、JSON 格式或请求参数错误</td></tr>
+<tr><td><code>40101</code></td><td>Bearer Key 缺失、无效或已失效</td></tr>
+<tr><td><code>40201</code></td><td>账号积分不足</td></tr>
+<tr><td><code>40301</code></td><td>账号状态、实名认证、年龄、功能权限或内容范围校验未通过</td></tr>
+<tr><td><code>42901</code></td><td>请求频率超过限制</td></tr>
+<tr><td><code>50001</code></td><td>图片生成、分类、配置、存储或其他服务异常</td></tr>
+<tr><td><code>50401</code></td><td>图片生成超时</td></tr>
+</tbody>
+</table>
+
+<h2>测试分类而不生成</h2>
+<pre>{
   "model": "jianyuan",
   "dry_run": true,
   "dialogue": [{"role":"user","content":"测试提示词"}]
-}</pre></div></main></body></html>
+}</pre>
+<p><code>dry_run=true</code> 时仍使用上述统一返回字段，并在 <code>data</code> 中返回分类测试结果；不会调用真实图片生成服务。</p>
+<p>生成成功会扣除积分并写入作品记录；失败会自动退回预扣积分。</p>
+</div>
+</main>
+</body>
+</html>
