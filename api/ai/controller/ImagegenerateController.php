@@ -407,12 +407,12 @@ class ImagegenerateController extends RestBaseController
             if (!AccessService::isEnabled($userId)) {
                 return $this->specResponse(false, '', '账号已被停用', false);
             }
-            if (AccessService::isApiOnly($userId)) {
-                return $this->specResponse(false, '', '此账号仅支持通过 API 创建图片', false);
-            }
             $eligibility = AccessService::generationEligibility($userId);
             if (empty($eligibility['allowed'])) {
                 return $this->specResponse(false, '', $eligibility['message'], false);
+            }
+            if (AccessService::isApiOnly($userId)) {
+                return $this->specResponse(false, '', '当前账号未开通网页生图权限', false);
             }
             $this->imageAiUserId = $userId;
         } else {

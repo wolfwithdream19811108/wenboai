@@ -12,6 +12,7 @@ namespace app\admin\controller;
 
 use app\admin\model\RouteModel;
 use app\ai\service\ImageGenerationConfig;
+use app\imageai\service\AccessService;
 use app\imageai\service\TestAccountService;
 use app\imageai\service\RealNameConfig;
 use cmf\controller\AdminBaseController;
@@ -66,6 +67,7 @@ class SettingController extends AdminBaseController
         $functionKeys = ImageGenerationConfig::keys();
         $imageGenerationSettings = ImageGenerationConfig::settings();
         $realNameSettings = RealNameConfig::settings();
+        $imageAiAccessSettings = AccessService::settings();
 
         $this->assign('site_info', cmf_get_option('site_info'));
         $this->assign("admin_styles", $adminStyles);
@@ -77,6 +79,7 @@ class SettingController extends AdminBaseController
         $this->assign('function_key_status', ImageGenerationConfig::keyStatus($functionKeys));
         $this->assign('image_generation_settings', $imageGenerationSettings);
         $this->assign('real_name_settings', $realNameSettings);
+        $this->assign('imageai_access_settings', $imageAiAccessSettings);
         $this->assign("cmf_settings", $cmfSettings);
         $this->assignTestAccounts();
 
@@ -125,6 +128,10 @@ class SettingController extends AdminBaseController
             $realNameSettings = is_array($submittedRealNameSettings)
                 ? $this->normalizeRealNameSettings($submittedRealNameSettings, $functionKeys)
                 : RealNameConfig::settings();
+            $submittedAccessSettings = $this->request->param('imageai_access_settings/a');
+            $imageAiAccessSettings = $this->normalizeImageAiAccessSettings(
+                is_array($submittedAccessSettings) ? $submittedAccessSettings : []
+            );
 
             $options = $this->request->param('options/a');
             cmf_set_option('site_info', $options);
@@ -148,6 +155,7 @@ class SettingController extends AdminBaseController
             cmf_set_option(ImageGenerationConfig::KEYS_OPTION, $functionKeys, true);
             cmf_set_option(ImageGenerationConfig::SETTINGS_OPTION, $imageGenerationSettings, true);
             cmf_set_option(RealNameConfig::SETTINGS_OPTION, $realNameSettings, true);
+            cmf_set_option(AccessService::SETTINGS_OPTION, $imageAiAccessSettings, true);
 
             $adminSettings = $this->request->param('admin_settings/a');
 
@@ -350,6 +358,17 @@ class SettingController extends AdminBaseController
             $this->error('启用实名认证时，必须配置腾讯云 FaceID SecretId 和 SecretKey');
         }
         return $settings;
+    }
+
+    private function normalizeImageAiAccessSettings(array $input)
+    {
+        $mode = isset($input['registration_account_mode'])
+            ? trim((string)$input['registration_account_mode'])
+            : AccessService::ACCOUNT_MODE_NORMAL;
+        if (!in_array($mode, [AccessService::ACCOUNT_MODE_NORMAL, AccessService::ACCOUNT_MODE_API_ONLY], true)) {
+            $this->error('新注册用户账号能力设置无效');
+        }
+        return ['registration_account_mode' => $mode];
     }
 
     private function normalizeImageGenerationSettings(array $input, array $functionKeys)

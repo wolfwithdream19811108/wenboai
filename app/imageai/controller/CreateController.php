@@ -15,13 +15,13 @@ class CreateController extends HomeBaseController
         if ($isLogin && !AccessService::isEnabled(cmf_get_current_user_id())) {
             $this->error('ImageAI 账号已停用或已过期', '/imageai/logout');
         }
-        if ($isLogin && AccessService::isApiOnly(cmf_get_current_user_id())) {
-            $this->error('此账号仅支持通过 API 创建图片', '/imageai/account/api-keys');
-        }
         if ($isLogin) {
             $eligibility = AccessService::generationEligibility(cmf_get_current_user_id());
             if (empty($eligibility['allowed'])) {
                 $this->error($eligibility['message'], '/imageai/account/real-name');
+            }
+            if (AccessService::isApiOnly(cmf_get_current_user_id())) {
+                $this->error('当前账号未开通网页生图权限', '/imageai/account/api-keys');
             }
             $this->assign('points', (new UserPointsModel())->getUserPoints(cmf_get_current_user_id()));
         }

@@ -6,6 +6,30 @@ use think\Db;
 
 class AccessService
 {
+    const SETTINGS_OPTION = 'imageai_access_settings';
+    const ACCOUNT_MODE_NORMAL = 'normal';
+    const ACCOUNT_MODE_API_ONLY = 'api_only';
+
+    public static function settings()
+    {
+        $settings = cmf_get_option(self::SETTINGS_OPTION);
+        if (!is_array($settings)) {
+            $settings = [];
+        }
+        $mode = isset($settings['registration_account_mode'])
+            ? (string)$settings['registration_account_mode']
+            : self::ACCOUNT_MODE_NORMAL;
+        if (!in_array($mode, [self::ACCOUNT_MODE_NORMAL, self::ACCOUNT_MODE_API_ONLY], true)) {
+            $mode = self::ACCOUNT_MODE_NORMAL;
+        }
+        return ['registration_account_mode' => $mode];
+    }
+
+    public static function registrationAccountMode()
+    {
+        return self::settings()['registration_account_mode'];
+    }
+
     public static function ensureProfile($userId)
     {
         $profile = self::profile($userId);
@@ -40,7 +64,7 @@ class AccessService
 
     public static function isApiOnly($userId)
     {
-        return self::accountMode($userId) === 'api_only';
+        return self::accountMode($userId) === self::ACCOUNT_MODE_API_ONLY;
     }
 
     public static function isEnabled($userId)

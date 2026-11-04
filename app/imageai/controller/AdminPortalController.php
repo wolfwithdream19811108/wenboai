@@ -337,8 +337,33 @@ class AdminPortalController extends AdminBaseController
      */
     public function userStatus()
     {
-        if ($this->request->isPost()
-            && trim((string)$this->request->post('operation', '')) === 'reset_password') {
+        $operation = $this->request->isPost()
+            ? trim((string)$this->request->post('operation', ''))
+            : '';
+        if ($operation === 'set_account_mode') {
+            $userId = (int)$this->request->post('id');
+            $mode = trim((string)$this->request->post('account_mode', ''));
+            $profile = Db::name('imageai_user_profile')->where('user_id', $userId)->find();
+            if (!$profile) {
+                return json(['code' => 0, 'msg' => 'ImageAI 用户不存在']);
+            }
+            if ((string)$profile['account_mode'] === 'test') {
+                return json(['code' => 0, 'msg' => '测试账号能力由测试账号设置管理']);
+            }
+            if (!in_array($mode, ['normal', 'api_only'], true)) {
+                return json(['code' => 0, 'msg' => '账号能力参数无效']);
+            }
+            Db::name('imageai_user_profile')->where('user_id', $userId)->update([
+                'account_mode' => $mode,
+                'update_time' => time(),
+            ]);
+            return json([
+                'code' => 1,
+                'msg' => $mode === 'normal' ? '已允许网页生图和 API' : '已设为仅 API',
+            ]);
+        }
+
+        if ($operation === 'reset_password') {
             $userId = (int)$this->request->post('id');
             $password = (string)$this->request->post('password', '');
             $passwordConfirm = (string)$this->request->post('password_confirm', '');

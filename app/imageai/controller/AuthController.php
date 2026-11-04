@@ -67,7 +67,7 @@ class AuthController extends HomeBaseController
             ]);
             Db::name('imageai_user_profile')->insert([
                 'user_id' => $userId,
-                'account_mode' => 'api_only',
+                'account_mode' => AccessService::registrationAccountMode(),
                 'register_source' => 'imageai',
                 'status' => 1,
                 'service_agreement_version' => $serviceAgreement['version'],

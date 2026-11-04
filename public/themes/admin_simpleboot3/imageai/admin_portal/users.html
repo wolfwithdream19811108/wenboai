@@ -27,7 +27,9 @@
                 <td>{$v.user_id}</td>
                 <td>{$v.user_login|htmlspecialchars}</td>
                 <td><if condition="!empty($v.mobile)">{$v.mobile|htmlspecialchars}<else/>—</if></td>
-                <td>{$v.account_mode}</td>
+                <td>
+                    <if condition="$v.account_mode eq 'normal'"><span class="label label-success">网页生图 + API</span><elseif condition="$v.account_mode eq 'api_only'"/><span class="label label-info">仅 API</span><else/><span class="label label-default">测试账号</span></if>
+                </td>
                 <td>
                     <if condition="$v.real_name_status eq 'verified_adult'">
                         <span class="label label-success">已认证（成年）</span>
@@ -45,6 +47,7 @@
                 <td><if condition="$v.status eq 1"><span class="label label-success">启用</span><else/><span class="label label-danger">停用</span></if></td>
                 <td>
                     <if condition="$v.status eq 1"><a class="btn btn-xs btn-warning js-ajax-dialog-btn" data-msg="确认停用？" href="{:url('AdminPortal/userStatus',['id'=>$v.user_id,'status'=>0])}">停用</a><else/><a class="btn btn-xs btn-success js-ajax-dialog-btn" href="{:url('AdminPortal/userStatus',['id'=>$v.user_id,'status'=>1])}">启用</a></if>
+                    <if condition="$v.account_mode neq 'test'"><button type="button" class="btn btn-xs btn-info js-account-mode" data-user-id="{$v.user_id}" data-account-mode="<?php echo $v['account_mode'] === 'normal' ? 'api_only' : 'normal'; ?>"><?php echo $v['account_mode'] === 'normal' ? '设为仅 API' : '允许网页生图'; ?></button></if>
                     <button type="button" class="btn btn-xs btn-default js-reset-password" data-user-id="{$v.user_id}" data-user-login="{$v.user_login|htmlspecialchars}">重设密码</button>
                 </td>
             </tr>
@@ -81,6 +84,44 @@
 (function () {
     var modal = $('#reset-password-modal');
     var submit = document.getElementById('reset-password-submit');
+    document.querySelectorAll('.js-account-mode').forEach(function (button) {
+        button.addEventListener('click', function () {
+            var targetMode = button.getAttribute('data-account-mode');
+            var message = targetMode === 'normal'
+                ? '确认允许该用户使用网页生图和 API？'
+                : '确认将该用户设为仅 API？';
+            if (!window.confirm(message)) {
+                return;
+            }
+            button.disabled = true;
+            fetch("{:url('AdminPortal/userStatus')}", {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                },
+                body: new URLSearchParams({
+                    operation: 'set_account_mode',
+                    id: button.getAttribute('data-user-id'),
+                    account_mode: targetMode
+                })
+            }).then(function (response) {
+                return response.json();
+            }).then(function (result) {
+                if (result.code !== 1) {
+                    throw new Error(result.msg || '账号能力设置失败');
+                }
+                layer.msg(result.msg, {icon: 1}, function () {
+                    window.location.reload();
+                });
+            }).catch(function (error) {
+                button.disabled = false;
+                layer.msg(error.message || '账号能力设置失败', {icon: 2});
+            });
+        });
+    });
     document.querySelectorAll('.js-reset-password').forEach(function (button) {
         button.addEventListener('click', function () {
             document.getElementById('reset-password-user-id').value = button.getAttribute('data-user-id');
